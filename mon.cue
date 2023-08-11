@@ -12,31 +12,51 @@ Rows: [...#Row]
 Tags: [...string]
 
 #Target: {
-	Expr: string
-	Legend: string
+	Expr:    string
+	Legend?: string
 	StackDriver?: {
-		Reducer: string
+		Reducer: string | *""
 		Filters: [...string]
 		GroupBy: [...string]
-		Aligner: string
-		Project: string
-		Uint: string | *""
-		Value: string | *""
+		Aligner:         string | *""
+		Project:         string | *""
+		AlignmentPeriod: string | *""
+		EditorMode: string | *""
+		MetricKind:      string | *""
+		MetricType:      string | *""
+		Unit:            string | *""
+		Value:           string | *""
 	}
 }
 
+#Threshold: { Color: string, Value: number | *null }
+
+#LegendValues: ["min", "avg", "max", "total", "current"]
 #Panel: {
-	Type: *"graph" | "stat" | "table"
-	Unit?:       string
+	Type:       *"graph" | "stat" | "gauge" | "table"
+	Unit:       string | *""
 	DataSource: string
 	Metrics: [...#Target]
+	if Type == "graph" {
+		Points: number | *0
+		Lines: number | *1
+		NullValue: *"null" | "null_as_zero" | "connected"
+		Legend: "table_right" | *"table_bottom" | "list_right" | "list_bottom" | "none"
+		Values: [...or(#LegendValues)] | *["current"]
+	}
+	if Type == "stat" {
+		TextMode: *"auto" | "value" | "value_and_name" | "name" | "none"
+		GraphMode: *"area" | "none"
+		Reduce: *"lastNotNull" | "all"
+		Thresholds?: [...#Threshold]
+	}
 }
 
 #Grid: {X?: number, Y?: number, Width?: number, Height?: number}
 
 #Row: {
-	Title?: string
-	Columns: [number, ...number] | *[]
+	Title?:    string
+	Columns:   [number, ...number] | *[]
 	Heights:   [...number] | number | *9
 	Collapsed: bool | *false
 	Panel: [string]:     #Panel

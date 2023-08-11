@@ -1,22 +1,22 @@
 package cuemon
 
-#Conversion: {Grafana: #GrafanaTemplate, Mon: {
-	Type: Grafana.type
+#Conversion: {Input: #GrafanaTemplate, Output: {
+	Type: Input.type
 	if Type == "constant" {
-		Value: Grafana.query
+		Value: Input.query
 	}
 	if Type == "custom" {
-		Values: [for option in Grafana.options { option.value }]
-		Multi: Grafana.multi
-		IncludeAll: Grafana.includeAll
-		Current: Grafana.current.value
+		Values: [ for option in Input.options if option.value != "$__all" {option.value}]
+		Multi:      Input.multi
+		IncludeAll: Input.includeAll
+		Current:    Input.current.value
 	}
 	if Type == "query" {
-		DataSource: Grafana.datasource
-		Query: Grafana.definition
-		Multi: Grafana.multi
-		IncludeAll: Grafana.includeAll
-		Current: Grafana.current.value
-		Sort: Grafana.sort
+		DataSource: Input.datasource
+		Query:      Input.definition
+		Multi:      Input.multi
+		IncludeAll: Input.includeAll
+		Current:    Input.current.value
+		Sort:       Input.sort
 	}
 }}

@@ -1,4 +1,4 @@
-package main
+package src
 
 import (
 	"cuelang.org/go/cue/ast"

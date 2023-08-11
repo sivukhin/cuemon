@@ -1,4 +1,4 @@
-package main
+package src
 
 import (
 	"cuelang.org/go/cue/format"
@@ -8,8 +8,8 @@ import (
 
 func TestConvert(t *testing.T) {
 	t.Run("simple", func(t *testing.T) {
-		result, err := cueConvert(map[string]string{
-			"/a.cue": `package main
+		result, err := CueConvert("number", []string{
+			`package main
 #Conversion: { Input: number, Output: Input + Input }
 `,
 		}, 123, false)
@@ -19,8 +19,8 @@ func TestConvert(t *testing.T) {
 		require.Equal(t, "246\n", string(node))
 	})
 	t.Run("complex", func(t *testing.T) {
-		result, err := cueConvert(map[string]string{
-			"/def.cue": `package main
+		result, err := CueConvert("_", []string{
+			`package main
 
 #Def: {
 	X: number
@@ -31,7 +31,7 @@ func TestConvert(t *testing.T) {
 	}
 }
 `,
-			"/a.cue": `package main
+			`package main
 #Conversion: { Input: #Def, Output: {
 	X: 10 * Input.X
 	Y: len(Input.Y)
@@ -41,9 +41,9 @@ func TestConvert(t *testing.T) {
 	}
 }}
 `,
-		}, map[string]any{"X": 1, "Y": "hello", "Z": map[string]any{"A": 5, "B": true}}, false)
+		}, map[string]any{"X": 1, "Y": "hello", "Z": map[string]any{"A": 5, "B": true}}, true)
 		require.Nil(t, err)
-		node, err := format.Node(File(result))
+		node, err := format.Node(File(result), format.Simplify())
 		require.Nil(t, err)
 		require.Equal(t, `X:   10
 Y:   5
@@ -54,7 +54,7 @@ A:   -5
 }
 
 func TestPrettify(t *testing.T) {
-	declarations, err := cuePrettify(cueAst(`{
+	declarations, err := CuePrettify(cueAst(`{
 	A: {
 		C: "123"
 		D: "456"
@@ -71,24 +71,18 @@ B: 2
 }
 
 func TestForceTrim(t *testing.T) {
-	result, err := forceTrim(map[string]string{
-		"/a.cue": `package main
+	result, err := ForceTrim("#D", []string{
+		`package main
 #D: {
 	type: "A" | "B"
 	if type == "A" {
 		value: number | *0
 	}
 }`,
-	}, `package main 
-
-#D & {type: "A", value: 0}
-`)
+	}, `{type: "A", value: 0}`)
 	require.Nil(t, err)
 	node, err := format.Node(result)
 	t.Log(string(node))
 	require.Nil(t, err)
-	require.Equal(t, `package main
-
-#D & {type: "A"}
-`, string(node))
+	require.Equal(t, `{type: "A"}`, string(node))
 }

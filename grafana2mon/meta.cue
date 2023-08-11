@@ -1,13 +1,13 @@
 package cuemon
 
-#Conversion: {G=Grafana: #GrafanaSchema, Mon: {
-	Grafana: id: G.id
-	Grafana: uid: G.uid
+#Conversion: {Input: #GrafanaSchema, Output: {
+	Grafana: id:  Input.id
+	Grafana: uid: Input.uid
 
-	Title: G.title
+	Title: Input.title
 
-	Links: { for link in G.links if link.type == "link" {
+	Links: {for link in Input.links if link.type == "link" {
 		"\(link.title)": Url: link.url
 	}}
-	Tags: G.tags
+	Tags: Input.tags
 }}

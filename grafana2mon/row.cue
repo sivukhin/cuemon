@@ -1,8 +1,8 @@
 package cuemon
 
-#Conversion: {Grafana: #GrafanaPanel, Mon: {
-	if Grafana.type == "row" {
-			Title: Grafana.title
-			Collapsed: Grafana.collapsed
+#Conversion: {Input: #GrafanaPanel, Output: {
+	if Input.type == "row" {
+		Title:     Input.title
+		Collapsed: Input.collapsed
 	}
 }}

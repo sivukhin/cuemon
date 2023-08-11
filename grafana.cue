@@ -239,11 +239,12 @@ package cuemon
 		datasource: null
 	}
 	if type == "graph" || type == "stat" || type == "table" {
-		#GrafanaGraph
+		#GrafanaGraph & {#type: type}
 	}
 }
 
 #GrafanaGraph: {
+	#type: string
 	datasource:  string
 	description: string | *""
 	targets: [...#GrafanaTarget]
@@ -268,10 +269,10 @@ package cuemon
 	stack:         bool | *false
 	steppedLine:   bool | *false
 	dashLength:    number | *10
+	spaceLength:   number | *10
 	fill:          number | *0
 	fillGradient:  number | *0
-	pointradius:   number | *2
-	spaceLength:   number | *10
+	pointradius:   number | *0
 	description:   string | *""
 	pluginVersion: string | *"7.5.17"
 	renderer:      string | *"flot"
@@ -279,19 +280,19 @@ package cuemon
 	timeRegions: []
 	timeShift: null
 	options: {
+		alertThreshold: bool | *true
 		colorMode?:   string
 		graphMode?:   string
 		justifyMode?: string
 		orientation?: string
+		textMode?:      string
+		showHeader?:    bool
 		reduceOptions?: {
 			calcs: [...string]
-			fields: string
+			fields: string | *""
 			values: bool
 		}
 		text?: {}
-		textMode?:      string
-		alertThreshold: bool | *true
-		showHeader?:    bool
 		sortBy: []
 	}
 	fieldConfig?: {
@@ -318,7 +319,7 @@ package cuemon
 			mappings?: []
 			links?: []
 			thresholds?: {
-				mode: string
+				mode: string | *"absolute"
 				steps: [...{color: string, value: string | null}]
 			}
 		}

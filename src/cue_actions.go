@@ -1,4 +1,4 @@
-package main
+package src
 
 import (
 	"cuelang.org/go/cue"
@@ -25,11 +25,27 @@ func cuePackage(data string) string {
 	return strings.SplitN(packageRegex.FindString(data), " ", 2)[1]
 }
 
-func buildOverlay(sources map[string]string, target string) (string, []string, map[string]load.Source) {
+func singleCuePackage(sources []string) (string, error) {
+	packages := make([]string, 0)
+	for _, conversion := range sources {
+		packages = append(packages, cuePackage(conversion))
+	}
+	uniquePackages := getUnique(packages)
+	if len(uniquePackages) == 0 {
+		return "defualt", nil
+	}
+	if len(uniquePackages) > 1 {
+		return "", fmt.Errorf("all conversion sources should belong to the same package: %v", packages)
+	}
+	return uniquePackages[0], nil
+}
+
+func buildOverlay(sources []string, target string) (string, []string, map[string]load.Source) {
 	hackName := fmt.Sprintf("/overlay-target-%v.cue", rand.Int())
 	filenames := make([]string, 0)
 	overlay := map[string]load.Source{hackName: load.FromString(target)}
-	for filename, source := range sources {
+	for _, source := range sources {
+		filename := fmt.Sprintf("/overlay-source-%v.cue", rand.Int())
 		filenames = append(filenames, filename)
 		overlay[filename] = load.FromString(source)
 	}
@@ -37,9 +53,13 @@ func buildOverlay(sources map[string]string, target string) (string, []string, m
 	return hackName, filenames, overlay
 }
 
-func forceTrim(sources map[string]string, target string) (ast.Node, error) {
+func ForceTrim(variable string, sources []string, target string) (ast.Decl, error) {
+	pack, err := singleCuePackage(sources)
+	if err != nil {
+		return nil, fmt.Errorf("invalid packages assignment: %w", err)
+	}
 	cueContext := cuecontext.New()
-	targetName, filenames, overlay := buildOverlay(sources, target)
+	targetName, filenames, overlay := buildOverlay(sources, fmt.Sprintf("package %v\n%v & %v", pack, variable, target))
 	originalBuildInstances := load.Instances(filenames, &load.Config{Overlay: overlay})
 	original, err := cueContext.BuildInstances(originalBuildInstances)
 	if err != nil {
@@ -66,17 +86,17 @@ func forceTrim(sources map[string]string, target string) (ast.Node, error) {
 		if file.Filename != targetName {
 			continue
 		}
-		return file, nil
+		return file.Decls[1].(*ast.EmbedDecl).Expr.(*ast.BinaryExpr).Y, nil
 	}
 	return nil, fmt.Errorf("unable to trim node against variable")
 }
 
-func cuePrettify(decl ast.Decl, flatten bool) ([]ast.Decl, error) {
+func CuePrettify(decl ast.Decl, flatten bool) ([]ast.Decl, error) {
 	embedDecl, ok := decl.(*ast.EmbedDecl)
-	if !ok {
-		return []ast.Decl{decl}, nil
+	if ok {
+		decl = embedDecl.Expr
 	}
-	structLit, ok := embedDecl.Expr.(*ast.StructLit)
+	structLit, ok := decl.(*ast.StructLit)
 	if !ok {
 		return []ast.Decl{decl}, nil
 	}
@@ -102,18 +122,10 @@ func cuePrettify(decl ast.Decl, flatten bool) ([]ast.Decl, error) {
 	return final, nil
 }
 
-func cueConvert(conversions map[string]string, data any, flatten bool) ([]ast.Decl, error) {
-	packages := make([]string, 0)
-	for _, conversion := range conversions {
-		packages = append(packages, cuePackage(conversion))
-	}
-	uniquePackages := getUnique(packages)
-	if len(uniquePackages) > 1 {
-		return nil, fmt.Errorf("all conversion sources should belong to the same package: %v", packages)
-	}
-	pack := "default"
-	if len(uniquePackages) > 0 {
-		pack = uniquePackages[0]
+func CueConvert(variable string, conversions []string, data any, flatten bool) ([]ast.Decl, error) {
+	pack, err := singleCuePackage(conversions)
+	if err != nil {
+		return nil, fmt.Errorf("invalid packages assignment: %w", err)
 	}
 
 	input, err := json.Marshal(data)
@@ -132,7 +144,14 @@ Data: %v`, pack, string(input))
 	if err != nil {
 		return nil, fmt.Errorf("unable to compile conversion sources and target: %w", err)
 	}
-	source := original[0].LookupPath(cue.MakePath(cue.Str("Output"))).Eval()
-	converted := fmt.Sprintf("%v", source)
-	return cuePrettify(cueAst(converted).Decls[0], flatten)
+	source := original[0].LookupPath(cue.MakePath(cue.Str("Output"))).Syntax(cue.Concrete(true))
+	converted, err := format.Node(source, format.Simplify())
+	if err != nil {
+		return nil, fmt.Errorf("unable to get concrete value of conversion: %w", err)
+	}
+	trimmed, err := ForceTrim(variable, conversions, string(converted))
+	if err != nil {
+		return nil, fmt.Errorf("unable to trim concrete value: %w", err)
+	}
+	return CuePrettify(trimmed, flatten)
 }

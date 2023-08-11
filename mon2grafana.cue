@@ -20,7 +20,7 @@ import (
 		#RowNumber:    number | *0
 
 		if Row.Columns != _|_ && Row.Heights != _|_ {
-			Width: Width | *Row.Columns[#ColumnNumber]
+			Width: number | *Row.Columns[#ColumnNumber]
 			if Row.PanelGrid[panel.Title] != _|_ {
 				if Row.PanelGrid[panel.Title].Height != _|_ {
 					Height: Row.PanelGrid[panel.Title].Height
@@ -47,10 +47,10 @@ import (
 		}
 
 		if Row.Heights[#RowNumber] != _|_ {
-			Height: Height | *Row.Heights[#RowNumber]
+			Height: number | *Row.Heights[#RowNumber]
 		}
 		if Row.Heights[#RowNumber] == _|_ && Row.Heights != _|_ {
-			Height: Height | *Row.Heights
+			Height: number | *Row.Heights
 		}
 		if i > 0 {
 			if SequenceGrid[i-1].#EndX+Width <= 24 {
@@ -103,9 +103,9 @@ import (
 	Row: {#Row, Y: number, Id: number}
 	Panel: {#Panel, #Grid, Title: string, Id: number}
 	Grafana: {
-		id:         Panel.Id
+		id:         Row.Id + 1 + Panel.Id
 		title:      Panel.Title
-		type:       "graph"
+		type:       Panel.Type
 		datasource: Panel.DataSource
 		gridPos: {
 			w: Panel.Width
@@ -118,10 +118,74 @@ import (
 				y: Row.Y + 1 + Panel.Y
 			}
 		}
+		if Panel.Type == "graph" {
+			if Panel.Points > 0 {
+				pointradius: Panel.Points
+				points:      true
+			}
+			if Panel.Points == 0 {
+				points: false
+			}
+			if Panel.Lines > 0 {
+				linewidth: Panel.Lines
+				lines:     true
+			}
+			if Panel.Lines == 0 {
+				lines: false
+			}
+			nullPointMode: Panel.NullValue
+			legend: {
+				show:         Panel.Legend != "none"
+				alignAsTable: Panel.Legend == "table_right" || Panel.Legend == "table_bottom"
+				rightSide:    Panel.Legend == "table_right" || Panel.Legend == "list_right"
+				values:       len(Panel.Values) > 0
+				current:      listFunc.Contains(Panel.Values, "current")
+				avg:          listFunc.Contains(Panel.Values, "avg")
+				max:          listFunc.Contains(Panel.Values, "max")
+				min:          listFunc.Contains(Panel.Values, "min")
+				total:        listFunc.Contains(Panel.Values, "total")
+			}
+		}
+		if Panel.Type == "stat" || Panel.Type == "gauge" {
+			options: {
+				textMode:  Panel.TextMode
+				graphMode: Panel.GraphMode
+				if Panel.Reduce == "all" {
+					reduceOptions: values: true
+				}
+				if Panel.Reduce != "all" {
+					reduceOptions: calcs: [Panel.Reduce]
+					reduceOptions: values: false
+				}
+			}
+		}
+		if Panel.Thresholds != _|_ {
+			fieldConfig: defaults: thresholds: steps: [ for t in Panel.Thresholds {color: t.Color, value: t.Value}]
+		}
 		targets: [ for i, target in Panel.Metrics {
-			expr:         target.Expr
-			legendFormat: target.Legend
-			refId:        #Alphabet[i]
+			refId: #Alphabet[i]
+			if target.StackDriver != _|_ {
+				queryType: "metrics"
+				metricQuery: {
+					query:              target.Expr
+					aliasBy:            target.Legend
+					crossSeriesReducer: target.StackDriver.Reducer
+					filters:            target.StackDriver.Filters
+					groupBys:           target.StackDriver.GroupBy
+					perSeriesAligner:   target.StackDriver.Aligner
+					alignmentPeriod:    target.StackDriver.AlignmentPeriod
+					projectName:        target.StackDriver.Project
+					unit:               target.StackDriver.Unit
+					valueType:          target.StackDriver.Value
+					metricKind:         target.StackDriver.MetricKind
+					metricType:         target.StackDriver.MetricType
+					editorMode:         target.StackDriver.EditorMode
+				}
+			}
+			if target.StackDriver == _|_ {
+				expr:         target.Expr
+				legendFormat: target.Legend
+			}
 		}]
 		yaxes: [
 			{
