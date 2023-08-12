@@ -4,6 +4,7 @@ import (
 	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/format"
 	"cuelang.org/go/pkg/strings"
+	"cuemon/src"
 	_ "embed"
 	"encoding/json"
 	"flag"
@@ -12,8 +13,6 @@ import (
 	"os"
 	"path"
 	"regexp"
-	"sort"
-	"strconv"
 )
 
 func asAny[T any](array []T) []any {
@@ -39,6 +38,8 @@ var (
 	Row2Monitoring string
 	//go:embed grafana2mon/panel.cue
 	Panel2Monitoring string
+	//go:embed grafana2mon/target.cue
+	Target2Monitoring string
 )
 
 func has(data any, path ...string) (any, bool) {
@@ -50,15 +51,6 @@ func has(data any, path ...string) (any, bool) {
 		data = next
 	}
 	return data, true
-}
-
-func hasObject(data any, path ...string) (map[string]any, bool) {
-	data, ok := has(data, path...)
-	if !ok {
-		return nil, false
-	}
-	object, ok := data.(map[string]any)
-	return object, ok
 }
 
 func hasArray(data any, path ...string) ([]any, bool) {
@@ -102,138 +94,27 @@ func toFilename(s string) string {
 	return strings.ToLower(s)
 }
 
-type Grid struct {
-	X int `json:"x"`
-	Y int `json:"y"`
-	W int `json:"w"`
-	H int `json:"h"`
-}
-
-type LayoutOverride struct {
-	Width, Height, X, Y int
-}
-
-type Layout struct {
-	Columns   []int
-	Heights   []int
-	Order     []int
-	Overrides map[int]LayoutOverride
-}
-
-type Indexed struct {
-	Index int
-	Grid  Grid
-}
-
-func createWidthDescriptor(row []Indexed) (string, []int) {
-	widthString := make([]string, 0)
-	width := make([]int, 0)
-	for _, cell := range row {
-		widthString = append(widthString, strconv.Itoa(cell.Grid.W))
-		width = append(width, cell.Grid.W)
-	}
-	return strings.Join(widthString, ","), width
-}
-
-func getUnique[T comparable](a []T) []T {
-	used := make(map[T]struct{}, 0)
-	unique := make([]T, 0)
-	for _, element := range a {
-		if _, ok := used[element]; !ok {
-			used[element] = struct{}{}
-			unique = append(unique, element)
-		}
-	}
-	return unique
-}
-
-func getHeights(row []Indexed) []int {
-	heights := make([]int, 0)
-	for _, cell := range row {
-		heights = append(heights, cell.Grid.H)
-	}
-	return getUnique(heights)
-}
-
-func analyzeGrid(grid []Grid) Layout {
-	indexed := make([]Indexed, 0, len(grid))
-	for i, element := range grid {
-		indexed = append(indexed, Indexed{Index: i, Grid: element})
-	}
-	sort.Slice(indexed, func(i, j int) bool {
-		if indexed[i].Grid.Y != indexed[j].Grid.Y {
-			return indexed[i].Grid.Y < indexed[j].Grid.Y
-		}
-		return indexed[i].Grid.X < indexed[j].Grid.X
-	})
-
-	stat := make(map[string]int, 0)
-	rows := make([][]Indexed, 0)
-	for _, element := range indexed {
-		if len(rows) == 0 || rows[len(rows)-1][0].Grid.Y != element.Grid.Y {
-			rows = append(rows, make([]Indexed, 0))
-		}
-		rows[len(rows)-1] = append(rows[len(rows)-1], element)
-	}
-	commonWidthString, commonWidth := "", make([]int, 0)
-	for _, row := range rows {
-		widthString, width := createWidthDescriptor(row)
-		if _, ok := stat[widthString]; !ok {
-			stat[widthString] = 0
-		}
-		stat[widthString]++
-		if stat[widthString] > stat[commonWidthString] {
-			commonWidthString = widthString
-			commonWidth = width
-		}
-	}
-	order := make([]int, 0)
-	heights := make([]int, 0)
-	overrides := make(map[int]LayoutOverride)
-	for _, row := range rows {
-		rowWidthString, _ := createWidthDescriptor(row)
-		rowHeights := getUnique(getHeights(row))
-		for _, cell := range row {
-			order = append(order, cell.Index)
-			if rowWidthString != commonWidthString || len(rowHeights) > 1 {
-				overrides[cell.Index] = LayoutOverride{Width: cell.Grid.W, Height: cell.Grid.H}
-			}
-		}
-		if rowWidthString == commonWidthString && len(rowHeights) == 1 {
-			heights = append(heights, rowHeights[0])
-		}
-	}
-	if len(getUnique(heights)) == 1 {
-		heights = []int{heights[0]}
-	}
-	return Layout{
-		Columns:   commonWidth,
-		Heights:   heights,
-		Order:     order,
-		Overrides: overrides,
-	}
-}
-
 func createRow(pack string, row any, panels []any) ([]ast.Decl, error) {
 	decls := []ast.Decl{
-		Package(pack),
-		Imports("github.com/sivukhin/cuemon"),
+		src.Package(pack),
+		src.Imports("github.com/sivukhin/cuemon"),
 		ast.NewSel(ast.NewIdent("cuemon"), "#Row"),
-		LineBreak(),
+		src.LineBreak(),
 	}
-	meta, err := cueConvert(map[string]string{"/grafana.cue": Grafana, "/row.cue": Row2Monitoring}, row, true)
+	meta, err := src.CueConvert("#Row", []string{Grafana, Mon, Row2Monitoring}, row, true)
 	if err != nil {
 		return nil, fmt.Errorf("unable to convert row meta: %w", err)
 	}
 	decls = append(decls, meta...)
-	grid := make([]Grid, 0)
+
+	grid := make([]src.Grid, 0)
 	for _, panel := range panels {
 		panelJson, err := json.Marshal(panel)
 		if err != nil {
 			return nil, fmt.Errorf("unable to marshal single panel: %w", err)
 		}
 		var container struct {
-			Grid Grid `json:"gridPos"`
+			Grid src.Grid `json:"gridPos"`
 		}
 		err = json.Unmarshal(panelJson, &container)
 		if err != nil {
@@ -241,47 +122,46 @@ func createRow(pack string, row any, panels []any) ([]ast.Decl, error) {
 		}
 		grid = append(grid, container.Grid)
 	}
-	layout := analyzeGrid(grid)
+	layout := src.AnalyzeGrid(grid)
 
-	decls = append(decls, FieldIdent("Columns", IntList(layout.Columns)))
+	decls = append(decls, src.FieldIdent("Columns", src.IntList(layout.Columns)))
 	if len(layout.Heights) == 1 {
-		decls = append(decls, FieldIdent("Heights", Int(layout.Heights[0])))
+		decls = append(decls, src.FieldIdent("Heights", src.Int(layout.Heights[0])))
 	} else {
-		decls = append(decls, FieldIdent("Heights", IntList(layout.Heights)))
+		decls = append(decls, src.FieldIdent("Heights", src.IntList(layout.Heights)))
 	}
+	decls = append(decls, src.LineBreak())
 
 	for _, id := range layout.Order {
 		panel := panels[id]
-		//panelDecls, err := cueConvert([]string{Grafana, Panel2Monitoring}, panel, false)
+		panelDecls, err := src.CueConvert("#Panel", []string{Grafana, Mon, Panel2Monitoring}, panel, false)
 		if err != nil {
 			return nil, fmt.Errorf("unable to convert panel %v: %w", panel, err)
 		}
 		title := getString(panel, "title")
 		if override, ok := layout.Overrides[id]; ok {
-			decls = append(decls, FieldIdent("PanelGrid", ast.NewStruct(ast.NewIdent(title), ast.NewStruct(
-				FieldIdent("Width", Int(override.Width)),
-				FieldIdent("Height", Int(override.Height)),
+			decls = append(decls, src.FieldIdent("PanelGrid", ast.NewStruct(ast.NewIdent(title), ast.NewStruct(
+				src.FieldIdent("Width", src.Int(override.Width)),
+				src.FieldIdent("Height", src.Int(override.Height)),
 			))))
 		}
-		//simplified, err := forceTrim("#Panel", ast.NewStruct(asAny(panelDecls)...))
-		//if err != nil {
-		//	return nil, fmt.Errorf("unable to simplify panel %v: %w", panel, err)
-		//}
-		//decls = append(decls, &ast.Field{
-		//	Label: ast.NewIdent("Panel"),
-		//	Value: ast.NewStruct(ast.NewIdent(title), simplified),
-		//})
-	}
-
-	for _, panel := range panels {
-		panelDecls, err := cueConvert(map[string]string{"/grafana.cue": Grafana, "/panel.cue": Panel2Monitoring}, panel, false)
-		if err != nil {
-			return nil, fmt.Errorf("unable to convert panel %v: %w", panel, err)
+		declarations := asAny(panelDecls)
+		targets, ok := hasArray(panel, "targets")
+		if ok {
+			targetsDecls := make([]ast.Expr, 0)
+			for _, target := range targets {
+				targetDecls, err := src.CueConvert("#Target", []string{Grafana, Mon, Target2Monitoring}, target, false)
+				if err != nil {
+					return nil, fmt.Errorf("unable to convert target from panel %v: %w", panel, err)
+				}
+				targetsDecls = append(targetsDecls, ast.NewStruct(asAny(targetDecls)...))
+			}
+			declarations = append(declarations, src.FieldIdent("Metrics", ast.NewList(targetsDecls...)))
 		}
-		decls = append(decls, FieldIdent("Panel", ast.NewStruct(
-			ast.NewIdent(getString(panel, "title")),
-			ast.NewStruct(asAny(panelDecls)...),
+		decls = append(decls, src.FieldIdent("Panel", ast.NewStruct(
+			ast.NewIdent(title), ast.NewStruct(declarations...),
 		)))
+		decls = append(decls, src.LineBreak())
 	}
 	return decls, nil
 }
@@ -289,7 +169,6 @@ func createRow(pack string, row any, panels []any) ([]ast.Decl, error) {
 func main() {
 	input := flag.String("input", "", "")
 	module := flag.String("module", "", "")
-	//silent := flag.Bool("y", false, "")
 	output := flag.String("output", "", "")
 	flag.Parse()
 
@@ -305,7 +184,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("unable to unmarshal input file '%v': %v", *input, err)
 	}
-	meta, err := cueConvert(map[string]string{"/grafana.cue": Grafana, "/meta.cue": Meta2Monitoring}, data, true)
+	meta, err := src.CueConvert("_", []string{Grafana, Meta2Monitoring}, data, true)
 	if err != nil {
 		log.Fatalf("unable to convert monitoring meta: %v", err)
 	}
@@ -318,7 +197,7 @@ func main() {
 				log.Printf("unable to get variable name '%v'", template)
 				continue
 			}
-			variable, err := cueConvert(map[string]string{"/grafana.cue": Grafana, "/template.cue": Template2Monitoring}, template, false)
+			variable, err := src.CueConvert("_", []string{Grafana, Mon, Template2Monitoring}, template, false)
 			if err != nil {
 				log.Printf("unable to convert variable '%v': %v", template, err)
 			}
@@ -379,7 +258,7 @@ func main() {
 	imports := []string{"github.com/sivukhin/cuemon"}
 	if len(variables) > 0 {
 		imports = append(imports, fmt.Sprintf("%v:variables", *module))
-		meta = append(meta, FieldIdent("Variables", ast.NewIdent("variables")))
+		meta = append(meta, src.FieldIdent("Variables", ast.NewIdent("variables")))
 	}
 	rowList := make([]ast.Expr, 0)
 	for _, row := range rows {
@@ -387,13 +266,13 @@ func main() {
 		rowList = append(rowList, ast.NewIdent(row))
 	}
 	if len(rowList) > 0 {
-		meta = append(meta, FieldIdent("Rows", ast.NewList(rowList...)))
+		meta = append(meta, src.FieldIdent("Rows", ast.NewList(rowList...)))
 	}
 	decls := append([]ast.Decl{
-		Package(pack),
-		Imports(imports...),
-		ast.NewSel(ast.NewIdent("cuemon"), "#Monitoring"),
-		LineBreak(),
+		src.Package(pack),
+		src.Imports(imports...),
+		ast.NewSel(ast.NewIdent("cuemon")),
+		src.LineBreak(),
 	}, meta...)
 	type entry struct {
 		path    string

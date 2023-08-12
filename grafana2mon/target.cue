@@ -3,6 +3,7 @@ package cuemon
 #Conversion: {Input: #GrafanaTarget, Output: {
 	Expr:   Input.expr | Input.metricQuery.query
 	Legend: Input.legendFormat | Input.metricQuery.aliasBy
+	Hide:   Input.hide
 	if Input.queryType != _|_ {
 		if Input.queryType == "metrics" {
 			Expr:   Input.metricQuery.query

@@ -14,6 +14,7 @@ Tags: [...string]
 #Target: {
 	Expr:    string
 	Legend?: string
+	Hide: bool | *false
 	StackDriver?: {
 		Reducer: string | *""
 		Filters: [...string]
@@ -49,6 +50,17 @@ Tags: [...string]
 		GraphMode: *"area" | "none"
 		Reduce: *"lastNotNull" | "all"
 		Thresholds?: [...#Threshold]
+	}
+	Alert?: {
+		Name: string
+		Message?: string
+		NoDataState: *"alerting" | "no_data" | "keep_state" | "ok"
+		ExecutionErrorState: *"keep_state" | "alerting"
+		PendingPeriod: string | *"5m"
+		Frequency: string | *"1m"
+		Notifications: [...=~#"(avg|min|max|sum)\(\w+,(1m|5m|10m|15m),(now|now-1m|now-5m)\) (>|<) (.*)"#]
+		Tags: [string]: string
+		Channels: [...string]
 	}
 }
 

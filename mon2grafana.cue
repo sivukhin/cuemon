@@ -4,6 +4,7 @@ import (
 	listFunc "list"
 	"strings"
 	"strconv"
+	"regexp"
 )
 
 #RowGriding: {
@@ -116,6 +117,27 @@ import (
 			}
 			if !Row.Collapsed {
 				y: Row.Y + 1 + Panel.Y
+			}
+		}
+		if Panel.Alert != _|_ {
+			alert: {
+				alertRuleTags: Panel.Alert.Tags
+				executionErrorState: Panel.Alert.ExecutionErrorState
+				noDataState: Panel.Alert.NoDataState
+				pendingPeriod: Panel.Alert.PendingPeriod
+				frequency: Panel.Alert.Frequency
+				"for": Panel.Alert.PendingPeriod
+				message: Panel.Alert.Message
+				name: Panel.Alert.Name
+				conditions: [ for notification in Panel.Alert.Notifications {
+					#Match: regexp.FindNamedSubmatch(#"(?P<reducer>\w+)\((?P<ref>\w+),(?P<duration>1m|5m|10m|15m),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<) (?P<param>\w+)")"#, notification)
+					evaluator: params: [strconv.Atoi(#Match.param)]
+					if #Match.op == ">" { evaluator: type: "gt" }
+					if #Match.op == "<" { evaluator: type: "lt" }
+					reducer: type: #Match.reducer
+					query: params: [#Match.ref, #Match.duration, #Match.end]
+				}]
+				notifications: [for channel in Panel.Alert.Channels { uid: channel }]
 			}
 		}
 		if Panel.Type == "graph" {
