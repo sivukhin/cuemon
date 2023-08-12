@@ -4,7 +4,7 @@ import (
 	"list"
 )
 
-#Conversion: {Input: #GrafanaPanel, Output: {
+#Conversion: {SchemaVersion: number, Input: #GrafanaPanel, Output: {
 	Type: Input.type
 	if Input.alert != _|_ {
 		Alert: {
@@ -21,8 +21,9 @@ import (
 				if condition.evaluator.type == "lt" {#Operator: "<"}
 
 				N: "\(condition.reducer.type)(\(condition.query.params[0]),\(condition.query.params[1]),\(condition.query.params[2])) \(#Operator) \(condition.evaluator.params[0])"
-			}.N}]
-			Channels: [for notification in Input.alert.notifications { notification.uid }]
+			}.N
+			}]
+			Channels: [ for notification in Input.alert.notifications {notification.uid}]
 		}
 	}
 	if Type == "graph" {

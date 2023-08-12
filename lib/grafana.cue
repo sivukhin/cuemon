@@ -3,7 +3,7 @@ package cuemon
 #GrafanaSchema: {
 	#Tooltip: {Default: 0, SharedCrosshair: 1, SharedTooltip: 2}
 
-	schemaVersion: 27
+	schemaVersion: number
 	id:            int64
 	uid:           string
 	title:         string

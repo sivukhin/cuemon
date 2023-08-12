@@ -31,6 +31,58 @@ func FormatNode(node ast.Node) string {
 	return string(content)
 }
 
+func matchLabels(a, b ast.Node) bool {
+	identA, okIdentA := a.(*ast.Ident)
+	identB, okIdentB := b.(*ast.Ident)
+	if okIdentA && okIdentB && identA.Name == identB.Name {
+		return true
+	}
+	stringA, okStringA := a.(*ast.BasicLit)
+	stringB, okStringB := b.(*ast.BasicLit)
+	if okStringA && okStringB && stringA.Value == stringB.Value {
+		return true
+	}
+	return false
+}
+
+func matchPath(node ast.Node, path ...ast.Node) ast.Node {
+	if _, ok := node.(*ast.Field); ok {
+		node = ast.NewStruct(node)
+	}
+	for _, component := range path {
+		s, ok := node.(*ast.StructLit)
+		if !ok {
+			return nil
+		}
+		var target ast.Node
+		for _, element := range s.Elts {
+			field, ok := element.(*ast.Field)
+			if !ok {
+				continue
+			}
+			if !matchLabels(component, field.Label) {
+				continue
+			}
+			target = field.Value
+		}
+		if target == nil {
+			return nil
+		}
+		node = target
+	}
+	return node
+}
+
+func findField(decls []ast.Decl, path ...ast.Node) (ast.Node, ast.Node) {
+	for _, decl := range decls {
+		node := matchPath(decl, path...)
+		if node != nil {
+			return decl, node
+		}
+	}
+	return nil, nil
+}
+
 var packageRegex = regexp.MustCompile(`package \w+`)
 
 func cuePackage(data string) string {
@@ -134,7 +186,7 @@ func CuePrettify(decl ast.Decl, flatten bool) ([]ast.Decl, error) {
 	return final, nil
 }
 
-func CueConvert(variable string, conversions []string, jsonRaw []byte, flatten bool) ([]ast.Decl, error) {
+func CueConvert(variable string, conversions []string, jsonRaw []byte, jsonContext []byte, flatten bool) ([]ast.Decl, error) {
 	pack, err := singleCuePackage(conversions)
 	if err != nil {
 		return nil, fmt.Errorf("invalid packages assignment: %w", err)
@@ -143,7 +195,8 @@ func CueConvert(variable string, conversions []string, jsonRaw []byte, flatten b
 package %v
 Output: (#Conversion & {Input: Data}).Output
 
-Data: %v`, pack, string(jsonRaw))
+Data: %v
+%v`, pack, string(jsonRaw), string(jsonContext))
 	cueContext := cuecontext.New()
 	_, filenames, overlay := buildOverlay(conversions, target)
 	buildInstances := load.Instances(filenames, &load.Config{Overlay: overlay})
@@ -160,5 +213,12 @@ Data: %v`, pack, string(jsonRaw))
 	if err != nil {
 		return nil, fmt.Errorf("unable to trim concrete value: %w", err)
 	}
-	return CuePrettify(trimmed, flatten)
+	pretty, err := CuePrettify(trimmed, flatten)
+	if err != nil {
+		return nil, fmt.Errorf("unable to prettify value: %w", err)
+	}
+	if _, ok := pretty[0].(*ast.BottomLit); ok {
+		return nil, fmt.Errorf("unable to convert value: %v", string(jsonRaw))
+	}
+	return pretty, nil
 }

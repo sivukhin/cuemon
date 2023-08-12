@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -39,17 +40,19 @@ func toFilename(s string) string {
 }
 
 const (
-	TitleField     = "Title"
-	CollapsedField = "Collapsed"
-	ColumnsField   = "Columns"
-	HeightsField   = "Height"
-	PanelField     = "Panel"
-	PanelGridField = "PanelGrid"
-	MetricsField   = "Metrics"
-	WidthField     = "Width"
-	HeightField    = "Height"
-	VariablesField = "Variables"
-	RowsField      = "Rows"
+	GrafanaField       = "Grafana"
+	SchemaVersionField = "schemaVersion"
+	TitleField         = "Title"
+	CollapsedField     = "Collapsed"
+	ColumnsField       = "Columns"
+	HeightsField       = "Height"
+	PanelField         = "Panel"
+	PanelGridField     = "PanelGrid"
+	MetricsField       = "Metrics"
+	WidthField         = "Width"
+	HeightField        = "Height"
+	VariablesField     = "Variables"
+	RowsField          = "Rows"
 )
 
 const (
@@ -66,14 +69,18 @@ const (
 	CuemonName = "cuemon"
 )
 
-func createPanel(panel JsonRaw[GrafanaPanel]) ([]ast.Decl, error) {
-	panelDecls, err := CueConvert(PanelVar, []string{GrafanaCue, MonCue, Panel2MonitoringCue}, panel.Raw, false)
+type monitoringContext struct {
+	context []byte
+}
+
+func (m monitoringContext) createPanel(panel JsonRaw[GrafanaPanel]) ([]ast.Decl, error) {
+	panelDecls, err := CueConvert(PanelVar, []string{GrafanaCue, MonCue, Panel2MonitoringCue}, panel.Raw, m.context, false)
 	if err != nil {
 		return nil, fmt.Errorf("unable to convert panel '%v': %w", panel.Value.Title, err)
 	}
 	targetsDecls := make([]ast.Expr, 0)
 	for i, target := range panel.Value.Targets {
-		targetDecls, err := CueConvert(TargetVar, []string{GrafanaCue, MonCue, Target2MonitoringCue}, target, false)
+		targetDecls, err := CueConvert(TargetVar, []string{GrafanaCue, MonCue, Target2MonitoringCue}, target, m.context, false)
 		if err != nil {
 			return nil, fmt.Errorf("unable to convert target #%v from panel '%v': %w", i, panel.Value.Title, err)
 		}
@@ -85,7 +92,7 @@ func createPanel(panel JsonRaw[GrafanaPanel]) ([]ast.Decl, error) {
 	return panelDecls, nil
 }
 
-func createRow(row GrafanaPanel, panels []JsonRaw[GrafanaPanel]) (*Row, error) {
+func (m monitoringContext) createRow(row GrafanaPanel, panels []JsonRaw[GrafanaPanel]) (*Row, error) {
 	decls := []ast.Decl{FieldIdent(TitleField, ast.NewString(row.Title))}
 	if row.Collapsed {
 		decls = append(decls, FieldIdent(CollapsedField, ast.NewBool(true)))
@@ -109,7 +116,7 @@ func createRow(row GrafanaPanel, panels []JsonRaw[GrafanaPanel]) (*Row, error) {
 
 	for _, id := range layout.Order {
 		panel := panels[id]
-		panelDecls, err := createPanel(panel)
+		panelDecls, err := m.createPanel(panel)
 		if err != nil {
 			return nil, fmt.Errorf("unable to convert panel %v: %w", panel.Value.Title, err)
 		}
@@ -138,16 +145,16 @@ type Monitoring struct {
 	Rows      []*Row
 }
 
-func createVariable(template Templating) ([]ast.Decl, error) {
-	variable, err := CueConvert(anyVar, []string{GrafanaCue, MonCue, Template2MonitoringCue}, template.Raw, false)
+func (m monitoringContext) createVariable(template Templating) ([]ast.Decl, error) {
+	variable, err := CueConvert(anyVar, []string{GrafanaCue, MonCue, Template2MonitoringCue}, template.Raw, m.context, false)
 	if err != nil {
 		return nil, fmt.Errorf("unable to convert variable '%v': %v", template.Value.Name, err)
 	}
 	return []ast.Decl{FieldIdent(template.Value.Name, ast.NewStruct(AsAny(variable)...))}, nil
 }
 
-func CreateMeta(grafana Grafana) ([]ast.Decl, error) {
-	meta, err := CueConvert(anyVar, []string{GrafanaCue, Meta2MonitoringCue}, grafana.Raw, true)
+func (m monitoringContext) creteMeta(grafana Grafana) ([]ast.Decl, error) {
+	meta, err := CueConvert(anyVar, []string{GrafanaCue, Meta2MonitoringCue}, grafana.Raw, m.context, true)
 	if err != nil {
 		return nil, fmt.Errorf("unable to convert meta: %w", err)
 	}
@@ -180,14 +187,14 @@ func ExtractRows(grafana Grafana) []GrafanaPanel {
 	return rows
 }
 
-func CreateDashboard(grafana Grafana) (*Monitoring, error) {
-	meta, err := CreateMeta(grafana)
+func (m monitoringContext) createDashboard(grafana Grafana) (*Monitoring, error) {
+	meta, err := m.creteMeta(grafana)
 	if err != nil {
 		return nil, err
 	}
 	variables := make([]ast.Decl, 0)
 	for _, template := range grafana.Value.Templating.List {
-		variable, err := createVariable(template)
+		variable, err := m.createVariable(template)
 		if err != nil {
 			return nil, err
 		}
@@ -195,7 +202,7 @@ func CreateDashboard(grafana Grafana) (*Monitoring, error) {
 	}
 	rows := make([]*Row, 0)
 	for _, grafanaRow := range ExtractRows(grafana) {
-		row, err := createRow(grafanaRow, grafanaRow.Panels)
+		row, err := m.createRow(grafanaRow, grafanaRow.Panels)
 		if err != nil {
 			return nil, err
 		}
@@ -210,7 +217,8 @@ type FileEntry struct {
 }
 
 func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error) {
-	monitoring, err := CreateDashboard(grafana)
+	m := monitoringContext{context: []byte(fmt.Sprintf(`SchemaVersion: %v`, grafana.Value.SchemaVersion))}
+	monitoring, err := m.createDashboard(grafana)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create monitoring configuration: %w", err)
 	}
@@ -259,15 +267,9 @@ type FileEntryUpdated struct {
 }
 
 func UpdateFiles(output string, panel JsonRaw[GrafanaPanel]) ([]FileEntryUpdated, error) {
-	panelDecls, err := createPanel(panel)
-	if err != nil {
-		return nil, fmt.Errorf("unable to convert panel %v: %w", panel.Value.Title, err)
-	}
-	panelStruct := FieldIdent(PanelField, ast.NewStruct(
-		ast.NewIdent(panel.Value.Title), ast.NewStruct(AsAny(panelDecls)...),
-	))
-	updates := make([]FileEntryUpdated, 0)
-	err = filepath.WalkDir(output, func(path string, d fs.DirEntry, err error) error {
+	targets := make(map[string]ast.Node, 0)
+	versions := make([]int, 0)
+	_ = filepath.WalkDir(output, func(path string, d fs.DirEntry, err error) error {
 		if d == nil {
 			return fmt.Errorf("directory %v not found", output)
 		}
@@ -285,46 +287,43 @@ func UpdateFiles(output string, panel JsonRaw[GrafanaPanel]) ([]FileEntryUpdated
 		if err != nil {
 			return err
 		}
-		for _, decl := range cueAst.Decls {
-			field, ok := decl.(*ast.Field)
-			if !ok {
-				continue
-			}
-			label, ok := field.Label.(*ast.Ident)
-			if !ok {
-				continue
-			}
-			if label.Name != PanelField {
-				continue
-			}
-			nested, ok := field.Value.(*ast.StructLit)
-			if !ok {
-				continue
-			}
-			if len(nested.Elts) != 1 {
-				continue
-			}
-			subfield, ok := nested.Elts[0].(*ast.Field)
-			if !ok {
-				continue
-			}
-			subfieldLabel, ok := subfield.Label.(*ast.BasicLit)
-			if !ok {
-				continue
-			}
-			if subfieldLabel.Value[1:len(subfieldLabel.Value)-1] != panel.Value.Title {
-				continue
-			}
-			cutted, oldPart, newPart, err := CutNode(content, field, panelStruct)
+		_, versionNode := findField(cueAst.Decls, ast.NewIdent(GrafanaField), ast.NewIdent(SchemaVersionField))
+		if versionNode != nil {
+			version, err := strconv.Atoi(versionNode.(*ast.BasicLit).Value)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to parse Grafana schema version: %w", err)
 			}
-			updates = append(updates, FileEntryUpdated{Path: path, Content: cutted, BeforePart: oldPart, AfterPart: newPart})
+			versions = append(versions, version)
+		}
+		target, _ := findField(cueAst.Decls, ast.NewIdent(PanelField), ast.NewString(panel.Value.Title))
+		if target != nil {
+			targets[path] = target
 		}
 		return nil
 	})
+	if len(Unique(versions)) != 1 {
+		return nil, fmt.Errorf("unable to find single Grafana schema version: %v", versions)
+	}
+	version := versions[0]
+	m := monitoringContext{context: []byte(fmt.Sprintf(`SchemaVersion: %v`, version))}
+	panelDecls, err := m.createPanel(panel)
 	if err != nil {
-		return nil, fmt.Errorf("unable to process directory %v: %w", output, err)
+		return nil, fmt.Errorf("unable to convert panel %v: %w", panel.Value.Title, err)
+	}
+	panelStruct := FieldIdent(PanelField, ast.NewStruct(
+		ast.NewIdent(panel.Value.Title), ast.NewStruct(AsAny(panelDecls)...),
+	))
+	updates := make([]FileEntryUpdated, 0)
+	for targetPath, target := range targets {
+		content, err := os.ReadFile(targetPath)
+		if err != nil {
+			return nil, err
+		}
+		cutted, oldPart, newPart, err := CutNode(content, target, panelStruct)
+		if err != nil {
+			return nil, err
+		}
+		updates = append(updates, FileEntryUpdated{Path: targetPath, Content: cutted, BeforePart: oldPart, AfterPart: newPart})
 	}
 	return updates, nil
 }

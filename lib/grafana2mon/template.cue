@@ -1,6 +1,6 @@
 package cuemon
 
-#Conversion: {Input: #GrafanaTemplate, Output: {
+#Conversion: {SchemaVersion: number, Input: #GrafanaTemplate, Output: {
 	Type: Input.type
 	if Type == "constant" {
 		Value: Input.query

@@ -1,8 +1,9 @@
 package cuemon
 
-#Conversion: {Input: #GrafanaSchema, Output: {
-	Grafana: id:  Input.id
-	Grafana: uid: Input.uid
+#Conversion: {SchemaVersion: number, Input: #GrafanaSchema, Output: {
+	Grafana: id:            Input.id
+	Grafana: uid:           Input.uid
+	Grafana: schemaVersion: Input.schemaVersion
 
 	Title: Input.title
 

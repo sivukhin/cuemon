@@ -36,7 +36,7 @@ Tags: [...string]
 #Panel: {
 	Type:       *"graph" | "stat" | "gauge" | "table"
 	Unit:       string | *""
-	DataSource: string
+	DataSource: string | { Type: string, Id: string }
 	Metrics: [...#Target]
 	if Type == "graph" {
 		Points: number | *0

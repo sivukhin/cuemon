@@ -6,10 +6,6 @@ import (
 	"strconv"
 )
 
-func Conjuction(a, b ast.Expr) ast.Expr {
-	return ast.NewBinExpr(token.AND, a, b)
-}
-
 func Int(value int) *ast.BasicLit {
 	return ast.NewLit(token.INT, strconv.Itoa(value))
 }
@@ -34,10 +30,6 @@ func FieldIdent(ident string, value ast.Expr) *ast.Field {
 	return &ast.Field{Label: ast.NewIdent(ident), Value: value}
 }
 
-func Field(label ast.Label, value ast.Expr) *ast.Field {
-	return &ast.Field{Label: label, Value: value}
-}
-
 func IntList(ints []int) *ast.ListLit {
 	list := make([]ast.Expr, 0, len(ints))
 	for _, i := range ints {
@@ -50,14 +42,6 @@ func IdentList(idents []string) *ast.ListLit {
 	list := make([]ast.Expr, 0, len(idents))
 	for _, ident := range idents {
 		list = append(list, ast.NewIdent(ident))
-	}
-	return ast.NewList(list...)
-}
-
-func StringList(strs []string) *ast.ListLit {
-	list := make([]ast.Expr, 0, len(strs))
-	for _, str := range strs {
-		list = append(list, ast.NewString(str))
 	}
 	return ast.NewList(list...)
 }

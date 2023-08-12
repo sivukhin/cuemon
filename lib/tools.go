@@ -115,9 +115,9 @@ func Update(input, dir string, overwrite bool) error {
 		}
 		return fmt.Errorf("found more than 1 configuration for panel with name '%v': files=%v", panel.Value.Title, filenames)
 	}
-	log.Printf("--- OLD ---\n")
+	log.Printf("--- OLD (%v) ---\n", updates[0].Path)
 	log.Printf("%v\n", string(updates[0].BeforePart))
-	log.Printf("--- NEW ---\n")
+	log.Printf("--- NEW (%v) ---\n", updates[0].Path)
 	log.Printf("%v\n", string(updates[0].AfterPart))
 	if !overwrite {
 		log.Printf("skipped update of file %v - pass overwrite flag to force this action", updates[0].Path)
