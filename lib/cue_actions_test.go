@@ -1,4 +1,4 @@
-package src
+package lib
 
 import (
 	"cuelang.org/go/cue/format"
@@ -12,7 +12,7 @@ func TestConvert(t *testing.T) {
 			`package main
 #Conversion: { Input: number, Output: Input + Input }
 `,
-		}, 123, false)
+		}, []byte("123"), false)
 		require.Nil(t, err)
 		node, err := format.Node(File(result))
 		require.Nil(t, err)
@@ -41,7 +41,7 @@ func TestConvert(t *testing.T) {
 	}
 }}
 `,
-		}, map[string]any{"X": 1, "Y": "hello", "Z": map[string]any{"A": 5, "B": true}}, true)
+		}, []byte(`{"X":1,"Y":"hello","Z":{"A":5,"B":true}}`), true)
 		require.Nil(t, err)
 		node, err := format.Node(File(result), format.Simplify())
 		require.Nil(t, err)
@@ -54,13 +54,15 @@ A:   -5
 }
 
 func TestPrettify(t *testing.T) {
-	declarations, err := CuePrettify(cueAst(`{
+	ast, err := CueAst(`{
 	A: {
 		C: "123"
 		D: "456"
 	}
 	B: 2
-}`).Decls[0], true)
+}`)
+	require.Nil(t, err)
+	declarations, err := CuePrettify(ast.Decls[0], true)
 	require.Nil(t, err)
 	pretty, err := format.Node(File(declarations), format.Simplify())
 	require.Nil(t, err)

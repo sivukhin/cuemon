@@ -54,7 +54,7 @@ Tags: [...string]
 	Alert?: {
 		Name: string
 		Message?: string
-		NoDataState: *"alerting" | "no_data" | "keep_state" | "ok"
+		NoDataState: *"no_data" | "keep_state" | "ok" | "alerting"
 		ExecutionErrorState: *"keep_state" | "alerting"
 		PendingPeriod: string | *"5m"
 		Frequency: string | *"1m"

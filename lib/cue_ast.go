@@ -1,4 +1,4 @@
-package src
+package lib
 
 import (
 	"cuelang.org/go/cue/ast"
@@ -46,10 +46,18 @@ func IntList(ints []int) *ast.ListLit {
 	return ast.NewList(list...)
 }
 
-func StringList(idents []string) *ast.ListLit {
+func IdentList(idents []string) *ast.ListLit {
 	list := make([]ast.Expr, 0, len(idents))
 	for _, ident := range idents {
-		list = append(list, ast.NewString(ident))
+		list = append(list, ast.NewIdent(ident))
+	}
+	return ast.NewList(list...)
+}
+
+func StringList(strs []string) *ast.ListLit {
+	list := make([]ast.Expr, 0, len(strs))
+	for _, str := range strs {
+		list = append(list, ast.NewString(str))
 	}
 	return ast.NewList(list...)
 }

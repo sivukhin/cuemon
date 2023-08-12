@@ -1,4 +1,4 @@
-package src
+package lib
 
 import (
 	"cuelang.org/go/cue"
@@ -6,17 +6,29 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	"cuelang.org/go/cue/format"
 	"cuelang.org/go/cue/load"
+	"cuelang.org/go/cue/parser"
 	"cuelang.org/go/tools/trim"
-	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"regexp"
 	"strings"
 )
 
-func cueAst(data string) *ast.File {
-	cueContext := cuecontext.New()
-	return cueContext.CompileString(data).Source().(*ast.File)
+func CueAst(data string) (*ast.File, error) {
+	return parser.ParseFile("", data)
+}
+
+func FormatDecls(decl []ast.Decl) string {
+	return FormatNode(File(decl))
+}
+
+func FormatNode(node ast.Node) string {
+	content, err := format.Node(node, format.Simplify())
+	if err != nil {
+		log.Fatalf("unable to format declarations: %v", err)
+	}
+	return string(content)
 }
 
 var packageRegex = regexp.MustCompile(`package \w+`)
@@ -30,7 +42,7 @@ func singleCuePackage(sources []string) (string, error) {
 	for _, conversion := range sources {
 		packages = append(packages, cuePackage(conversion))
 	}
-	uniquePackages := getUnique(packages)
+	uniquePackages := Unique(packages)
 	if len(uniquePackages) == 0 {
 		return "defualt", nil
 	}
@@ -122,21 +134,16 @@ func CuePrettify(decl ast.Decl, flatten bool) ([]ast.Decl, error) {
 	return final, nil
 }
 
-func CueConvert(variable string, conversions []string, data any, flatten bool) ([]ast.Decl, error) {
+func CueConvert(variable string, conversions []string, jsonRaw []byte, flatten bool) ([]ast.Decl, error) {
 	pack, err := singleCuePackage(conversions)
 	if err != nil {
 		return nil, fmt.Errorf("invalid packages assignment: %w", err)
-	}
-
-	input, err := json.Marshal(data)
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse json: %w", err)
 	}
 	target := fmt.Sprintf(`
 package %v
 Output: (#Conversion & {Input: Data}).Output
 
-Data: %v`, pack, string(input))
+Data: %v`, pack, string(jsonRaw))
 	cueContext := cuecontext.New()
 	_, filenames, overlay := buildOverlay(conversions, target)
 	buildInstances := load.Instances(filenames, &load.Config{Overlay: overlay})
