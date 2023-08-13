@@ -45,7 +45,7 @@ const (
 	TitleField         = "Title"
 	CollapsedField     = "Collapsed"
 	ColumnsField       = "Columns"
-	HeightsField       = "Height"
+	HeightsField       = "Heights"
 	PanelField         = "Panel"
 	PanelGridField     = "PanelGrid"
 	MetricsField       = "Metrics"
@@ -56,12 +56,11 @@ const (
 )
 
 const (
-	PanelVar      = "#Panel"
-	TargetVar     = "#Target"
-	MonitoringVar = "#Monitoring"
-	RowVar        = "#Row"
-	anyVar        = "_"
-	variablesVar  = "variables"
+	PanelVar     = "#Panel"
+	TargetVar    = "#Target"
+	RowVar       = "#Row"
+	variablesVar = "variables"
+	anyVar       = "_"
 )
 
 const (
@@ -70,17 +69,23 @@ const (
 )
 
 type monitoringContext struct {
-	context []byte
+	context string
 }
 
 func (m monitoringContext) createPanel(panel JsonRaw[GrafanaPanel]) ([]ast.Decl, error) {
-	panelDecls, err := CueConvert(PanelVar, []string{GrafanaCue, MonCue, Panel2MonitoringCue}, panel.Raw, m.context, false)
+	panelDecls, err := CueConvert(PanelVar, []string{GrafanaCue, MonCue, Panel2MonitoringCue}, map[string]string{
+		"Input":         string(panel.Raw),
+		"SchemaVersion": m.context,
+	}, false)
 	if err != nil {
 		return nil, fmt.Errorf("unable to convert panel '%v': %w", panel.Value.Title, err)
 	}
 	targetsDecls := make([]ast.Expr, 0)
 	for i, target := range panel.Value.Targets {
-		targetDecls, err := CueConvert(TargetVar, []string{GrafanaCue, MonCue, Target2MonitoringCue}, target, m.context, false)
+		targetDecls, err := CueConvert(TargetVar, []string{GrafanaCue, MonCue, Target2MonitoringCue}, map[string]string{
+			"Input":         string(target),
+			"SchemaVersion": m.context,
+		}, false)
 		if err != nil {
 			return nil, fmt.Errorf("unable to convert target #%v from panel '%v': %w", i, panel.Value.Title, err)
 		}
@@ -146,7 +151,10 @@ type Monitoring struct {
 }
 
 func (m monitoringContext) createVariable(template Templating) ([]ast.Decl, error) {
-	variable, err := CueConvert(anyVar, []string{GrafanaCue, MonCue, Template2MonitoringCue}, template.Raw, m.context, false)
+	variable, err := CueConvert(anyVar, []string{GrafanaCue, MonCue, Template2MonitoringCue}, map[string]string{
+		"Input":         string(template.Raw),
+		"SchemaVersion": m.context,
+	}, false)
 	if err != nil {
 		return nil, fmt.Errorf("unable to convert variable '%v': %v", template.Value.Name, err)
 	}
@@ -154,7 +162,10 @@ func (m monitoringContext) createVariable(template Templating) ([]ast.Decl, erro
 }
 
 func (m monitoringContext) creteMeta(grafana Grafana) ([]ast.Decl, error) {
-	meta, err := CueConvert(anyVar, []string{GrafanaCue, Meta2MonitoringCue}, grafana.Raw, m.context, true)
+	meta, err := CueConvert(anyVar, []string{GrafanaCue, Meta2MonitoringCue}, map[string]string{
+		"Input":         string(grafana.Raw),
+		"SchemaVersion": m.context,
+	}, true)
 	if err != nil {
 		return nil, fmt.Errorf("unable to convert meta: %w", err)
 	}
@@ -217,7 +228,7 @@ type FileEntry struct {
 }
 
 func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error) {
-	m := monitoringContext{context: []byte(fmt.Sprintf(`SchemaVersion: %v`, grafana.Value.SchemaVersion))}
+	m := monitoringContext{context: fmt.Sprintf(`%v`, grafana.Value.SchemaVersion)}
 	monitoring, err := m.createDashboard(grafana)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create monitoring configuration: %w", err)
@@ -232,7 +243,7 @@ func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error
 	rowVars := make([]string, 0)
 	dashboardImports := []string{CuemonPath, fmt.Sprintf("%v:%v", module, variablesVar)}
 	for _, row := range monitoring.Rows {
-		dashboardImports = append(dashboardImports, fmt.Sprintf("%v:%v", module, row.Name))
+		dashboardImports = append(dashboardImports, fmt.Sprintf("%v/rows:%v", module, row.Name))
 		rowVars = append(rowVars, row.Name)
 	}
 	dashboardDecls := []ast.Decl{
@@ -247,11 +258,11 @@ func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error
 
 	files = append(files, FileEntry{path.Join(output, "dashboard.cue"), FormatDecls(dashboardDecls)})
 	files = append(files, FileEntry{path.Join(output, "variables.cue"), FormatDecls(
-		append([]ast.Decl{Package(packageName)}, monitoring.Variables...),
+		append([]ast.Decl{Package(variablesVar)}, monitoring.Variables...),
 	)})
 	for _, row := range monitoring.Rows {
 		rowDecls := append(
-			[]ast.Decl{Package(packageName), Imports(CuemonPath), ast.NewSel(ast.NewIdent(CuemonName), RowVar)},
+			[]ast.Decl{Package(row.Name), Imports(CuemonPath), ast.NewSel(ast.NewIdent(CuemonName), RowVar)},
 			row.Src...,
 		)
 		files = append(files, FileEntry{path.Join(output, "rows", fmt.Sprintf("%v.cue", row.Name)), FormatDecls(rowDecls)})
@@ -305,7 +316,7 @@ func UpdateFiles(output string, panel JsonRaw[GrafanaPanel]) ([]FileEntryUpdated
 		return nil, fmt.Errorf("unable to find single Grafana schema version: %v", versions)
 	}
 	version := versions[0]
-	m := monitoringContext{context: []byte(fmt.Sprintf(`SchemaVersion: %v`, version))}
+	m := monitoringContext{context: fmt.Sprintf(`%v`, version)}
 	panelDecls, err := m.createPanel(panel)
 	if err != nil {
 		return nil, fmt.Errorf("unable to convert panel %v: %w", panel.Value.Title, err)

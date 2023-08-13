@@ -57,7 +57,7 @@ func AnalyzeGrid(grid []Box) Layout {
 			stat[widthString] = 0
 		}
 		stat[widthString]++
-		if stat[widthString] > stat[columnsString] {
+		if stat[widthString] > stat[columnsString] || stat[widthString] == stat[columnsString] && len(width) > len(columns) {
 			columnsString = widthString
 			columns = width
 		}

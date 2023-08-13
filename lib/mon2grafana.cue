@@ -47,12 +47,8 @@ import (
 			}
 		}
 
-		if Row.Heights[#RowNumber] != _|_ {
-			Height: number | *Row.Heights[#RowNumber]
-		}
-		if Row.Heights[#RowNumber] == _|_ && Row.Heights != _|_ {
-			Height: number | *Row.Heights
-		}
+		if Row.Heights[#RowNumber] != _|_ {Height: number | *Row.Heights[#RowNumber]}
+		if Row.Heights[#RowNumber] == _|_ && Row.Heights != _|_ {Height: number | *Row.Heights}
 		if i > 0 {
 			if SequenceGrid[i-1].#EndX+Width <= 24 {
 				X: SequenceGrid[i-1].#EndX
@@ -103,11 +99,13 @@ import (
 #Panel2Grafana: {
 	Row: {#Row, Y: number, Id: number}
 	Panel: {#Panel, #Grid, Title: string, Id: number}
-	Grafana: {
-		id:         Row.Id + 1 + Panel.Id
-		title:      Panel.Title
-		type:       Panel.Type
-		datasource: Panel.DataSource
+	G: {
+		id:    Row.Id + 1 + Panel.Id
+		title: Panel.Title
+		type:  Panel.Type
+		if Grafana.schemaVersion < 37 {datasource: Panel.DataSource}
+		if Grafana.schemaVersion >= 37 {datasource: uid: Panel.DataSource}
+
 		gridPos: {
 			w: Panel.Width
 			h: Panel.Height
@@ -121,23 +119,30 @@ import (
 		}
 		if Panel.Alert != _|_ {
 			alert: {
-				alertRuleTags: Panel.Alert.Tags
+				alertRuleTags:       Panel.Alert.Tags
 				executionErrorState: Panel.Alert.ExecutionErrorState
-				noDataState: Panel.Alert.NoDataState
-				frequency: Panel.Alert.Frequency
-				"for": Panel.Alert.PendingPeriod
-				message: Panel.Alert.Message
-				name: Panel.Alert.Name
+				noDataState:         Panel.Alert.NoDataState
+				frequency:           Panel.Alert.Frequency
+				"for":               Panel.Alert.PendingPeriod
+				message:             Panel.Alert.Message
+				name:                Panel.Alert.Name
 				conditions: [ for notification in Panel.Alert.Notifications {
-					#Match: regexp.FindNamedSubmatch(#"(?P<reducer>\w+)\((?P<ref>\w+),(?P<duration>1m|5m|10m|15m),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<) (?P<param>\w+)"#, notification)
-					evaluator: params: [strconv.Atoi(#Match.param)]
-					if #Match.op == ">" { evaluator: type: "gt" }
-					if #Match.op == "<" { evaluator: type: "lt" }
-					reducer: type: #Match.reducer
-					query: params: [#Match.ref, #Match.duration, #Match.end]
+					let match = regexp.FindNamedSubmatch(#"(?P<reducer>\w+)\((?P<ref>\w+),(?P<duration>1m|5m|10m|15m),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<) (?P<param>\w+)"#, notification)
+					evaluator: params: [strconv.Atoi(match.param)]
+					if match.op == ">" {evaluator: type: "gt"}
+					if match.op == "<" {evaluator: type: "lt"}
+					reducer: type: match.reducer
+					query: params: [match.ref, match.duration, match.end]
 				}]
-				notifications: [for channel in Panel.Alert.Channels { uid: channel }]
+				notifications: [ for channel in Panel.Alert.Channels {uid: channel}]
 			}
+		}
+		if Panel.Type == "timeseries" {
+			fieldConfig: defaults: unit: Panel.Unit
+			let match = regexp.FindNamedSubmatch(#"(?P<displayMode>\w+)_(?P<placement>\w+)"#, Panel.Legend)
+			options: legend: calcs:       Panel.Values
+			options: legend: displayMode: match.displayMode
+			options: legend: placement:   match.placement
 		}
 		if Panel.Type == "graph" {
 			if Panel.Points > 0 {
@@ -166,6 +171,10 @@ import (
 				min:          listFunc.Contains(Panel.Values, "min")
 				total:        listFunc.Contains(Panel.Values, "total")
 			}
+			yaxes: [
+				{$$hashKey: "object:\(2*(Row.Id+Panel.Id))", format:   Panel.Unit},
+				{$$hashKey: "object:\(2*(Row.Id+Panel.Id)+1)", format: Panel.Unit},
+			]
 		}
 		if Panel.Type == "stat" || Panel.Type == "gauge" {
 			options: {
@@ -201,6 +210,7 @@ import (
 					metricKind:         target.StackDriver.MetricKind
 					metricType:         target.StackDriver.MetricType
 					editorMode:         target.StackDriver.EditorMode
+					if target.StackDriver.Preprocessor != _|_ { preprocessor: target.StackDriver.Preprocessor }
 				}
 			}
 			if target.StackDriver == _|_ {
@@ -208,23 +218,13 @@ import (
 				legendFormat: target.Legend
 			}
 		}]
-		yaxes: [
-			{
-				"$$hashKey": "object:\(2*(Row.Id+Panel.Id))"
-				format:      Panel.Unit
-			},
-			{
-				"$$hashKey": "object:\(2*(Row.Id+Panel.Id)+1)"
-				format:      Panel.Unit
-			},
-		]
 	}
 }
 
 #Variable2Grafana: {
 	VariableName: string
 	Variable:     #Variable
-	Grafana: {
+	G: {
 		if Variable.Type == "constant" {
 			{
 				type:  "constant"
@@ -269,10 +269,9 @@ import (
 }
 
 Grafana: #GrafanaSchema & {
-	title: Title
 	links: [ for linkTitle, link in Links {{type: "link", title: linkTitle, url: link.Url}}]
 	templating: list: [ for variableName, variable in Variables {
-		{#Variable2Grafana, VariableName: variableName, Variable: variable}.Grafana
+		{#Variable2Grafana, VariableName: variableName, Variable: variable}.G
 	}]
 	tags:   Tags
 	panels: listFunc.FlattenN([ for row in {#DashboardGriding, DashboardRows: Rows}.DashboardGrided {
@@ -284,7 +283,7 @@ Grafana: #GrafanaSchema & {
 				collapsed: true
 				gridPos: {w: 24, h: 1, x: 0, y: row.Y}
 				panels: [ for panel in row.Panel {
-					{#Panel2Grafana, Row: row, Panel: panel}.Grafana
+					{#Panel2Grafana, Row: row, Panel: panel}.G
 				}]
 			}]
 		}
@@ -297,7 +296,7 @@ Grafana: #GrafanaSchema & {
 				gridPos: {w: 24, h: 1, x: 0, y: row.Y}
 				panels: []
 			}], [ for panel in row.Panel {
-				{#Panel2Grafana, Row: row, Panel: panel}.Grafana
+				{#Panel2Grafana, Row: row, Panel: panel}.G
 			}]])
 		}
 	}], 1)

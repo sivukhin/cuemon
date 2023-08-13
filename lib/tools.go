@@ -57,7 +57,7 @@ func Bootstrap(input, module, dir string, overwrite bool) error {
 			errs = append(errs, err)
 			continue
 		}
-		mode := os.O_CREATE | os.O_RDWR
+		mode := os.O_CREATE | os.O_RDWR | os.O_TRUNC
 		if !overwrite {
 			mode |= os.O_EXCL
 		}
@@ -66,7 +66,7 @@ func Bootstrap(input, module, dir string, overwrite bool) error {
 			errs = append(errs, err)
 			continue
 		}
-		err = WriteFile(f, []byte(file.Content))
+		_, err = f.Write([]byte(file.Content))
 		if err != nil {
 			errs = append(errs, err)
 		}

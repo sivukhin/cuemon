@@ -14,7 +14,7 @@ package cuemon
 	timezone:      string | *"browser"
 	editable:      bool | *true
 	graphTooltip:  #Tooltip.Default | *#Tooltip.SharedCrosshair | #Tooltip.SharedTooltip
-	time?:         {from: string, to: string} | *{from: "now-6h", to: "now"}
+	time?:         {from: string | *"now-6h", to: string | *"now"}
 	version?:      int
 	refresh:       string | *"15m"
 
@@ -23,7 +23,7 @@ package cuemon
 
 	tags?: [...string]
 	links?: [...#GrafanaLink]
-	panels?: [...#GrafanaPanel]
+	panels?: [...{#GrafanaPanel, #schemaVersion: schemaVersion}]
 	templating: list?: [...#GrafanaTemplate]
 }
 
@@ -141,6 +141,7 @@ package cuemon
 }
 
 #GrafanaLegend: {
+	#schemaVersion: number
 	sort:         "current" | "avg" | "max" | "min" | "total" | *null
 	show:         bool | *false
 	values:       bool | *false
@@ -182,6 +183,7 @@ package cuemon
 }
 
 #GrafanaTarget: {
+	#schemaVersion: number
 	refId:      string
 	queryType?: string
 	hide:       bool | *false
@@ -213,6 +215,7 @@ package cuemon
 				unit:               string
 				valueType:          string
 				query:              string | *""
+				preprocessor?:              string
 				filters:            [...string] | *[]
 				groupBys:           [...string] | *[]
 			}
@@ -229,29 +232,91 @@ package cuemon
 }
 
 #GrafanaPanel: {
-	id:    number
-	title: string
-	type:  "row" | "graph" | "stat" | "table"
+	v=#schemaVersion: number
+	id:               number
+	title:            string
+	type:             "row" | "graph" | "stat" | "table" | "timeseries"
 	gridPos: {h: number, w: number, x: number, y: number}
 	if type == "row" {
 		collapsed: bool
-		panels: [...#GrafanaPanel]
+		panels: [...{#GrafanaPanel, #schemaVersion: v}]
 		datasource: null
 	}
 	if type == "graph" || type == "stat" || type == "table" {
-		#GrafanaGraph & {#type: type}
+		{#GrafanaGraph, #type: type, #schemaVersion: v}
+	}
+	if type == "timeseries" {
+		{#GrafanaTimeseries, #schemaVersion: v}
+	}
+}
+
+#GrafanaTimeseries: {
+	v=#schemaVersion: number
+	if #schemaVersion >= 37 {datasource: {type?: string, uid: string}}
+	if #schemaVersion < 37 {datasource: string}
+	options: {
+		tooltip: {
+			mode: "none" | "single" | *"multi"
+			sort: "none" | "asc" | *"desc"
+		}
+		legend: {
+			displayMode: "list" | *"table"
+			placement:   "bottom" | *"right"
+			showLegend:  bool | *true
+			calcs: [...string]
+		}
+	}
+	targets: [...{#GrafanaTarget, #schemaVersion: v}]
+	fieldConfig: {
+		overrides: []
+		defaults: {
+			mappings: []
+			unit?: string
+			color: mode: string | *"palette-classic"
+			thresholds: {
+				mode: string | *"absolute"
+				steps: [...{color: string, value: number | null}]
+			}
+			custom: {
+				axisCenteredZero:  bool | *false
+				axisColorMode:     string | *"text"
+				axisLabel:         string | *""
+				axisPlacement:     string | *"auto"
+				barAlignment:      number | *0
+				drawStyle:         string | *"line"
+				fillOpacity:       number | *0
+				gradientMode:      string | *"none"
+				lineInterpolation: string | *"linear"
+				lineWidth:         number | *1
+				pointSize:         number | *5
+				showPoints:        string | *"auto"
+				spanNulls:         bool | *false
+				scaleDistribution: type: string | *"linear"
+				thresholdsStyle: mode:   string | *"off"
+				stacking: {
+					group: string | *"A"
+					mode:  string | *"none"
+				}
+				hideFrom: {
+					legend:  bool | *false
+					tooltip: bool | *false
+					viz:     bool | *false
+				}
+			}
+		}
 	}
 }
 
 #GrafanaGraph: {
-	#type: string
+	v=#schemaVersion: number
+	#type:       string
 	datasource:  string
 	description: string | *""
-	targets: [...#GrafanaTarget]
+	targets: [...{#GrafanaTarget, #schemaVersion: v}]
 	tooltip?: #GrafanaTooltip
 	thresholds: [...#GrafanaThreshold]
 	yaxes: [...#GrafanaYAxes]
-	legend: #GrafanaLegend
+	legend: {#GrafanaLegend, #schemaVersion:v}
 	alert?: #GrafanaAlert
 	xaxis:  #GrafanaXAxis
 	yaxis:  #GrafanaYAxis
@@ -281,10 +346,10 @@ package cuemon
 	timeShift: null
 	options: {
 		alertThreshold: bool | *true
-		colorMode?:   string
-		graphMode?:   string
-		justifyMode?: string
-		orientation?: string
+		colorMode?:     string
+		graphMode?:     string
+		justifyMode?:   string
+		orientation?:   string
 		textMode?:      string
 		showHeader?:    bool
 		reduceOptions?: {

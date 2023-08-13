@@ -4,7 +4,6 @@ import (
 	"list"
 )
 
-Title: string
 Links: [string]: Url: string
 Variables: [string]: #Variable
 Panels: [string]:    #Panel
@@ -12,7 +11,7 @@ Rows: [...#Row]
 Tags: [...string]
 
 #Target: {
-	Expr:    string
+	Expr:    string | *""
 	Legend?: string
 	Hide: bool | *false
 	StackDriver?: {
@@ -27,18 +26,19 @@ Tags: [...string]
 		MetricType:      string | *""
 		Unit:            string | *""
 		Value:           string | *""
+		Preprocessor?:           string
 	}
 }
 
 #Threshold: { Color: string, Value: number | *null }
 
-#LegendValues: ["min", "avg", "max", "total", "current"]
+#LegendValues: ["last", "mean", "min", "avg", "max", "total", "current"]
 #Panel: {
-	Type:       *"graph" | "stat" | "gauge" | "table"
+	Type:       "graph" | "stat" | "gauge" | "table" | "timeseries"
 	Unit:       string | *""
-	DataSource: string | { Type: string, Id: string }
+	DataSource: string
 	Metrics: [...#Target]
-	if Type == "graph" {
+	if Type == "graph" || Type == "timeseries" {
 		Points: number | *0
 		Lines: number | *1
 		NullValue: *"null" | "null_as_zero" | "connected"
@@ -68,12 +68,12 @@ Tags: [...string]
 
 #Row: {
 	Title?:    string
-	Columns:   [number, ...number] | *[]
+	Columns!:   [number, ...number]
 	Heights:   [...number] | number | *9
 	Collapsed: bool | *false
 	Panel: [string]:     #Panel
 	PanelGrid: [string]: #Grid
-	#Width: list.Sum(Columns) & 24
+	_width: list.Sum(Columns) & 24
 }
 
 #Variable: {

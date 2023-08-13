@@ -12,7 +12,7 @@ func TestConvert(t *testing.T) {
 			`package main
 #Conversion: { Input: number, Output: Input + Input }
 `,
-		}, []byte("123"), false)
+		}, map[string]string{"Input": "123"}, false)
 		require.Nil(t, err)
 		node, err := format.Node(File(result))
 		require.Nil(t, err)
@@ -41,7 +41,7 @@ func TestConvert(t *testing.T) {
 	}
 }}
 `,
-		}, []byte(`{"X":1,"Y":"hello","Z":{"A":5,"B":true}}`), true)
+		}, map[string]string{"Input": `{"X":1,"Y":"hello","Z":{"A":5,"B":true}}`}, true)
 		require.Nil(t, err)
 		node, err := format.Node(File(result), format.Simplify())
 		require.Nil(t, err)

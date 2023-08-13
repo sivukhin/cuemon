@@ -186,17 +186,23 @@ func CuePrettify(decl ast.Decl, flatten bool) ([]ast.Decl, error) {
 	return final, nil
 }
 
-func CueConvert(variable string, conversions []string, jsonRaw []byte, jsonContext []byte, flatten bool) ([]ast.Decl, error) {
+func CueConvert(variable string, conversions []string, context map[string]string, flatten bool) ([]ast.Decl, error) {
 	pack, err := singleCuePackage(conversions)
 	if err != nil {
 		return nil, fmt.Errorf("invalid packages assignment: %w", err)
 	}
+	lets := make([]string, 0)
+	init := make([]string, 0)
+	for key, value := range context {
+		lets = append(lets, fmt.Sprintf("let var_%v=%v", key, value))
+		init = append(init, fmt.Sprintf("%v: var_%v", key, key))
+	}
 	target := fmt.Sprintf(`
 package %v
-Output: (#Conversion & {Input: Data}).Output
 
-Data: %v
-%v`, pack, string(jsonRaw), string(jsonContext))
+%v
+
+Output: (#Conversion & {%v}).Output`, pack, strings.Join(lets, "\n"), strings.Join(init, ", "))
 	cueContext := cuecontext.New()
 	_, filenames, overlay := buildOverlay(conversions, target)
 	buildInstances := load.Instances(filenames, &load.Config{Overlay: overlay})
@@ -218,7 +224,7 @@ Data: %v
 		return nil, fmt.Errorf("unable to prettify value: %w", err)
 	}
 	if _, ok := pretty[0].(*ast.BottomLit); ok {
-		return nil, fmt.Errorf("unable to convert value: %v", string(jsonRaw))
+		return nil, fmt.Errorf("unable to convert value: %v", context)
 	}
 	return pretty, nil
 }

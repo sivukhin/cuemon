@@ -1,8 +1,6 @@
 package lib
 
 import (
-	"fmt"
-	"os"
 	"strings"
 )
 
@@ -29,15 +27,4 @@ func AsAny[T any](array []T) []any {
 func PackageName(module string) string {
 	modulePath := strings.Split(module, "/")
 	return modulePath[len(modulePath)-1]
-}
-
-func WriteFile(f *os.File, data []byte) error {
-	for len(data) > 0 {
-		n, err := f.Write(data)
-		if err != nil {
-			return fmt.Errorf("unable to write to file '%v': %v", f.Name(), err)
-		}
-		data = data[n:]
-	}
-	return nil
 }
