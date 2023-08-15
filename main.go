@@ -1,9 +1,9 @@
 package main
 
 import (
-	"cuemon/lib"
 	"flag"
 	"fmt"
+	"github.com/sivukhin/cuemon/lib"
 	"os"
 	"strings"
 )
