@@ -32,7 +32,7 @@ Tags: [...string]
 
 #Threshold: { Color: string, Value: number | *null }
 
-#LegendValues: ["last", "mean", "min", "avg", "max", "total", "current"]
+#LegendValues: ["last", "mean", "min", "avg", "max", "total", "current", "lastNotNull", "sum"]
 #Panel: {
 	Type:       "graph" | "stat" | "gauge" | "table" | "timeseries"
 	Unit:       string | *""
@@ -48,7 +48,7 @@ Tags: [...string]
 	if Type == "stat" {
 		TextMode: *"auto" | "value" | "value_and_name" | "name" | "none"
 		GraphMode: *"area" | "none"
-		Reduce: *"lastNotNull" | "all"
+		Reduce: *"lastNotNull" | "last" | "all"
 		Thresholds?: [...#Threshold]
 	}
 	Alert?: {
@@ -58,7 +58,7 @@ Tags: [...string]
 		ExecutionErrorState: *"keep_state" | "alerting"
 		PendingPeriod: string | *"5m"
 		Frequency: string | *"1m"
-		Notifications: [...=~#"(avg|min|max|sum)\(\w+,(1m|5m|10m|15m),(now|now-1m|now-5m)\) (>|<) (.*)"#]
+		Notifications: [...=~#"(avg|min|max|sum)\([^,]+,(1m|5m|10m|15m|1h),(now|now-1m|now-5m)\) (>|<) (.*)"#]
 		Tags: [string]: string
 		Channels: [...string]
 	}
@@ -68,12 +68,12 @@ Tags: [...string]
 
 #Row: {
 	Title?:    string
-	Columns!:   [number, ...number]
+	Columns:   [number, ...number]
 	Heights:   [...number] | number | *9
 	Collapsed: bool | *false
 	Panel: [string]:     #Panel
 	PanelGrid: [string]: #Grid
-	_width: list.Sum(Columns) & 24
+	_width: list.Sum(Columns) & <=24
 }
 
 #Variable: {
@@ -85,7 +85,10 @@ Tags: [...string]
 		Values: [...string]
 		Multi:      bool | *true
 		IncludeAll: bool | *Multi
-		Current: [...string]
+		Current: {
+			if Multi { [...string] }
+			if !Multi { string }
+		}
 	}
 	if Type == "query" {
 		DataSource: string

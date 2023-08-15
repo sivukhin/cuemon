@@ -9,7 +9,6 @@ import (
 	"cuelang.org/go/cue/parser"
 	"cuelang.org/go/tools/trim"
 	"fmt"
-	"log"
 	"math/rand"
 	"regexp"
 	"strings"
@@ -19,16 +18,16 @@ func CueAst(data string) (*ast.File, error) {
 	return parser.ParseFile("", data)
 }
 
-func FormatDecls(decl []ast.Decl) string {
+func FormatDecls(decl []ast.Decl) (string, error) {
 	return FormatNode(File(decl))
 }
 
-func FormatNode(node ast.Node) string {
+func FormatNode(node ast.Node) (string, error) {
 	content, err := format.Node(node, format.Simplify())
 	if err != nil {
-		log.Fatalf("unable to format declarations: %v", err)
+		return "", fmt.Errorf("unable to format declarations: %w", err)
 	}
-	return string(content)
+	return string(content), nil
 }
 
 func matchLabels(a, b ast.Node) bool {

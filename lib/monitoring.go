@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 	"io/fs"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -173,7 +174,7 @@ func (m monitoringContext) creteMeta(grafana Grafana) ([]ast.Decl, error) {
 }
 
 func ExtractRows(grafana Grafana) []GrafanaPanel {
-	title, collapsed := "", false
+	title, collapsed := "top_unnamed", false
 	i := 0
 	rows := make([]GrafanaPanel, 0)
 	for i < len(grafana.Value.Panels) {
@@ -205,6 +206,7 @@ func (m monitoringContext) createDashboard(grafana Grafana) (*Monitoring, error)
 	}
 	variables := make([]ast.Decl, 0)
 	for _, template := range grafana.Value.Templating.List {
+		log.Printf("bootstraping CUE node for '%v' variable...", template.Value.Name)
 		variable, err := m.createVariable(template)
 		if err != nil {
 			return nil, err
@@ -213,6 +215,7 @@ func (m monitoringContext) createDashboard(grafana Grafana) (*Monitoring, error)
 	}
 	rows := make([]*Row, 0)
 	for _, grafanaRow := range ExtractRows(grafana) {
+		log.Printf("bootstraping CUE file for '%v' row...", grafanaRow.Title)
 		row, err := m.createRow(grafanaRow, grafanaRow.Panels)
 		if err != nil {
 			return nil, err
@@ -256,16 +259,27 @@ func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error
 	dashboardDecls = append(dashboardDecls, FieldIdent(VariablesField, ast.NewIdent(variablesVar)))
 	dashboardDecls = append(dashboardDecls, FieldIdent(RowsField, IdentList(rowVars)))
 
-	files = append(files, FileEntry{path.Join(output, "dashboard.cue"), FormatDecls(dashboardDecls)})
-	files = append(files, FileEntry{path.Join(output, "variables.cue"), FormatDecls(
-		append([]ast.Decl{Package(variablesVar)}, monitoring.Variables...),
-	)})
+	dashboardSrc, err := FormatDecls(dashboardDecls)
+	if err != nil {
+		return nil, fmt.Errorf("unable to format dashboard source: %w", err)
+	}
+	files = append(files, FileEntry{path.Join(output, "dashboard.cue"), dashboardSrc})
+
+	variablesSrc, err := FormatDecls(append([]ast.Decl{Package(variablesVar)}, monitoring.Variables...))
+	if err != nil {
+		return nil, fmt.Errorf("unable to format variable source: %w", err)
+	}
+	files = append(files, FileEntry{path.Join(output, "variables.cue"), variablesSrc})
 	for _, row := range monitoring.Rows {
 		rowDecls := append(
 			[]ast.Decl{Package(row.Name), Imports(CuemonPath), ast.NewSel(ast.NewIdent(CuemonName), RowVar)},
 			row.Src...,
 		)
-		files = append(files, FileEntry{path.Join(output, "rows", fmt.Sprintf("%v.cue", row.Name)), FormatDecls(rowDecls)})
+		rowSrc, err := FormatDecls(rowDecls)
+		if err != nil {
+			return nil, fmt.Errorf("unable to format row '%v' source: %w", row.Name, err)
+		}
+		files = append(files, FileEntry{path.Join(output, "rows", fmt.Sprintf("%v.cue", row.Name)), rowSrc})
 	}
 	return files, nil
 }

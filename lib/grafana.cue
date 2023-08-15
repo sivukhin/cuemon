@@ -14,9 +14,9 @@ package cuemon
 	timezone:      string | *"browser"
 	editable:      bool | *true
 	graphTooltip:  #Tooltip.Default | *#Tooltip.SharedCrosshair | #Tooltip.SharedTooltip
-	time?:         {from: string | *"now-6h", to: string | *"now"}
-	version?:      int
-	refresh:       string | *"15m"
+	time: {from: string | *"now-6h", to: string | *"now"}
+	version?: int
+	refresh:  string | *"15m"
 
 	annotations: list:             [...#GrafanaAnnotation] | *[]
 	timepicker: refresh_intervals: [...string] | *["10s", "30s", "1m", "5m", "15m", "30m", "1h"]
@@ -66,8 +66,14 @@ package cuemon
 		current: {
 			selected: bool | *true
 			tags: []
-			text: [...or([ for option in options {option.text}])]
-			value: [...or([ for option in options {option.value}])]
+			if multi {
+				text: [...or([ for option in options {option.text}])]
+				value: [...or([ for option in options {option.value}])]
+			}
+			if !multi {
+				text:  or([ for option in options {option.text}])
+				value: or([ for option in options {option.value}])
+			}
 		}
 		options: [...{selected: bool, text: string, value: string}]
 		multi:      bool
@@ -142,19 +148,19 @@ package cuemon
 
 #GrafanaLegend: {
 	#schemaVersion: number
-	sort:         "current" | "avg" | "max" | "min" | "total" | *null
-	show:         bool | *false
-	values:       bool | *false
-	current:      bool | *false
-	avg:          bool | *false
-	max:          bool | *false
-	min:          bool | *false
-	total:        bool | *false
-	sortDesc:     bool | *false
-	rightSide:    bool | *false
-	alignAsTable: bool | *false
-	hideEmpty?:   bool
-	hideZero?:    bool
+	sort:           "current" | "avg" | "max" | "min" | "total" | *null
+	show:           bool | *false
+	values:         bool | *false
+	current:        bool | *false
+	avg:            bool | *false
+	max:            bool | *false
+	min:            bool | *false
+	total:          bool | *false
+	sortDesc:       bool | *false
+	rightSide:      bool | *false
+	alignAsTable:   bool | *false
+	hideEmpty?:     bool
+	hideZero?:      bool
 }
 
 #GrafanaAlert: {
@@ -184,11 +190,11 @@ package cuemon
 
 #GrafanaTarget: {
 	#schemaVersion: number
-	refId:      string
-	queryType?: string
-	hide:       bool | *false
-	exemplar:   bool | *true
-	interval:   string | *""
+	refId:          string
+	queryType?:     string
+	hide:           bool | *false
+	exemplar:       bool | *true
+	interval:       string | *""
 	if queryType == _|_ {
 		expr:         string
 		legendFormat: string
@@ -215,7 +221,7 @@ package cuemon
 				unit:               string
 				valueType:          string
 				query:              string | *""
-				preprocessor?:              string
+				preprocessor?:      string
 				filters:            [...string] | *[]
 				groupBys:           [...string] | *[]
 			}
@@ -268,7 +274,7 @@ package cuemon
 	}
 	targets: [...{#GrafanaTarget, #schemaVersion: v}]
 	fieldConfig: {
-		overrides: []
+		overrides: [..._]
 		defaults: {
 			mappings: []
 			unit?: string
@@ -309,14 +315,14 @@ package cuemon
 
 #GrafanaGraph: {
 	v=#schemaVersion: number
-	#type:       string
-	datasource:  string
-	description: string | *""
+	#type:            string
+	datasource:       string
+	description:      string | *""
 	targets: [...{#GrafanaTarget, #schemaVersion: v}]
 	tooltip?: #GrafanaTooltip
 	thresholds: [...#GrafanaThreshold]
 	yaxes: [...#GrafanaYAxes]
-	legend: {#GrafanaLegend, #schemaVersion:v}
+	legend: {#GrafanaLegend, #schemaVersion: v}
 	alert?: #GrafanaAlert
 	xaxis:  #GrafanaXAxis
 	yaxis:  #GrafanaYAxis
@@ -385,7 +391,7 @@ package cuemon
 			links?: []
 			thresholds?: {
 				mode: string | *"absolute"
-				steps: [...{color: string, value: string | null}]
+				steps: [...{color: string, value: number | string | null}]
 			}
 		}
 	}
