@@ -2,6 +2,7 @@ package lib
 
 import (
 	"cuelang.org/go/cue/ast"
+	"cuelang.org/go/cue/ast/astutil"
 	_ "embed"
 	"fmt"
 	"io/fs"
@@ -15,11 +16,11 @@ import (
 )
 
 var (
-	//go:embed grafana.cue
+	//go:embed cue/grafana.cue
 	GrafanaCue string
-	//go:embed mon.cue
+	//go:embed cue/mon.cue
 	MonCue string
-	//go:embed mon2grafana.cue
+	//go:embed cue/mon2grafana.cue
 	Mon2GrafanaCue string
 	//go:embed grafana2mon/meta.cue
 	Meta2MonitoringCue string
@@ -294,6 +295,7 @@ type FileEntryUpdated struct {
 func UpdateFiles(output string, panel JsonRaw[GrafanaPanel]) ([]FileEntryUpdated, error) {
 	targets := make(map[string]ast.Node, 0)
 	versions := make([]int, 0)
+	definitions := make(map[string]*ast.BasicLit)
 	_ = filepath.WalkDir(output, func(path string, d fs.DirEntry, err error) error {
 		if d == nil {
 			return fmt.Errorf("directory %v not found", output)
@@ -312,7 +314,26 @@ func UpdateFiles(output string, panel JsonRaw[GrafanaPanel]) ([]FileEntryUpdated
 		if err != nil {
 			return err
 		}
-		_, versionNode := findField(cueAst.Decls, ast.NewIdent(GrafanaField), ast.NewIdent(SchemaVersionField))
+		for _, decl := range cueAst.Decls {
+			field, ok := decl.(*ast.Field)
+			if !ok {
+				continue
+			}
+			ident, ok := field.Label.(*ast.Ident)
+			if !ok {
+				continue
+			}
+			if !strings.HasPrefix(ident.Name, "#") {
+				continue
+			}
+			value, ok := field.Value.(*ast.BasicLit)
+			if !ok {
+				continue
+			}
+			definitions[ident.Name] = value
+		}
+
+		_, versionNode := findField(cueAst.Decls, GrafanaField, SchemaVersionField)
 		if versionNode != nil {
 			version, err := strconv.Atoi(versionNode.(*ast.BasicLit).Value)
 			if err != nil {
@@ -320,7 +341,7 @@ func UpdateFiles(output string, panel JsonRaw[GrafanaPanel]) ([]FileEntryUpdated
 			}
 			versions = append(versions, version)
 		}
-		target, _ := findField(cueAst.Decls, ast.NewIdent(PanelField), ast.NewString(panel.Value.Title))
+		target, _ := findField(cueAst.Decls, PanelField, panel.Value.Title)
 		if target != nil {
 			targets[path] = target
 		}
@@ -338,6 +359,19 @@ func UpdateFiles(output string, panel JsonRaw[GrafanaPanel]) ([]FileEntryUpdated
 	panelStruct := FieldIdent(PanelField, ast.NewStruct(
 		ast.NewIdent(panel.Value.Title), ast.NewStruct(AsAny(panelDecls)...),
 	))
+	astutil.Apply(panelStruct, nil, func(cursor astutil.Cursor) bool {
+		lit, ok := cursor.Node().(*ast.BasicLit)
+		if !ok {
+			return true
+		}
+		for definition, replacement := range definitions {
+			if replacement.Value == lit.Value && replacement.Kind == lit.Kind {
+				cursor.Replace(ast.NewIdent(definition))
+				return true
+			}
+		}
+		return true
+	})
 	updates := make([]FileEntryUpdated, 0)
 	for targetPath, target := range targets {
 		content, err := os.ReadFile(targetPath)

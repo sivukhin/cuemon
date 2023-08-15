@@ -33,6 +33,18 @@ func extractHeights(row []Box) []int {
 	return heights
 }
 
+func isPrefix[T comparable](a, b []T) bool {
+	if len(a) > len(b) {
+		return false
+	}
+	for i := 0; i < len(a); i++ {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func AnalyzeGrid(grid []Box) Layout {
 	sort.Slice(grid, func(i, j int) bool {
 		if grid[i].Y != grid[j].Y {
@@ -66,7 +78,7 @@ func AnalyzeGrid(grid []Box) Layout {
 	for _, row := range rows {
 		width := extractWidths(row)
 		heights := Unique(extractHeights(row))
-		if fmt.Sprintf("%v", width) != columnsString || len(heights) > 1 {
+		if !isPrefix(width, columns) || len(heights) > 1 {
 			for _, cell := range row {
 				layout.Overrides[cell.Id] = LayoutOverride{Width: cell.W, Height: cell.H}
 			}

@@ -30,21 +30,25 @@ func FormatNode(node ast.Node) (string, error) {
 	return string(content), nil
 }
 
-func matchLabels(a, b ast.Node) bool {
-	identA, okIdentA := a.(*ast.Ident)
-	identB, okIdentB := b.(*ast.Ident)
-	if okIdentA && okIdentB && identA.Name == identB.Name {
-		return true
+func labelString(a ast.Node) (string, bool) {
+	if ident, ok := a.(*ast.Ident); ok {
+		return ident.Name, true
 	}
-	stringA, okStringA := a.(*ast.BasicLit)
-	stringB, okStringB := b.(*ast.BasicLit)
-	if okStringA && okStringB && stringA.Value == stringB.Value {
-		return true
+	if s, ok := a.(*ast.BasicLit); ok {
+		return s.Value[1 : len(s.Value)-1], true
 	}
-	return false
+	return "", false
 }
 
-func matchPath(node ast.Node, path ...ast.Node) ast.Node {
+func matchLabels(a string, b ast.Node) bool {
+	bString, bOk := labelString(b)
+	if !bOk {
+		return false
+	}
+	return a == bString
+}
+
+func matchPath(node ast.Node, path ...string) ast.Node {
 	if _, ok := node.(*ast.Field); ok {
 		node = ast.NewStruct(node)
 	}
@@ -72,7 +76,7 @@ func matchPath(node ast.Node, path ...ast.Node) ast.Node {
 	return node
 }
 
-func findField(decls []ast.Decl, path ...ast.Node) (ast.Node, ast.Node) {
+func findField(decls []ast.Decl, path ...string) (ast.Node, ast.Node) {
 	for _, decl := range decls {
 		node := matchPath(decl, path...)
 		if node != nil {
