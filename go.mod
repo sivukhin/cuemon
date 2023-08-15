@@ -1,4 +1,4 @@
-module cuemon
+module github.com/sivukhin/cuemon
 
 go 1.20
 
