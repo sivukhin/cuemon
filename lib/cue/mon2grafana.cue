@@ -21,7 +21,9 @@ import (
 		#RowNumber:    number | *0
 
 		if Row.Columns != _|_ && Row.Heights != _|_ {
-			Width: number | *Row.Columns[#ColumnNumber]
+			if Row.Columns[#ColumnNumber] != _|_ {
+				Width: number | *Row.Columns[#ColumnNumber]
+			}
 			if Row.PanelGrid[panel.Title] != _|_ {
 				if Row.PanelGrid[panel.Title].Height != _|_ {
 					Height: Row.PanelGrid[panel.Title].Height
@@ -30,7 +32,7 @@ import (
 					Width: Row.PanelGrid[panel.Title].Width
 				}
 				if i > 0 {
-					#ColumnNumber: SequenceGrid[i-1].#ColumnNumber
+					#ColumnNumber: -1
 					#RowNumber:    SequenceGrid[i-1].#RowNumber
 				}
 			}
