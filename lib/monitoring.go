@@ -3,6 +3,8 @@ package lib
 import (
 	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/ast/astutil"
+	"cuelang.org/go/cue/literal"
+	"cuelang.org/go/cue/token"
 	_ "embed"
 	"fmt"
 	"io/fs"
@@ -91,6 +93,24 @@ func (m monitoringContext) createPanel(panel JsonRaw[GrafanaPanel]) ([]ast.Decl,
 		if err != nil {
 			return nil, fmt.Errorf("unable to convert target #%v from panel '%v': %w", i, panel.Value.Title, err)
 		}
+		astutil.Apply(File(targetDecls), nil, func(cursor astutil.Cursor) bool {
+			lit, ok := cursor.Node().(*ast.BasicLit)
+			if !ok {
+				return true
+			}
+			if lit.Kind != token.STRING {
+				return true
+			}
+			value, err := literal.Unquote(lit.Value)
+			if err != nil {
+				log.Printf("unable to unquote string literal: %v", err)
+				return true
+			}
+			if strings.Contains(value, "\"") && !strings.Contains(value, "#") && !strings.Contains(value, "\n") {
+				cursor.Replace(&ast.BasicLit{Kind: token.STRING, Value: fmt.Sprintf("#\"%v\"#", value)})
+			}
+			return true
+		})
 		targetsDecls = append(targetsDecls, ast.NewStruct(AsAny(targetDecls)...))
 	}
 	if len(targetsDecls) > 0 {
@@ -128,10 +148,11 @@ func (m monitoringContext) createRow(row GrafanaPanel, panels []JsonRaw[GrafanaP
 			return nil, fmt.Errorf("unable to convert panel %v: %w", panel.Value.Title, err)
 		}
 		if override, ok := layout.Overrides[id]; ok {
-			decls = append(decls, FieldIdent(PanelGridField, ast.NewStruct(ast.NewIdent(panel.Value.Title), ast.NewStruct(
-				FieldIdent(WidthField, Int(override.Width)),
-				FieldIdent(HeightField, Int(override.Height)),
-			))))
+			fields := []any{FieldIdent(WidthField, Int(override.Width))}
+			if override.Height > 0 {
+				fields = append(fields, FieldIdent(HeightField, Int(override.Height)))
+			}
+			decls = append(decls, FieldIdent(PanelGridField, ast.NewStruct(ast.NewIdent(panel.Value.Title), ast.NewStruct(fields...))))
 		}
 		decls = append(decls, FieldIdent(PanelField, ast.NewStruct(
 			ast.NewIdent(panel.Value.Title), ast.NewStruct(AsAny(panelDecls)...),

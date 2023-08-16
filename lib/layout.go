@@ -68,8 +68,8 @@ func AnalyzeGrid(grid []Box) Layout {
 		if _, ok := stat[widthString]; !ok {
 			stat[widthString] = 0
 		}
-		stat[widthString]++
-		if stat[widthString] > stat[columnsString] || stat[widthString] == stat[columnsString] && len(width) > len(columns) {
+		stat[widthString] += len(row)
+		if stat[widthString] > stat[columnsString] {
 			columnsString = widthString
 			columns = width
 		}
@@ -80,11 +80,14 @@ func AnalyzeGrid(grid []Box) Layout {
 		heights := Unique(extractHeights(row))
 		if !isPrefix(width, columns) || len(heights) > 1 {
 			for _, cell := range row {
-				layout.Overrides[cell.Id] = LayoutOverride{Width: cell.W, Height: cell.H}
+				h := cell.H
+				if heights[0] == cell.H {
+					h = 0
+				}
+				layout.Overrides[cell.Id] = LayoutOverride{Width: cell.W, Height: h}
 			}
-		} else {
-			layout.Heights = append(layout.Heights, heights[0])
 		}
+		layout.Heights = append(layout.Heights, heights[0])
 		for _, cell := range row {
 			layout.Order = append(layout.Order, cell.Id)
 		}
