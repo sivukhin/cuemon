@@ -40,8 +40,3 @@ $> cuemon update -input <panel.json> -dir <cuemon-directory> -overwrite
 - **-input**: Path to the input Grafana panel JSON file.
 - **-dir**: Directory containing the cuemon setup to update.
 - **-overwrite**: Enable unsafe mode to allow overwriting files.
-
-Contributions to cuemon are welcome! If you find a bug, want to propose a feature, or have any questions, feel free to open an issue or submit a pull request.
-License
-
-cuemon is licensed under the MIT License.
