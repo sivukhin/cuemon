@@ -129,8 +129,8 @@ import (
 				message:             Panel.Alert.Message
 				name:                Panel.Alert.Name
 				conditions: [ for notification in Panel.Alert.Notifications {
-					let match = regexp.FindNamedSubmatch(#"(?P<reducer>\w+)\((?P<ref>[^,]+),(?P<duration>1m|5m|10m|15m|1h),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<) (?P<param>\w+)"#, notification)
-					evaluator: params: [strconv.Atoi(match.param)]
+					let match = regexp.FindNamedSubmatch(#"(?P<reducer>\w+)\((?P<ref>[^,]+),(?P<duration>1m|5m|10m|15m|1h),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<) (?P<param>[0-9.]+)"#, notification)
+					evaluator: params: [strconv.ParseFloat(match.param, 64)]
 					if match.op == ">" {evaluator: type: "gt"}
 					if match.op == "<" {evaluator: type: "lt"}
 					reducer: type: match.reducer
