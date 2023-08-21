@@ -38,6 +38,7 @@ type Templating = JsonRaw[struct {
 type Grafana = JsonRaw[struct {
 	Id            int    `json:"id"`
 	Uid           string `json:"uid"`
+	Title         string `json:"title"`
 	SchemaVersion int    `json:"schemaVersion"`
 	Templating    struct {
 		List []Templating `json:"list"`

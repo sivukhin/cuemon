@@ -59,8 +59,9 @@ const (
 	RowsField          = "Rows"
 	LegendField        = "Legend"
 	OverridesField     = "Overrides"
-	IdField            = "id"
-	UidField           = "uid"
+	GrafanaIdField     = "id"
+	GrafanaUidField    = "uid"
+	GrafanaTitleField  = "title"
 	TestField          = "Test"
 
 	DashesField    = "Dashes"
@@ -259,12 +260,15 @@ func (m monitoringContext) creteMeta(grafana Grafana) ([]ast.Decl, error) {
 			&ast.UnaryExpr{Op: token.MUL, X: ast.NewBool(false)},
 		), &ast.Attribute{Text: "@tag(Test,type=bool)"}),
 		FieldIdent(GrafanaField, ast.NewStruct(
-			FieldIdent(IdField, ast.NewBinExpr(token.OR, ast.NewIdent("number"),
+			FieldIdent(GrafanaIdField, ast.NewBinExpr(token.OR, ast.NewIdent("number"),
 				&ast.UnaryExpr{Op: token.MUL, X: ast.NewLit(token.INT, fmt.Sprintf("%v", grafana.Value.Id))},
 			), &ast.Attribute{Text: "@tag(Id,type=number)"}),
-			FieldIdent(UidField, ast.NewBinExpr(token.OR, ast.NewIdent("string"),
+			FieldIdent(GrafanaUidField, ast.NewBinExpr(token.OR, ast.NewIdent("string"),
 				&ast.UnaryExpr{Op: token.MUL, X: ast.NewLit(token.STRING, fmt.Sprintf("\"%v\"", grafana.Value.Uid))},
 			), &ast.Attribute{Text: "@tag(Uid,type=string)"}),
+			FieldIdent(GrafanaTitleField, ast.NewBinExpr(token.OR, ast.NewIdent("string"),
+				&ast.UnaryExpr{Op: token.MUL, X: ast.NewLit(token.STRING, fmt.Sprintf("\"%v\"", grafana.Value.Title))},
+			), &ast.Attribute{Text: "@tag(Title,type=string)"}),
 		)),
 	}, meta...), nil
 }

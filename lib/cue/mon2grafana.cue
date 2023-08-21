@@ -133,7 +133,7 @@ Test: bool | *false @tag(Test,type=bool)
 					query: params: [match.ref, match.duration, match.end]
 				}]
 
-				if !Test { notifications: [ for channel in Panel.Alert.Channels {uid: channel}] }
+				if !Test {notifications: [ for channel in Panel.Alert.Channels {uid: channel}]}
 			}
 		}
 		if Panel.Type == "timeseries" {
@@ -169,6 +169,8 @@ Test: bool | *false @tag(Test,type=bool)
 				max:          listFunc.Contains(Panel.Values, "max")
 				min:          listFunc.Contains(Panel.Values, "min")
 				total:        listFunc.Contains(Panel.Values, "total")
+				sort:         Panel.Sort
+				sortDesc:     Panel.SortDesc
 			}
 			yaxes: [
 				{$$hashKey: "object:\(10*(Row.Id+Panel.Id))", format:   Panel.Unit},
@@ -192,7 +194,7 @@ Test: bool | *false @tag(Test,type=bool)
 			fieldConfig: defaults: thresholds: steps: [ for t in Panel.Thresholds {color: t.Color, value: t.Value}]
 		}
 		seriesOverrides: [ for i, target in Panel.Metrics if target.Overrides != _|_ {
-			$$hashKey: "object:\(10*(Row.Id+Panel.Id + 2 + i))"
+			$$hashKey: "object:\(10*(Row.Id+Panel.Id+2+i))"
 			if target.Overrides.Alias != _|_ {alias: target.Overrides.Alias}
 			if target.Overrides.Alias == _|_ {alias: "/" + regexp.ReplaceAll("{{.*?}}", target.Legend, ".*") + "/"}
 			if target.Overrides.Dashes != _|_ {dashes: target.Overrides.Dashes}
@@ -205,7 +207,7 @@ Test: bool | *false @tag(Test,type=bool)
 		}]
 		targets: [ for i, target in Panel.Metrics {
 			refId: #Alphabet[i]
-			hide: target.Hide
+			hide:  target.Hide
 			if target.StackDriver != _|_ {
 				queryType: "metrics"
 				metricQuery: {
@@ -247,7 +249,7 @@ Test: bool | *false @tag(Test,type=bool)
 		if Variable.Type == "custom" {
 			{
 				type:       "custom"
-				label: Variable.Label
+				label:      Variable.Label
 				name:       VariableName
 				query:      strings.Join(Variable.Values, ",")
 				includeAll: Variable.IncludeAll
@@ -269,7 +271,7 @@ Test: bool | *false @tag(Test,type=bool)
 		if Variable.Type == "query" {
 			{
 				type:       "query"
-				label: Variable.Label
+				label:      Variable.Label
 				name:       VariableName
 				datasource: Variable.DataSource
 				definition: Variable.Query
@@ -290,7 +292,7 @@ Grafana: #GrafanaSchema & {
 	templating: list: [ for variableName, variable in Variables {
 		{#Variable2Grafana, VariableName: variableName, Variable: variable}.G
 	}]
-	if !Test { tags:   Tags }
+	if !Test {tags: Tags}
 	panels: listFunc.FlattenN([ for row in {#DashboardGriding, DashboardRows: Rows}.DashboardGrided {
 		if row.Collapsed {
 			[{
