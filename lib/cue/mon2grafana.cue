@@ -173,8 +173,8 @@ Test: bool | *false @tag(Test,type=bool)
 				sortDesc:     Panel.SortDesc
 			}
 			yaxes: [
-				{$$hashKey: "object:\(10*(Row.Id+Panel.Id))", format:   Panel.Unit},
-				{$$hashKey: "object:\(10*(Row.Id+Panel.Id)+1)", format: Panel.Unit},
+				{$$hashKey: "object:\(10*(Row.Id+Panel.Id))", format:   Panel.Unit, if Panel.YMin != null {min: "\(Panel.YMin)"}},
+				{$$hashKey: "object:\(10*(Row.Id+Panel.Id)+1)", format: Panel.Unit, if Panel.YMin != null {min: "\(Panel.YMin)"}},
 			]
 		}
 		if Panel.Type == "stat" || Panel.Type == "gauge" {

@@ -13,7 +13,7 @@ package cuemon
 		Current:    Input.current.value
 	}
 	if Type == "query" {
-		Label: Input.label
+		Label:      Input.label
 		DataSource: Input.datasource
 		Query:      Input.definition
 		Multi:      Input.multi

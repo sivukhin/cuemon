@@ -2,6 +2,7 @@ package cuemon
 
 import (
 	"list"
+	"strconv"
 )
 
 #Conversion: {SchemaVersion: number, Input: {#GrafanaPanel, #schemaVersion: SchemaVersion}, Output: {
@@ -38,6 +39,9 @@ import (
 	}
 	if Type == "graph" {
 		Unit: Input.yaxes[0].format
+		if Input.yaxes[0].min != null {
+			YMin: strconv.ParseInt(Input.yaxes[0].min, 10, 64)
+		}
 		if Input.points {
 			Points: Input.pointradius
 		}
@@ -52,7 +56,7 @@ import (
 		}
 		NullValue: Input.nullPointMode
 		Values: [ for key, value in Input.legend if list.Contains(#LegendValues, key) && value {key}]
-		Sort: Input.legend.sort
+		Sort:     Input.legend.sort
 		SortDesc: Input.legend.sortDesc
 		if !Input.legend.show {Legend: "none"}
 		if Input.legend.show && Input.legend.alignAsTable && Input.legend.rightSide {Legend: "table_right"}

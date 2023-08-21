@@ -21,7 +21,7 @@ package cuemon
 				Unit:            Input.metricQuery.unit
 				Value:           Input.metricQuery.valueType
 				if Input.metricQuery.preprocessor != _|_ {
-					Preprocessor:           Input.metricQuery.preprocessor
+					Preprocessor: Input.metricQuery.preprocessor
 				}
 			}
 		}
