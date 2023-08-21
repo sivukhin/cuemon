@@ -148,7 +148,6 @@ package cuemon
 
 #GrafanaLegend: {
 	#schemaVersion: number
-	sort:           "current" | "avg" | "max" | "min" | "total" | *null
 	show:           bool | *false
 	values:         bool | *false
 	current:        bool | *false
@@ -156,6 +155,7 @@ package cuemon
 	max:            bool | *false
 	min:            bool | *false
 	total:          bool | *false
+	sort:           "current" | "avg" | "max" | "min" | "total" | *null
 	sortDesc:       bool | *false
 	rightSide:      bool | *false
 	alignAsTable:   bool | *false
@@ -274,7 +274,7 @@ package cuemon
 	}
 	targets: [...{#GrafanaTarget, #schemaVersion: v}]
 	fieldConfig: {
-		overrides: [..._]
+		overrides: [...]
 		defaults: {
 			mappings: []
 			unit?: string

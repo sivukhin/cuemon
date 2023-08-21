@@ -7,6 +7,8 @@ import (
 	"regexp"
 )
 
+Test: bool | *false @tag(Test,type=bool)
+
 #RowGriding: {
 	Row: #Row
 	SequencePanels: [ for title, panel in Row.Panel {panel, Title: title}]
@@ -31,20 +33,12 @@ import (
 				if Row.PanelGrid[panel.Title].Width != _|_ {
 					Width: Row.PanelGrid[panel.Title].Width
 				}
-				if i > 0 {
-					#ColumnNumber: -1
-					#RowNumber:    SequenceGrid[i-1].#RowNumber
-				}
+				if i > 0 {#ColumnNumber: -1}
 			}
 			if Row.PanelGrid[panel.Title] == _|_ {
 				if i > 0 {
-					if SequenceGrid[i-1].#ColumnNumber+1 < len(Row.Columns) {
-						#ColumnNumber: SequenceGrid[i-1].#ColumnNumber + 1
-					}
-					if SequenceGrid[i-1].#ColumnNumber+1 == len(Row.Columns) {
-						#ColumnNumber: 0
-						#RowNumber:    SequenceGrid[i-1].#RowNumber + 1
-					}
+					if SequenceGrid[i-1].#ColumnNumber+1 < len(Row.Columns) {#ColumnNumber: SequenceGrid[i-1].#ColumnNumber + 1}
+					if SequenceGrid[i-1].#ColumnNumber+1 == len(Row.Columns) {#ColumnNumber: 0}
 				}
 			}
 		}
@@ -53,12 +47,14 @@ import (
 		if Row.Heights[#RowNumber] == _|_ && Row.Heights != _|_ {Height: number | *Row.Heights}
 		if i > 0 {
 			if SequenceGrid[i-1].#EndX+Width <= 24 {
-				X: SequenceGrid[i-1].#EndX
-				Y: SequenceGrid[i-1].Y
+				X:          SequenceGrid[i-1].#EndX
+				Y:          SequenceGrid[i-1].Y
+				#RowNumber: SequenceGrid[i-1].#RowNumber
 			}
 			if SequenceGrid[i-1].#EndX+Width > 24 {
-				X: 0
-				Y: SequenceGrid[i-1].Y + SequenceGrid[i-1].Height
+				X:          0
+				Y:          SequenceGrid[i-1].Y + SequenceGrid[i-1].Height
+				#RowNumber: SequenceGrid[i-1].#RowNumber + 1
 			}
 		}
 	}]
@@ -136,7 +132,8 @@ import (
 					reducer: type: match.reducer
 					query: params: [match.ref, match.duration, match.end]
 				}]
-				notifications: [ for channel in Panel.Alert.Channels {uid: channel}]
+
+				if !Test { notifications: [ for channel in Panel.Alert.Channels {uid: channel}] }
 			}
 		}
 		if Panel.Type == "timeseries" {
@@ -174,8 +171,8 @@ import (
 				total:        listFunc.Contains(Panel.Values, "total")
 			}
 			yaxes: [
-				{$$hashKey: "object:\(2*(Row.Id+Panel.Id))", format:   Panel.Unit},
-				{$$hashKey: "object:\(2*(Row.Id+Panel.Id)+1)", format: Panel.Unit},
+				{$$hashKey: "object:\(10*(Row.Id+Panel.Id))", format:   Panel.Unit},
+				{$$hashKey: "object:\(10*(Row.Id+Panel.Id)+1)", format: Panel.Unit},
 			]
 		}
 		if Panel.Type == "stat" || Panel.Type == "gauge" {
@@ -194,8 +191,21 @@ import (
 		if Panel.Thresholds != _|_ {
 			fieldConfig: defaults: thresholds: steps: [ for t in Panel.Thresholds {color: t.Color, value: t.Value}]
 		}
+		seriesOverrides: [ for i, target in Panel.Metrics if target.Overrides != _|_ {
+			$$hashKey: "object:\(10*(Row.Id+Panel.Id + 2 + i))"
+			if target.Overrides.Alias != _|_ {alias: target.Overrides.Alias}
+			if target.Overrides.Alias == _|_ {alias: "/" + regexp.ReplaceAll("{{.*?}}", target.Legend, ".*") + "/"}
+			if target.Overrides.Dashes != _|_ {dashes: target.Overrides.Dashes}
+			if target.Overrides.Hidden != _|_ {hiddenSeries: target.Overrides.Hidden}
+			if target.Overrides.Fill != _|_ {fill: target.Overrides.Fill}
+			if target.Overrides.YAxis != _|_ {yaxis: target.Overrides.YAxis}
+			if target.Overrides.ZIndex != _|_ {zindex: target.Overrides.ZIndex}
+			if target.Overrides.LineWidth != _|_ {linewidth: target.Overrides.LineWidth}
+			if target.Overrides.Color != _|_ {color: target.Overrides.Color}
+		}]
 		targets: [ for i, target in Panel.Metrics {
 			refId: #Alphabet[i]
+			hide: target.Hide
 			if target.StackDriver != _|_ {
 				queryType: "metrics"
 				metricQuery: {
@@ -212,7 +222,7 @@ import (
 					metricKind:         target.StackDriver.MetricKind
 					metricType:         target.StackDriver.MetricType
 					editorMode:         target.StackDriver.EditorMode
-					if target.StackDriver.Preprocessor != _|_ { preprocessor: target.StackDriver.Preprocessor }
+					if target.StackDriver.Preprocessor != _|_ {preprocessor: target.StackDriver.Preprocessor}
 				}
 			}
 			if target.StackDriver == _|_ {
@@ -237,6 +247,7 @@ import (
 		if Variable.Type == "custom" {
 			{
 				type:       "custom"
+				label: Variable.Label
 				name:       VariableName
 				query:      strings.Join(Variable.Values, ",")
 				includeAll: Variable.IncludeAll
@@ -250,14 +261,15 @@ import (
 						if multi {listFunc.Contains(Variable.Current, VariableValue)}
 						if !multi {Variable.Current == VariableValue}
 					}
-					text:     VariableValue
-					value:    VariableValue
+					text:  VariableValue
+					value: VariableValue
 				}]
 			}
 		}
 		if Variable.Type == "query" {
 			{
 				type:       "query"
+				label: Variable.Label
 				name:       VariableName
 				datasource: Variable.DataSource
 				definition: Variable.Query
@@ -278,7 +290,7 @@ Grafana: #GrafanaSchema & {
 	templating: list: [ for variableName, variable in Variables {
 		{#Variable2Grafana, VariableName: variableName, Variable: variable}.G
 	}]
-	tags:   Tags
+	if !Test { tags:   Tags }
 	panels: listFunc.FlattenN([ for row in {#DashboardGriding, DashboardRows: Rows}.DashboardGrided {
 		if row.Collapsed {
 			[{

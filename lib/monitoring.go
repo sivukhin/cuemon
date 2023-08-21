@@ -57,6 +57,19 @@ const (
 	HeightField        = "Height"
 	VariablesField     = "Variables"
 	RowsField          = "Rows"
+	LegendField        = "Legend"
+	OverridesField     = "Overrides"
+	IdField            = "id"
+	UidField           = "uid"
+	TestField          = "Test"
+
+	DashesField    = "Dashes"
+	HiddenField    = "Hidden"
+	FillField      = "Fill"
+	YAxisField     = "YAxis"
+	ZIndexField    = "ZIndex"
+	LineWidthField = "LineWidth"
+	ColorField     = "Color"
 )
 
 const (
@@ -76,6 +89,43 @@ type monitoringContext struct {
 	context string
 }
 
+func (m monitoringContext) matchOverrides(legend string, overrides []GrafanaSeriesOverrides) ([]ast.Decl, bool) {
+	for _, override := range overrides {
+		matched, err := regexp.MatchString(strings.Trim(override.Alias, "/"), legend)
+		if err != nil {
+			log.Printf("unable to match legend %v against alias %v: %v", legend, override.Alias, err)
+			continue
+		}
+		if !matched {
+			continue
+		}
+		fields := make([]any, 0)
+		if override.Dashes != nil {
+			fields = append(fields, ast.NewIdent(DashesField), ast.NewBool(*override.Dashes))
+		}
+		if override.Hidden != nil {
+			fields = append(fields, ast.NewIdent(HiddenField), ast.NewBool(*override.Hidden))
+		}
+		if override.Color != nil {
+			fields = append(fields, ast.NewIdent(ColorField), ast.NewString(*override.Color))
+		}
+		if override.Fill != nil {
+			fields = append(fields, ast.NewIdent(FillField), &ast.BasicLit{Kind: token.INT, Value: strconv.Itoa(*override.Fill)})
+		}
+		if override.YAxis != nil {
+			fields = append(fields, ast.NewIdent(YAxisField), &ast.BasicLit{Kind: token.INT, Value: strconv.Itoa(*override.YAxis)})
+		}
+		if override.ZIndex != nil {
+			fields = append(fields, ast.NewIdent(ZIndexField), &ast.BasicLit{Kind: token.INT, Value: strconv.Itoa(*override.ZIndex)})
+		}
+		if override.LineWidth != nil {
+			fields = append(fields, ast.NewIdent(LineWidthField), &ast.BasicLit{Kind: token.INT, Value: strconv.Itoa(*override.LineWidth)})
+		}
+		return []ast.Decl{FieldIdent(OverridesField, ast.NewStruct(fields...))}, true
+	}
+	return nil, false
+}
+
 func (m monitoringContext) createPanel(panel JsonRaw[GrafanaPanel]) ([]ast.Decl, error) {
 	panelDecls, err := CueConvert(PanelVar, []string{GrafanaCue, MonCue, Panel2MonitoringCue}, map[string]string{
 		"Input":         string(panel.Raw),
@@ -92,6 +142,18 @@ func (m monitoringContext) createPanel(panel JsonRaw[GrafanaPanel]) ([]ast.Decl,
 		}, false)
 		if err != nil {
 			return nil, fmt.Errorf("unable to convert target #%v from panel '%v': %w", i, panel.Value.Title, err)
+		}
+		_, legendNode := findField(targetDecls, LegendField)
+		if legendNode == nil {
+			return nil, fmt.Errorf("legend is absent for target %v in panel %v", i, panel.Value.Title)
+		}
+		legend, err := literal.Unquote(legendNode.(*ast.BasicLit).Value)
+		if err != nil {
+			return nil, fmt.Errorf("legend for target %v in panel %v has unexpected format: %w", i, panel.Value.Title, err)
+		}
+		overrides, ok := m.matchOverrides(legend, panel.Value.SeriesOverrides)
+		if ok {
+			targetDecls = append(targetDecls, overrides...)
 		}
 		astutil.Apply(File(targetDecls), nil, func(cursor astutil.Cursor) bool {
 			lit, ok := cursor.Node().(*ast.BasicLit)
@@ -192,7 +254,19 @@ func (m monitoringContext) creteMeta(grafana Grafana) ([]ast.Decl, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to convert meta: %w", err)
 	}
-	return meta, nil
+	return append([]ast.Decl{
+		FieldIdent(TestField, ast.NewBinExpr(token.OR, ast.NewIdent("bool"),
+			&ast.UnaryExpr{Op: token.MUL, X: ast.NewBool(false)},
+		), &ast.Attribute{Text: "@tag(Test,type=bool)"}),
+		FieldIdent(GrafanaField, ast.NewStruct(
+			FieldIdent(IdField, ast.NewBinExpr(token.OR, ast.NewIdent("number"),
+				&ast.UnaryExpr{Op: token.MUL, X: ast.NewLit(token.INT, fmt.Sprintf("%v", grafana.Value.Id))},
+			), &ast.Attribute{Text: "@tag(Id,type=number)"}),
+			FieldIdent(UidField, ast.NewBinExpr(token.OR, ast.NewIdent("string"),
+				&ast.UnaryExpr{Op: token.MUL, X: ast.NewLit(token.STRING, fmt.Sprintf("\"%v\"", grafana.Value.Uid))},
+			), &ast.Attribute{Text: "@tag(Uid,type=string)"}),
+		)),
+	}, meta...), nil
 }
 
 func ExtractRows(grafana Grafana) []GrafanaPanel {

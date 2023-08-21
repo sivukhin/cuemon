@@ -2,8 +2,12 @@ package lib
 
 import (
 	"bytes"
+	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/ast"
+	"cuelang.org/go/cue/cuecontext"
 	"cuelang.org/go/cue/format"
+	"cuelang.org/go/cue/load"
+	cueJson "cuelang.org/go/pkg/encoding/json"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -128,5 +132,50 @@ func Update(input, dir string, overwrite bool) error {
 		return err
 	}
 	log.Printf("updated file %v", updates[0].Path)
+	return nil
+}
+
+type DashboardPayload struct {
+	Dashboard json.RawMessage `json:"dashboard"`
+	Message   string          `json:"message"`
+	Overwrite bool            `json:"overwrite"`
+}
+
+func Push(dashboard string, message string, grafanaUrl string, dashboardTmp string) error {
+	if dashboard == "" {
+		return fmt.Errorf("dashboard should be provided")
+	}
+	if message == "" {
+		return fmt.Errorf("message should be non empty")
+	}
+	apiKey := os.Getenv("GRAFANA_API_KEY")
+	if apiKey == "" {
+		return fmt.Errorf("env var 'GRAFANA_API_KEY' should be set")
+	}
+	cueContext := cuecontext.New()
+	dir, file := path.Split(dashboard)
+	originalBuildInstances := load.Instances([]string{file}, &load.Config{
+		Dir:     dir,
+		TagVars: map[string]load.TagVar{},
+	})
+	original, err := cueContext.BuildInstances(originalBuildInstances)
+	if err != nil {
+		return fmt.Errorf("unable to load dashboard: %w", err)
+	}
+	grafana := original[0].LookupPath(cue.MakePath(cue.Str(GrafanaField)))
+	serialized, err := cueJson.Marshal(grafana)
+	if err != nil {
+		return fmt.Errorf("unable to export CUE value to json: %w", err)
+	}
+	payload := DashboardPayload{
+		Dashboard: []byte(serialized),
+		Message:   message,
+		Overwrite: true,
+	}
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("unable to serialize dashboard payload: %w", err)
+	}
+	fmt.Printf("%v", string(payloadBytes))
 	return nil
 }

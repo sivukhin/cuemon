@@ -19,6 +19,12 @@ var (
 	updateInput     = update.String("input", "", "input file with Grafana panel JSON (stdin if not provided)")
 	updateDir       = update.String("dir", "", "target directory with cuemon setup")
 	updateOverwrite = update.Bool("overwrite", false, "enable unsafe mode which can overwrite files")
+
+	push          = flag.NewFlagSet("push", flag.ExitOnError)
+	pushDashboard = push.String("dashboard", "", "target CUE file with cuemon dashboard setup")
+	pushMessage   = push.String("message", "", "message describing dashboard updates")
+	pushGrafana   = push.String("grafana", "", "url to Grafana instance")
+	pushTemp      = push.String("temp", "", "temp dashboard name which will be used instead of original dashboard id")
 )
 
 func printUsageAndExit() {
@@ -61,6 +67,15 @@ func main() {
 		}
 		if err := lib.Update(*updateInput, *updateDir, *updateOverwrite); err != nil {
 			fmt.Printf("update error: %v\n", multilineErr(err, errIdent))
+			os.Exit(1)
+		}
+	case "push":
+		if err := push.Parse(os.Args[2:]); err != nil {
+			fmt.Printf("push error: %v\n", multilineErr(err, errIdent))
+			printUsageAndExit()
+		}
+		if err := lib.Push(*pushDashboard, *pushMessage, strings.TrimRight(*pushGrafana, "/"), *pushTemp); err != nil {
+			fmt.Printf("push error: %v\n", multilineErr(err, errIdent))
 			os.Exit(1)
 		}
 	default:

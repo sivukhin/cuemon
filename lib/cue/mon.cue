@@ -14,6 +14,16 @@ Tags: [...string]
 	Expr:    string | *""
 	Legend?: string
 	Hide: bool | *false
+	Overrides?: {
+		Alias?: string
+		Dashes?: bool
+		Hidden?: bool
+		Fill?: number
+		YAxis?: number
+		ZIndex?: number
+		LineWidth?: number
+		Color?: string
+	}
 	StackDriver?: {
 		Reducer: string | *""
 		Filters: [...string]
@@ -43,7 +53,9 @@ Tags: [...string]
 		Lines: number | *1
 		NullValue: *"null" | "null_as_zero" | "connected"
 		Legend: "table_right" | *"table_bottom" | "list_right" | "list_bottom" | "none"
-		Values: [...or(#LegendValues)] | *["current"]
+		Values: [...or(#LegendValues)] | *[]
+		Sort:           "current" | "avg" | "max" | "min" | "total" | *null
+		SortDesc:       bool | *false
 	}
 	if Type == "stat" {
 		TextMode: *"auto" | "value" | "value_and_name" | "name" | "none"
@@ -82,6 +94,7 @@ Tags: [...string]
 		Value: string
 	}
 	if Type == "custom" {
+		Label?: string
 		Values: [...string]
 		Multi:      bool | *true
 		IncludeAll: bool | *Multi
@@ -91,6 +104,7 @@ Tags: [...string]
 		}
 	}
 	if Type == "query" {
+		Label?: string
 		DataSource: string
 		Query:      string
 		Multi:      bool | *true

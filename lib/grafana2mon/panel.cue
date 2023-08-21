@@ -52,6 +52,8 @@ import (
 		}
 		NullValue: Input.nullPointMode
 		Values: [ for key, value in Input.legend if list.Contains(#LegendValues, key) && value {key}]
+		Sort: Input.legend.sort
+		SortDesc: Input.legend.sortDesc
 		if !Input.legend.show {Legend: "none"}
 		if Input.legend.show && Input.legend.alignAsTable && Input.legend.rightSide {Legend: "table_right"}
 		if Input.legend.show && Input.legend.alignAsTable && !Input.legend.rightSide {Legend: "table_bottom"}

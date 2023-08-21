@@ -26,8 +26,8 @@ func File(decl []ast.Decl) *ast.File {
 	return &ast.File{Decls: decl}
 }
 
-func FieldIdent(ident string, value ast.Expr) *ast.Field {
-	return &ast.Field{Label: ast.NewIdent(ident), Value: value}
+func FieldIdent(ident string, value ast.Expr, attrs ...*ast.Attribute) *ast.Field {
+	return &ast.Field{Label: ast.NewIdent(ident), Value: value, Attrs: attrs}
 }
 
 func IntList(ints []int) *ast.ListLit {
