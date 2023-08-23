@@ -1,6 +1,7 @@
 package cuemon
 
 #GrafanaSchema: {
+	#version: number | null
 	#Tooltip: {Default: 0, SharedCrosshair: 1, SharedTooltip: 2}
 
 	schemaVersion: number
@@ -16,6 +17,8 @@ package cuemon
 	graphTooltip:  #Tooltip.Default | *#Tooltip.SharedCrosshair | #Tooltip.SharedTooltip
 	time: {from: string | *"now-6h", to: string | *"now"}
 	version?: int
+	if #version != null { version: #version }
+
 	refresh:  string | *"15m"
 
 	annotations: list:             [...#GrafanaAnnotation] | *[]

@@ -44,25 +44,26 @@ func toFilename(s string) string {
 }
 
 const (
-	GrafanaField       = "Grafana"
-	SchemaVersionField = "schemaVersion"
-	TitleField         = "Title"
-	CollapsedField     = "Collapsed"
-	ColumnsField       = "Columns"
-	HeightsField       = "Heights"
-	PanelField         = "Panel"
-	PanelGridField     = "PanelGrid"
-	MetricsField       = "Metrics"
-	WidthField         = "Width"
-	HeightField        = "Height"
-	VariablesField     = "Variables"
-	RowsField          = "Rows"
-	LegendField        = "Legend"
-	OverridesField     = "Overrides"
-	GrafanaIdField     = "id"
-	GrafanaUidField    = "uid"
-	GrafanaTitleField  = "title"
-	TestField          = "Test"
+	GrafanaField        = "Grafana"
+	SchemaVersionField  = "schemaVersion"
+	TitleField          = "Title"
+	CollapsedField      = "Collapsed"
+	ColumnsField        = "Columns"
+	HeightsField        = "Heights"
+	PanelField          = "Panel"
+	PanelGridField      = "PanelGrid"
+	MetricsField        = "Metrics"
+	WidthField          = "Width"
+	HeightField         = "Height"
+	VariablesField      = "Variables"
+	RowsField           = "Rows"
+	LegendField         = "Legend"
+	OverridesField      = "Overrides"
+	GrafanaIdField      = "id"
+	GrafanaUidField     = "uid"
+	GrafanaTitleField   = "title"
+	GrafanaVersionField = "#version"
+	TestField           = "Test"
 
 	DashesField    = "Dashes"
 	HiddenField    = "Hidden"
@@ -269,6 +270,9 @@ func (m monitoringContext) creteMeta(grafana Grafana) ([]ast.Decl, error) {
 			FieldIdent(GrafanaTitleField, ast.NewBinExpr(token.OR, ast.NewIdent("string"),
 				&ast.UnaryExpr{Op: token.MUL, X: ast.NewLit(token.STRING, fmt.Sprintf("\"%v\"", grafana.Value.Title))},
 			), &ast.Attribute{Text: "@tag(Title,type=string)"}),
+			FieldIdent(GrafanaVersionField, ast.NewBinExpr(token.OR, ast.NewIdent("number"),
+				&ast.UnaryExpr{Op: token.MUL, X: ast.NewNull()},
+			), &ast.Attribute{Text: "@tag(Version,type=number)"}),
 		)),
 	}, meta...), nil
 }
