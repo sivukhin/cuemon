@@ -158,6 +158,7 @@ Test: bool | *false @tag(Test,type=bool)
 			if Panel.Lines == 0 {
 				lines: false
 			}
+			fill:          Panel.Fill
 			nullPointMode: Panel.NullValue
 			legend: {
 				show:         Panel.Legend != "none"
