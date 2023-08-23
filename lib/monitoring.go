@@ -93,14 +93,21 @@ type monitoringContext struct {
 
 func (m monitoringContext) matchOverrides(legend string, overrides []GrafanaSeriesOverrides) ([]ast.Decl, bool) {
 	for _, override := range overrides {
-		matched, err := regexp.MatchString(strings.Trim(override.Alias, "/"), legend)
-		if err != nil {
-			log.Printf("unable to match legend %v against alias %v: %v", legend, override.Alias, err)
-			continue
+		if strings.HasPrefix(override.Alias, "/") && strings.HasSuffix(override.Alias, "/") {
+			matched, err := regexp.MatchString(strings.Trim(override.Alias, "/"), legend)
+			if err != nil {
+				log.Printf("unable to match legend %v against alias %v: %v", legend, override.Alias, err)
+				continue
+			}
+			if !matched {
+				continue
+			}
+		} else {
+			if override.Alias != legend {
+				continue
+			}
 		}
-		if !matched {
-			continue
-		}
+
 		fields := make([]any, 0)
 		if override.Dashes != nil {
 			fields = append(fields, ast.NewIdent(DashesField), ast.NewBool(*override.Dashes))

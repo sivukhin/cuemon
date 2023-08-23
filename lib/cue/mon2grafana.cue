@@ -204,7 +204,14 @@ Test: bool | *false @tag(Test,type=bool)
 		seriesOverrides: [ for i, target in Panel.Metrics if target.Overrides != _|_ {
 			$$hashKey: "object:\(10*(Row.Id+Panel.Id+2+i))"
 			if target.Overrides.Alias != _|_ {alias: target.Overrides.Alias}
-			if target.Overrides.Alias == _|_ {alias: "/" + regexp.ReplaceAll("{{.*?}}", target.Legend, ".*") + "/"}
+			if target.Overrides.Alias == _|_ {
+				if strings.Contains(target.Legend, "{{") && strings.Contains(target.Legend, "}}") {
+					alias: "/" + regexp.ReplaceAll("{{.*?}}", target.Legend, ".*") + "/"
+				}
+				if !strings.Contains(target.Legend, "{{") || !strings.Contains(target.Legend, "}}") {
+					alias: target.Legend
+				}
+			}
 			if target.Overrides.Dashes != _|_ {dashes: target.Overrides.Dashes}
 			if target.Overrides.Hidden != _|_ {hiddenSeries: target.Overrides.Hidden}
 			if target.Overrides.Fill != _|_ {fill: target.Overrides.Fill}
