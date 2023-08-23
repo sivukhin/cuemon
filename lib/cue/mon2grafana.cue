@@ -116,6 +116,13 @@ Test: bool | *false @tag(Test,type=bool)
 			}
 		}
 		if Panel.Alert != _|_ {
+			thresholds: [ for notification in Panel.Alert.Notifications {
+				let match = regexp.FindNamedSubmatch(#"(?P<reducer>\w+)\((?P<ref>[^,]+),(?P<duration>1m|5m|10m|15m|1h),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<) (?P<param>[0-9.]+)"#, notification)
+				value: strconv.ParseFloat(match.param, 64)
+				if match.op == ">" {op: "gt"}
+				if match.op == "<" {op: "lt"}
+			}]
+
 			alert: {
 				alertRuleTags:       Panel.Alert.Tags
 				executionErrorState: Panel.Alert.ExecutionErrorState

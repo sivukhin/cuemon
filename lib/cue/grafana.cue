@@ -17,14 +17,23 @@ package cuemon
 	graphTooltip:  #Tooltip.Default | *#Tooltip.SharedCrosshair | #Tooltip.SharedTooltip
 	time: {from: string | *"now-6h", to: string | *"now"}
 	version?: int
-	if #version != null { version: #version }
+	if #version != null {version: #version}
 
-	refresh:  string | *"15m"
+	refresh: string | *"15m"
 
-	annotations: list:             [...#GrafanaAnnotation] | *[]
+	annotations: list: [...#GrafanaAnnotation] | *[{
+		builtIn:    1
+		datasource: "-- Grafana --"
+		enable:     true
+		hide:       true
+		iconColor:  "rgba(0, 211, 255, 1)"
+		name:       "Annotations & Alerts"
+		type:       "dashboard"
+	}]
+
 	timepicker: refresh_intervals: [...string] | *["10s", "30s", "1m", "5m", "15m", "30m", "1h"]
 
-	tags?: [...string]
+	tags: [...string] | *[]
 	links?: [...#GrafanaLink]
 	panels?: [...{#GrafanaPanel, #schemaVersion: schemaVersion}]
 	templating: list?: [...#GrafanaTemplate]
@@ -65,10 +74,11 @@ package cuemon
 		hide:  hide | *#Hide.Variable
 	}
 	if type == "custom" {
+		tags: []
 		query: string
 		current: {
 			selected: bool | *true
-			tags: []
+			tags?: []
 			if multi {
 				text: [...or([ for option in options {option.text}])]
 				value: [...or([ for option in options {option.value}])]
@@ -91,10 +101,10 @@ package cuemon
 		refresh:    number | *1
 		multi:      bool
 		includeAll: bool | *multi
-		regex?:     string
+		regex:      string | *""
 		allValue:   string | *null
 		sort:       *#Sort.Disabled | #Sort.AlphAsc | #Sort.AlphDesc | #Sort.NumAsc | #Sort.NumDesc | #Sort.AlphAscNonSensitive | #Sort.AlphDescNonSensitive
-		current: {selected: bool | *true, tags: [], text: [...string], value: [...string]}
+		current: {selected: bool | *true, tags?: [], text: [...string], value: [...string]}
 		query: {query: string | *definition, refId: string | *"StandardVariableQuery"}
 		hide: hide | *#Hide.None
 		options: []
@@ -236,7 +246,7 @@ package cuemon
 #GrafanaTooltip: {
 	#Sort: {None: 0, Increasing: 1, Decreasing: 2}
 	shared:     bool | *true
-	sort:       #Sort.None | #Sort.Increasing | #Sort.Decreasing
+	sort:       #Sort.None | #Sort.Increasing | *#Sort.Decreasing
 	value_type: string | *"individual"
 }
 
@@ -322,7 +332,7 @@ package cuemon
 	datasource:       string
 	description:      string | *""
 	targets: [...{#GrafanaTarget, #schemaVersion: v}]
-	tooltip?: #GrafanaTooltip
+	tooltip: #GrafanaTooltip
 	thresholds: [...#GrafanaThreshold]
 	yaxes: [...#GrafanaYAxes]
 	legend: {#GrafanaLegend, #schemaVersion: v}
@@ -334,7 +344,7 @@ package cuemon
 	lines:         bool | *true
 	nullPointMode: string | *"null"
 	linewidth:     number | *1
-	aliasColors?: {}
+	aliasColors: {}
 	bars:          bool | *false
 	dashes:        bool | *false
 	hiddenSeries:  bool | *false
@@ -369,8 +379,8 @@ package cuemon
 		text?: {}
 		sortBy: []
 	}
-	fieldConfig?: {
-		overrides?: [
+	fieldConfig: {
+		overrides: [
 			...{
 				matcher: {
 					id:      string
