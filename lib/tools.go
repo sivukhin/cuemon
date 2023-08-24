@@ -183,7 +183,7 @@ func searchDashboards(grafanaUrl string, authorization auth.AuthorizationMethods
 	var dashboards []Grafana
 	err = json.Unmarshal(payload, &dashboards)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse response for url %v: %w (%v)", request.URL.String(), err, string(payload))
+		return nil, fmt.Errorf("unable to parse response for url %v: %w", request.URL.String(), err)
 	}
 	return dashboards, nil
 }
