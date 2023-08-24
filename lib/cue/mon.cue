@@ -53,6 +53,7 @@ Tags: [...string]
 		Points:    number | *0
 		Lines:     number | *1
 		Fill:      number | *0
+		Stack:     bool | *false
 		NullValue: *"null" | "null_as_zero" | "connected"
 		Legend:    "table_right" | *"table_bottom" | "list_right" | "list_bottom" | "none"
 		Values:    [...or(#LegendValues)] | *[]

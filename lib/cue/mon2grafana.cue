@@ -165,6 +165,7 @@ Test: bool | *false @tag(Test,type=bool)
 			if Panel.Lines == 0 {
 				lines: false
 			}
+			stack:         Panel.Stack
 			fill:          Panel.Fill
 			nullPointMode: Panel.NullValue
 			legend: {

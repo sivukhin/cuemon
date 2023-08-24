@@ -54,6 +54,7 @@ import (
 		if !Input.lines {
 			Lines: 0
 		}
+		Stack:     Input.stack
 		Fill:      Input.fill
 		NullValue: Input.nullPointMode
 		Values: [ for key, value in Input.legend if list.Contains(#LegendValues, key) && value {key}]
