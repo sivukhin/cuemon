@@ -1,15 +1,10 @@
 package main
 
 import (
-	"bufio"
-	"context"
 	"flag"
 	"fmt"
-	"github.com/chromedp/cdproto/network"
-	"github.com/chromedp/chromedp"
-	"github.com/google/shlex"
 	"github.com/sivukhin/cuemon/lib"
-	"log"
+	"github.com/sivukhin/cuemon/lib/auth"
 	"os"
 	"strings"
 )
@@ -49,14 +44,16 @@ func multilineErr(err error, ident string) string {
 	return strings.Join(append([]string{""}, lines...), "\n"+ident)
 }
 
-const errIdent = "  "
+const (
+	errIdent             = "  "
+	authorizationSubject = "GRAFANA"
+)
 
-type RunContext struct {
-	cookie      string
-	interactive bool
-}
-
-func (c *RunContext) run(args []string) error {
+func run(args []string) error {
+	authorization, err := auth.AnalyzeSubjectAuthorization(os.Environ())
+	if err != nil {
+		return fmt.Errorf("failed to analyze authorization methods: %w", err)
+	}
 	switch args[0] {
 	case "bootstrap":
 		if err := bootstrap.Parse(args[1:]); err != nil {
@@ -73,17 +70,10 @@ func (c *RunContext) run(args []string) error {
 			return fmt.Errorf("update error: %v", multilineErr(err, errIdent))
 		}
 	case "push":
-		if c.cookie == "" && c.interactive {
-			cookie, err := InitializeCookie("https://moj-monitoring.sharechat.com")
-			if err != nil {
-				return fmt.Errorf("unable to initialize run context: %v", err)
-			}
-			c.cookie = cookie
-		}
 		if err := push.Parse(args[1:]); err != nil {
 			return fmt.Errorf("push error: %v", multilineErr(err, errIdent))
 		}
-		if err := lib.Push(strings.TrimRight(*pushGrafana, "/"), c.cookie, *pushDashboard, *pushMessage, *pushTemp); err != nil {
+		if err := lib.Push(strings.TrimRight(*pushGrafana, "/"), authorization[authorizationSubject], *pushDashboard, *pushMessage, *pushTemp); err != nil {
 			return fmt.Errorf("push error: %v", multilineErr(err, errIdent))
 		}
 	case "help":
@@ -94,71 +84,15 @@ func (c *RunContext) run(args []string) error {
 	return nil
 }
 
-func InitializeCookie(grafanaUrl string) (string, error) {
-	dir, err := os.MkdirTemp("", "chromedp-example")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	opts := append(chromedp.DefaultExecAllocatorOptions[3:], chromedp.DisableGPU, chromedp.UserDataDir(dir))
-	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
-	defer cancel()
-	taskCtx, cancel := chromedp.NewContext(allocCtx, chromedp.WithLogf(log.Printf))
-	defer cancel()
-
-	var cookie string
-	err = chromedp.Run(taskCtx,
-		chromedp.Navigate(grafanaUrl),
-		chromedp.WaitVisible(".dashboard-container", chromedp.ByQuery),
-		chromedp.ActionFunc(func(ctx context.Context) error {
-			cookies, err := network.GetCookies().Do(ctx)
-			if err != nil {
-				return err
-			}
-			cookieValues := make([]string, 0)
-			for _, cookie := range cookies {
-				cookieValues = append(cookieValues, fmt.Sprintf("%v=%v", cookie.Name, cookie.Value))
-			}
-			cookie = strings.Join(cookieValues, "; ")
-			cancel()
-			return nil
-		}),
-	)
-	if err != nil {
-		return cookie, fmt.Errorf("unable to initialize context: %w", err)
-	}
-	<-taskCtx.Done()
-	return cookie, nil
-}
-
 func main() {
 	if len(os.Args) < 2 {
 		printUsage()
 		os.Exit(2)
 	}
-	runContext := RunContext{cookie: os.Getenv("GRAFANA_COOKIE")}
-	if os.Args[1] == "interactive" {
-		runContext.interactive = true
-		fmt.Printf("started interactive mode\n$> ")
-		scanner := bufio.NewScanner(os.Stdin)
-		for scanner.Scan() {
-			args, err := shlex.Split(scanner.Text())
-			if err != nil {
-				fmt.Printf("invalid command format: %v\n", err)
-			} else {
-				err = runContext.run(args)
-				if err != nil {
-					fmt.Printf("%v\n", err)
-				}
-			}
-			fmt.Printf("$> ")
-		}
-	} else {
-		err := runContext.run(os.Args[1:])
-		if err != nil {
-			fmt.Printf("%v\n", err)
-			printUsage()
-			os.Exit(2)
-		}
+	err := run(os.Args[1:])
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		printUsage()
+		os.Exit(2)
 	}
 }

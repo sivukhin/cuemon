@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/sivukhin/cuemon/lib/auth"
 	"io"
 	"log"
 	"net/http"
@@ -149,7 +150,19 @@ type DashboardPayload struct {
 	Overwrite bool            `json:"overwrite"`
 }
 
-func searchDashboards(grafanaUrl string, cookie string, name string) ([]Grafana, error) {
+func addAuthorization(request *http.Request, authorization auth.AuthorizationMethods) {
+	if authorization.Cookie != nil {
+		request.Header.Set("Cookie", *authorization.Cookie)
+	}
+	if authorization.AuthorizationHeader != nil {
+		request.Header.Set("Authorization", *authorization.AuthorizationHeader)
+	}
+	if authorization.ProxyAuthorizationHeader != nil {
+		request.Header.Set("Proxy-Authorization", *authorization.ProxyAuthorizationHeader)
+	}
+}
+
+func searchDashboards(grafanaUrl string, authorization auth.AuthorizationMethods, name string) ([]Grafana, error) {
 	request, err := http.NewRequest("GET", grafanaUrl+"/api/search", nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create request for url %v: %w", grafanaUrl, err)
@@ -158,7 +171,7 @@ func searchDashboards(grafanaUrl string, cookie string, name string) ([]Grafana,
 	q.Add("query", name)
 	request.URL.RawQuery = q.Encode()
 	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("Cookie", cookie)
+	addAuthorization(request, authorization)
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("unable to send request for url %v: %w", request.URL.String(), err)
@@ -170,12 +183,12 @@ func searchDashboards(grafanaUrl string, cookie string, name string) ([]Grafana,
 	var dashboards []Grafana
 	err = json.Unmarshal(payload, &dashboards)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse response for url %v: %w", request.URL.String(), err)
+		return nil, fmt.Errorf("unable to parse response for url %v: %w (%v)", request.URL.String(), err, string(payload))
 	}
 	return dashboards, nil
 }
 
-func updateDashboard(grafanaUrl string, cookie string, payload DashboardPayload) error {
+func updateDashboard(grafanaUrl string, authorization auth.AuthorizationMethods, payload DashboardPayload) error {
 	payloadBytes, err := json.Marshal(payload)
 	if err != nil {
 		return fmt.Errorf("unable to serialize request body for url %v: %w", grafanaUrl, err)
@@ -185,7 +198,7 @@ func updateDashboard(grafanaUrl string, cookie string, payload DashboardPayload)
 		return fmt.Errorf("unable to create request for url %v: %w", grafanaUrl, err)
 	}
 	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("Cookie", cookie)
+	addAuthorization(request, authorization)
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("unable to send request for url %v: %w", request.URL.String(), err)
@@ -208,7 +221,7 @@ const (
 	TitleTag = "Title"
 )
 
-func Push(grafanaUrl string, cookie string, dashboard string, message string, dashboardTmp string) error {
+func Push(grafanaUrl string, authorization auth.AuthorizationMethods, dashboard string, message string, dashboardTmp string) error {
 	if grafanaUrl == "" {
 		return fmt.Errorf("grafana URL should be provided")
 	}
@@ -218,13 +231,10 @@ func Push(grafanaUrl string, cookie string, dashboard string, message string, da
 	if message == "" {
 		return fmt.Errorf("message should be non empty")
 	}
-	if cookie == "" {
-		return fmt.Errorf("cookie should be provided implicitly through RunContext in interactive mode or explicitly through GRAFANA_COOKIE env variable")
-	}
 	tags := make([]string, 0)
 	if dashboardTmp != "" {
 		log.Printf("search for temp dashboard")
-		dashboards, err := searchDashboards(grafanaUrl, cookie, dashboardTmp)
+		dashboards, err := searchDashboards(grafanaUrl, authorization, dashboardTmp)
 		if err != nil {
 			return err
 		}
@@ -265,8 +275,9 @@ func Push(grafanaUrl string, cookie string, dashboard string, message string, da
 		Message:   message,
 		Overwrite: true,
 	}
+	_ = payload
 	log.Printf("prepared payload for dashboard update")
-	err = updateDashboard(grafanaUrl, cookie, payload)
+	err = updateDashboard(grafanaUrl, authorization, payload)
 	if err != nil {
 		return fmt.Errorf("unable to update grafana dashboard: %w", err)
 	}
