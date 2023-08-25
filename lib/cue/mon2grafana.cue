@@ -116,7 +116,7 @@ Test: bool | *false @tag(Test,type=bool)
 			}
 		}
 		if Panel.Alert != _|_ {
-			let alertRegex = #"(?P<reducer>\w+)\((?P<ref>[^,]+),(?P<duration>1m|5m|10m|15m|1h),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<|in) [( ]*(?P<param1>[0-9.]+)[, ]*(?P<param2>[0-9.]+)?[) ]*"#
+			let alertRegex = #"(?P<reducer>\w+)\((?P<ref>[^,]+),(?P<duration>1m|5m|10m|15m|1h),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<|in|notin) [( ]*(?P<param1>[0-9.]+)[, ]*(?P<param2>[0-9.]+)?[) ]*"#
 			let firstNotification = Panel.Alert.Notifications[0]
 			let firstMatch = regexp.FindNamedSubmatch(alertRegex, firstNotification)
 			if firstMatch.op == "in" {
