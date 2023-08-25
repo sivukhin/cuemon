@@ -221,7 +221,7 @@ const (
 	TitleTag = "Title"
 )
 
-func Push(grafanaUrl string, authorization auth.AuthorizationMethods, dashboard string, message string, dashboardTmp string) error {
+func Push(grafanaUrl string, authorization auth.AuthorizationMethods, dashboard string, message string, dashboardPlayground string) error {
 	if grafanaUrl == "" {
 		return fmt.Errorf("grafana URL should be provided")
 	}
@@ -232,28 +232,28 @@ func Push(grafanaUrl string, authorization auth.AuthorizationMethods, dashboard 
 		return fmt.Errorf("message should be non empty")
 	}
 	tags := make([]string, 0)
-	if dashboardTmp != "" {
-		log.Printf("search for temp dashboard")
-		dashboards, err := searchDashboards(grafanaUrl, authorization, dashboardTmp)
+	if dashboardPlayground != "" {
+		log.Printf("search for playground dashboard")
+		dashboards, err := searchDashboards(grafanaUrl, authorization, dashboardPlayground)
 		if err != nil {
 			return err
 		}
 		if len(dashboards) == 0 {
-			return fmt.Errorf("not found any dashboard matching query '%v'", dashboardTmp)
+			return fmt.Errorf("not found any dashboard matching query '%v'", dashboardPlayground)
 		}
 		if len(dashboards) > 1 {
 			names := make([]string, 0)
 			for _, d := range dashboards {
 				names = append(names, d.Value.Title)
 			}
-			return fmt.Errorf("found many dashboards matching query '%v': %v", dashboardTmp, strings.Join(names, ", "))
+			return fmt.Errorf("found many dashboards matching query '%v': %v", dashboardPlayground, strings.Join(names, ", "))
 		}
-		tempDashboard := dashboards[0]
-		tags = append(tags, fmt.Sprintf("%v=%v", IdTag, tempDashboard.Value.Id))
-		tags = append(tags, fmt.Sprintf("%v=%v", UidTag, tempDashboard.Value.Uid))
-		tags = append(tags, fmt.Sprintf("%v=%v", TitleTag, tempDashboard.Value.Title))
+		playgroundDashboard := dashboards[0]
+		tags = append(tags, fmt.Sprintf("%v=%v", IdTag, playgroundDashboard.Value.Id))
+		tags = append(tags, fmt.Sprintf("%v=%v", UidTag, playgroundDashboard.Value.Uid))
+		tags = append(tags, fmt.Sprintf("%v=%v", TitleTag, playgroundDashboard.Value.Title))
 		tags = append(tags, fmt.Sprintf("%v=%v", TestTag, true))
-		log.Printf("found temp dashboard with id: %v, uid: %v, title: %v", tempDashboard.Value.Id, tempDashboard.Value.Uid, tempDashboard.Value.Title)
+		log.Printf("found playground dashboard with id: %v, uid: %v, title: %v", playgroundDashboard.Value.Id, playgroundDashboard.Value.Uid, playgroundDashboard.Value.Title)
 	}
 	cueContext := cuecontext.New()
 	dir, file := path.Split(dashboard)

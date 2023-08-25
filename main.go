@@ -21,11 +21,11 @@ var (
 	updateDir       = update.String("dir", "", "target directory with cuemon setup")
 	updateOverwrite = update.Bool("overwrite", false, "enable unsafe mode which can overwrite files")
 
-	push          = flag.NewFlagSet("push", flag.ExitOnError)
-	pushDashboard = push.String("dashboard", "", "target CUE file with cuemon dashboard setup")
-	pushMessage   = push.String("message", "", "message describing dashboard updates")
-	pushGrafana   = push.String("grafana", "", "url to Grafana instance")
-	pushTemp      = push.String("temp", "", "temp dashboard name which will be used instead of original dashboard id")
+	push           = flag.NewFlagSet("push", flag.ExitOnError)
+	pushDashboard  = push.String("dashboard", "", "target CUE file with cuemon dashboard setup")
+	pushMessage    = push.String("message", "", "message describing dashboard updates")
+	pushGrafana    = push.String("grafana", "", "url to Grafana instance")
+	pushPlayground = push.String("playground", "", "playground dashboard name which will be updated instead of original dashboard id")
 )
 
 func printUsage() {
@@ -73,7 +73,7 @@ func run(args []string) error {
 		if err := push.Parse(args[1:]); err != nil {
 			return fmt.Errorf("push error: %v", multilineErr(err, errIdent))
 		}
-		if err := lib.Push(strings.TrimRight(*pushGrafana, "/"), authorization[authorizationSubject], *pushDashboard, *pushMessage, *pushTemp); err != nil {
+		if err := lib.Push(strings.TrimRight(*pushGrafana, "/"), authorization[authorizationSubject], *pushDashboard, *pushMessage, *pushPlayground); err != nil {
 			return fmt.Errorf("push error: %v", multilineErr(err, errIdent))
 		}
 	case "help":
