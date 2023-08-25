@@ -125,7 +125,13 @@ Test: bool | *false @tag(Test,type=bool)
 					{value: strconv.ParseFloat(firstMatch.param2, 64), op: "lt"},
 				]
 			}
-			if firstMatch.op != "in" {
+			if firstMatch.op == "notin" {
+				thresholds: [
+					{value: strconv.ParseFloat(firstMatch.param1, 64), op: "lt"},
+					{value: strconv.ParseFloat(firstMatch.param2, 64), op: "gt"},
+				]
+			}
+			if firstMatch.op != "in" && firstMatch.op != "notin" {
 				thresholds: [{
 					value: strconv.ParseFloat(firstMatch.param1, 64)
 					if firstMatch.op == ">" {op: "gt"}
@@ -146,6 +152,10 @@ Test: bool | *false @tag(Test,type=bool)
 					if match.op == "in" {
 						evaluator: params: [strconv.ParseFloat(match.param1, 64), strconv.ParseFloat(match.param2, 64)]
 						evaluator: type: "within_range"
+					}
+					if match.op == "notin" {
+						evaluator: params: [strconv.ParseFloat(match.param1, 64), strconv.ParseFloat(match.param2, 64)]
+						evaluator: type: "outside_range"
 					}
 					if match.op == ">" {
 						evaluator: params: [strconv.ParseFloat(match.param1, 64)]

@@ -195,7 +195,7 @@ package cuemon
 			type: string | *"avg"
 		}
 		evaluator: {
-			type: string | "lt" | "gt" | "within_range"
+			type: string | "lt" | "gt" | "within_range" | "outside_range"
 			params: [...number]
 		}
 	}]

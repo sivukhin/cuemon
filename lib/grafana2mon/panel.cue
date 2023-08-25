@@ -22,6 +22,7 @@ import (
 				if condition.evaluator.type == "gt" { "\(condition.reducer.type)(\(condition.query.params[0]),\(condition.query.params[1]),\(condition.query.params[2])) > \(condition.evaluator.params[0])" }
 				if condition.evaluator.type == "lt" { "\(condition.reducer.type)(\(condition.query.params[0]),\(condition.query.params[1]),\(condition.query.params[2])) < \(condition.evaluator.params[0])" }
 				if condition.evaluator.type == "within_range" { "\(condition.reducer.type)(\(condition.query.params[0]),\(condition.query.params[1]),\(condition.query.params[2])) in (\(condition.evaluator.params[0]), \(condition.evaluator.params[1]))" }
+				if condition.evaluator.type == "outside_range" { "\(condition.reducer.type)(\(condition.query.params[0]),\(condition.query.params[1]),\(condition.query.params[2])) notin (\(condition.evaluator.params[0]), \(condition.evaluator.params[1]))" }
 			}]
 			Channels: [ for notification in Input.alert.notifications {notification.uid}]
 		}
