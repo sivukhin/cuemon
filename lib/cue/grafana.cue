@@ -188,7 +188,7 @@ package cuemon
 	notifications: [...{uid: string}]
 	conditions: [...{
 		type: string | *"query"
-		operator: type: string | *"and"
+		operator: type: string | "and" | *"or"
 		query: params: [...string]
 		reducer: {
 			params: []
