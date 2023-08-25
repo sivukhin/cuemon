@@ -92,7 +92,7 @@ Test: bool | *false @tag(Test,type=bool)
 	}]
 }
 
-#Alphabet: [ for x in listFunc.Range(10, 36, 1) {strings.ToUpper(strconv.FormatInt(x, 36))}]
+#Alphabet: [ for x in listFunc.Range(10, 256+10, 1) {strings.ToUpper(strconv.FormatInt(x, 36))}]
 
 #Panel2Grafana: {
 	Row: {#Row, Y: number, Id: number}
@@ -116,12 +116,22 @@ Test: bool | *false @tag(Test,type=bool)
 			}
 		}
 		if Panel.Alert != _|_ {
-			thresholds: [ for notification in Panel.Alert.Notifications {
-				let match = regexp.FindNamedSubmatch(#"(?P<reducer>\w+)\((?P<ref>[^,]+),(?P<duration>1m|5m|10m|15m|1h),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<) (?P<param>[0-9.]+)"#, notification)
-				value: strconv.ParseFloat(match.param, 64)
-				if match.op == ">" {op: "gt"}
-				if match.op == "<" {op: "lt"}
-			}]
+			let alertRegex = #"(?P<reducer>\w+)\((?P<ref>[^,]+),(?P<duration>1m|5m|10m|15m|1h),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<|in) [( ]*(?P<param1>[0-9.]+)[, ]*(?P<param2>[0-9.]+)?[) ]*"#
+			let firstNotification = Panel.Alert.Notifications[0]
+			let firstMatch = regexp.FindNamedSubmatch(alertRegex, firstNotification)
+			if firstMatch.op == "in" {
+				thresholds: [
+					{value: strconv.ParseFloat(firstMatch.param1, 64), op: "gt"},
+					{value: strconv.ParseFloat(firstMatch.param2, 64), op: "lt"},
+				]
+			}
+			if firstMatch.op != "in" {
+				thresholds: [{
+					value: strconv.ParseFloat(firstMatch.param1, 64)
+					if firstMatch.op == ">" {op: "gt"}
+					if firstMatch.op == "<" {op: "lt"}
+				}]
+			}
 
 			alert: {
 				alertRuleTags:       Panel.Alert.Tags
@@ -132,10 +142,19 @@ Test: bool | *false @tag(Test,type=bool)
 				message:             Panel.Alert.Message
 				name:                Panel.Alert.Name
 				conditions: [ for notification in Panel.Alert.Notifications {
-					let match = regexp.FindNamedSubmatch(#"(?P<reducer>\w+)\((?P<ref>[^,]+),(?P<duration>1m|5m|10m|15m|1h),(?P<end>now|now-1m|now-5m)\) (?P<op>>|<) (?P<param>[0-9.]+)"#, notification)
-					evaluator: params: [strconv.ParseFloat(match.param, 64)]
-					if match.op == ">" {evaluator: type: "gt"}
-					if match.op == "<" {evaluator: type: "lt"}
+					let match = regexp.FindNamedSubmatch(alertRegex, notification)
+					if match.op == "in" {
+						evaluator: params: [strconv.ParseFloat(match.param1, 64), strconv.ParseFloat(match.param2, 64)]
+						evaluator: type: "within_range"
+					}
+					if match.op == ">" {
+						evaluator: params: [strconv.ParseFloat(match.param1, 64)]
+						evaluator: type: "gt"
+					}
+					if match.op == "<" {
+						evaluator: params: [strconv.ParseFloat(match.param1, 64)]
+						evaluator: type: "lt"
+					}
 					reducer: type: match.reducer
 					query: params: [match.ref, match.duration, match.end]
 				}]

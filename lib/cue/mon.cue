@@ -73,7 +73,7 @@ Tags: [...string]
 		ExecutionErrorState: *"keep_state" | "alerting"
 		PendingPeriod:       string | *"5m"
 		Frequency:           string | *"1m"
-		Notifications: [...=~#"(avg|min|max|sum)\([^,]+,(1m|5m|10m|15m|1h),(now|now-1m|now-5m)\) (>|<) (.*)"#]
+		Notifications: [...=~#"(avg|min|max|sum)\([^,]+,(1m|5m|10m|15m|1h),(now|now-1m|now-5m)\) ((>|<) ([0-9.]+))|(in \([0-9.]+, [0-9.]+\))"#]
 		Tags: [string]: string
 		Channels: [...string]
 	}

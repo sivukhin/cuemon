@@ -18,13 +18,10 @@ import (
 			PendingPeriod:       Input.alert."for"
 			Message:             Input.alert.message
 			Name:                Input.alert.name
-			Notifications: [ for condition in Input.alert.conditions {{
-				#Operator: string
-				if condition.evaluator.type == "gt" {#Operator: ">"}
-				if condition.evaluator.type == "lt" {#Operator: "<"}
-
-				N: "\(condition.reducer.type)(\(condition.query.params[0]),\(condition.query.params[1]),\(condition.query.params[2])) \(#Operator) \(condition.evaluator.params[0])"
-			}.N
+			Notifications: [ for condition in Input.alert.conditions {
+				if condition.evaluator.type == "gt" { "\(condition.reducer.type)(\(condition.query.params[0]),\(condition.query.params[1]),\(condition.query.params[2])) > \(condition.evaluator.params[0])" }
+				if condition.evaluator.type == "lt" { "\(condition.reducer.type)(\(condition.query.params[0]),\(condition.query.params[1]),\(condition.query.params[2])) < \(condition.evaluator.params[0])" }
+				if condition.evaluator.type == "within_range" { "\(condition.reducer.type)(\(condition.query.params[0]),\(condition.query.params[1]),\(condition.query.params[2])) in (\(condition.evaluator.params[0]), \(condition.evaluator.params[1]))" }
 			}]
 			Channels: [ for notification in Input.alert.notifications {notification.uid}]
 		}
