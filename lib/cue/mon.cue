@@ -114,5 +114,6 @@ Tags: [...string]
 		IncludeAll: bool | *Multi
 		Current: [...string]
 		Sort: (#GrafanaTemplate & {type: "query"}).sort
+		if IncludeAll {AllValue?: string}
 	}
 }

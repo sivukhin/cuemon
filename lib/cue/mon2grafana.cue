@@ -321,6 +321,7 @@ Test: bool | *false @tag(Test,type=bool)
 				datasource: Variable.DataSource
 				definition: Variable.Query
 				includeAll: Variable.IncludeAll
+				if Variable.AllValue != _|_ { allValue:   Variable.AllValue }
 				multi:      Variable.Multi
 				current: {
 					text:  Variable.Current
