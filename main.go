@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/sivukhin/cuemon/lib"
-	"github.com/sivukhin/cuemon/lib/auth"
 	"os"
 	"strings"
+
+	"github.com/sivukhin/cuemon/lib"
+	"github.com/sivukhin/cuemon/lib/auth"
 )
 
 var (
@@ -55,6 +56,11 @@ func run(args []string) error {
 		return fmt.Errorf("failed to analyze authorization methods: %w", err)
 	}
 	switch args[0] {
+	case "export":
+		files := args[1:]
+		if err := lib.Export(files); err != nil {
+			return fmt.Errorf("export error: %v", multilineErr(err, errIdent))
+		}
 	case "bootstrap":
 		if err := bootstrap.Parse(args[1:]); err != nil {
 			return fmt.Errorf("bootstrap error: %v", multilineErr(err, errIdent))

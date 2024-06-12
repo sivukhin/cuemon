@@ -1,25 +1,61 @@
 package lib
 
 import (
+	"testing"
+
+	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/format"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestConvert(t *testing.T) {
+	t.Run("test", func(t *testing.T) {
+		trimVar := "{ #meta?: { id: number, uid: number }, if #meta != _|_ { id: #meta.id } }"
+		conversions := []string{
+			`package main
+#Conversion: { Input: { id: number }, Output: { #meta: { id: Input.id, uid: -id }, Input } }
+`,
+		}
+		result, err := CueConvert(
+			conversions,
+			map[string]string{"Input": `{"id": 123}`},
+			trimVar,
+			"#Conversion",
+			"Output",
+			false,
+		)
+		require.Nil(t, err)
+		node, err := format.Node(File([]ast.Decl{ast.NewStruct(AsAny(result)...)}))
+		require.Nil(t, err)
+		require.Equal(t, `{
+	#meta: {
+		id:  123
+		uid: -123
+	}
+}
+`, string(node))
+	})
 	t.Run("simple", func(t *testing.T) {
-		result, err := CueConvert("number", []string{
+		conversion := []string{
 			`package main
 #Conversion: { Input: number, Output: Input + Input }
 `,
-		}, map[string]string{"Input": "123"}, false)
+		}
+		result, err := CueConvert(
+			conversion,
+			map[string]string{"Input": "123"},
+			"number",
+			"#Conversion",
+			"Output",
+			false,
+		)
 		require.Nil(t, err)
 		node, err := format.Node(File(result))
 		require.Nil(t, err)
 		require.Equal(t, "246\n", string(node))
 	})
 	t.Run("complex", func(t *testing.T) {
-		result, err := CueConvert("_", []string{
+		conversions := []string{
 			`package main
 
 #Def: {
@@ -41,7 +77,15 @@ func TestConvert(t *testing.T) {
 	}
 }}
 `,
-		}, map[string]string{"Input": `{"X":1,"Y":"hello","Z":{"A":5,"B":true}}`}, true)
+		}
+		result, err := CueConvert(
+			conversions,
+			map[string]string{"Input": `{"X":1,"Y":"hello","Z":{"A":5,"B":true}}`},
+			"_",
+			"#Conversion",
+			"Output",
+			true,
+		)
 		require.Nil(t, err)
 		node, err := format.Node(File(result), format.Simplify())
 		require.Nil(t, err)

@@ -7,12 +7,10 @@ import (
 	"regexp"
 )
 
-Test: bool | *false @tag(Test,type=bool)
-
 #RowGriding: {
 	Row: #Row
-	SequencePanels: [ for title, panel in Row.Panel {panel, Title: title}]
-	SequenceGrid: [ for i, panel in SequencePanels {
+	SequencePanels: [for title, panel in Row.Panel {panel, Title: title}]
+	SequenceGrid: [for i, panel in SequencePanels {
 		Id:            i
 		X:             (number & >=0 & <24) | *0
 		Y:             (number & >=0) | *0
@@ -65,7 +63,7 @@ Test: bool | *false @tag(Test,type=bool)
 			"\(SequencePanels[i].Title)": {position, SequencePanels[i]}
 		}}
 		if len(SequenceGrid) > 0 {
-			Height: listFunc.Max([ for _, position in SequenceGrid {position.Y + position.Height}])
+			Height: listFunc.Max([for _, position in SequenceGrid {position.Y + position.Height}])
 		}
 		Count: len(SequenceGrid)
 	}
@@ -73,8 +71,8 @@ Test: bool | *false @tag(Test,type=bool)
 
 #DashboardGriding: {
 	DashboardRows: [...#Row]
-	DashboardRowsGrided: [ for row in Rows {{#RowGriding, Row: row}.RowGrided}]
-	DashboardGrided: [ for i, row in DashboardRowsGrided {row
+	DashboardRowsGrided: [for row in Rows {{#RowGriding, Row: row}.RowGrided}]
+	DashboardGrided: [for i, row in DashboardRowsGrided {row
 		Id: number | *0
 		Y:  number | *0
 		if i > 0 {
@@ -92,7 +90,7 @@ Test: bool | *false @tag(Test,type=bool)
 	}]
 }
 
-#Alphabet: [ for x in listFunc.Range(10, 256+10, 1) {strings.ToUpper(strconv.FormatInt(x, 36))}]
+#Alphabet: [for x in listFunc.Range(10, 256+10, 1) {strings.ToUpper(strconv.FormatInt(x, 36))}]
 
 #Panel2Grafana: {
 	Row: {#Row, Y: number, Id: number}
@@ -147,7 +145,7 @@ Test: bool | *false @tag(Test,type=bool)
 				"for":               Panel.Alert.PendingPeriod
 				message:             Panel.Alert.Message
 				name:                Panel.Alert.Name
-				conditions: [ for notification in Panel.Alert.Notifications {
+				conditions: [for notification in Panel.Alert.Notifications {
 					let match = regexp.FindNamedSubmatch(alertRegex, notification)
 					if match.op == "in" {
 						evaluator: params: [strconv.ParseFloat(match.param1, 64), strconv.ParseFloat(match.param2, 64)]
@@ -169,7 +167,7 @@ Test: bool | *false @tag(Test,type=bool)
 					query: params: [match.ref, match.duration, match.end]
 				}]
 
-				if !Test {notifications: [ for channel in Panel.Alert.Channels {uid: channel}]}
+				if !Test {notifications: [for channel in Panel.Alert.Channels {uid: channel}]}
 			}
 		}
 		if Panel.Type == "timeseries" {
@@ -229,9 +227,9 @@ Test: bool | *false @tag(Test,type=bool)
 			}
 		}
 		if Panel.Thresholds != _|_ {
-			fieldConfig: defaults: thresholds: steps: [ for t in Panel.Thresholds {color: t.Color, value: t.Value}]
+			fieldConfig: defaults: thresholds: steps: [for t in Panel.Thresholds {color: t.Color, value: t.Value}]
 		}
-		seriesOverrides: [ for i, target in Panel.Metrics if target.Overrides != _|_ {
+		seriesOverrides: [for i, target in Panel.Metrics if target.Overrides != _|_ {
 			$$hashKey: "object:\(10*(Row.Id+Panel.Id+2+i))"
 			if target.Overrides.Alias != _|_ {alias: target.Overrides.Alias}
 			if target.Overrides.Alias == _|_ {
@@ -250,7 +248,7 @@ Test: bool | *false @tag(Test,type=bool)
 			if target.Overrides.LineWidth != _|_ {linewidth: target.Overrides.LineWidth}
 			if target.Overrides.Color != _|_ {color: target.Overrides.Color}
 		}]
-		targets: [ for i, target in Panel.Metrics {
+		targets: [for i, target in Panel.Metrics {
 			refId: #Alphabet[i]
 			hide:  target.Hide
 			if target.StackDriver != _|_ {
@@ -280,66 +278,61 @@ Test: bool | *false @tag(Test,type=bool)
 	}
 }
 
-#Variable2Grafana: {
-	VariableName: string
-	Variable:     #Variable
-	G: {
-		if Variable.Type == "constant" {
-			{
-				type:  "constant"
-				name:  VariableName
-				query: Variable.Value
-			}
+#variable2grafana: {
+	name:     string
+	variable: #variable
+	grafana: {
+		if variable.type == "constant" {
+			type:  "constant"
+			name:  name
+			query: variable.Value
 		}
-		if Variable.Type == "custom" {
-			{
-				type:       "custom"
-				label:      Variable.Label
-				name:       VariableName
-				query:      strings.Join(Variable.Values, ",")
-				includeAll: Variable.IncludeAll
-				multi:      Variable.Multi
-				current: {
-					text:  Variable.Current
-					value: Variable.Current
-				}
-				options: [ for VariableValue in Variable.Values {
-					selected: {
-						if multi {listFunc.Contains(Variable.Current, VariableValue)}
-						if !multi {Variable.Current == VariableValue}
-					}
-					text:  VariableValue
-					value: VariableValue
-				}]
+		if variable.type == "custom" {
+			type:       "custom"
+			label:      variable.label
+			name:       name
+			query:      strings.Join(variable.values, ",")
+			includeAll: variable.includeAll
+			multi:      variable.multi
+			current: {
+				text:  variable.current
+				value: variable.current
 			}
+			options: [for value in variable.values {
+				selected: {
+					if multi {listFunc.Contains(variable.current, value)}
+					if !multi {variable.current == value}
+				}
+				text:  value
+				value: value
+			}]
 		}
-		if Variable.Type == "query" {
-			{
-				type:       "query"
-				label:      Variable.Label
-				name:       VariableName
-				datasource: Variable.DataSource
-				definition: Variable.Query
-				includeAll: Variable.IncludeAll
-				if Variable.AllValue != _|_ { allValue:   Variable.AllValue }
-				multi:      Variable.Multi
-				current: {
-					text:  Variable.Current
-					value: Variable.Current
-				}
-				sort: Variable.Sort
+		if variable.type == "query" {
+			type:       "query"
+			label:      variable.label
+			name:       name
+			datasource: variable.dataSource
+			definition: variable.query
+			includeAll: variable.includeAll
+			if variable.allValue != _|_ {allValue: variable.allValue}
+			multi: variable.multi
+			current: {
+				text:  variable.current
+				value: variable.current
 			}
+			sort: variable.sort
 		}
 	}
 }
 
-Grafana: #GrafanaSchema & {
-	links: [ for linkTitle, link in Links {{type: "link", title: linkTitle, url: link.Url}}]
-	templating: list: [ for variableName, variable in Variables {
-		{#Variable2Grafana, VariableName: variableName, Variable: variable}.G
+grafanaDashboard: #grafanaDashboard & {
+	links: [for title, link in links {{type: "link", title: title, url: link}}]
+	templating: list: [for name, variable in variables {
+		{#variable2grafana, name: variableName, variable: variable}.grafana
 	}]
-	if !Test {tags: Tags}
-	panels: listFunc.FlattenN([ for row in {#DashboardGriding, DashboardRows: Rows}.DashboardGrided {
+	if !#playground {tags: tags}
+
+	panels: listFunc.FlattenN([for row in {#DashboardGriding, DashboardRows: Rows}.DashboardGrided {
 		if row.Collapsed {
 			[{
 				type:      "row"
@@ -347,7 +340,7 @@ Grafana: #GrafanaSchema & {
 				id:        row.Id
 				collapsed: true
 				gridPos: {w: 24, h: 1, x: 0, y: row.Y}
-				panels: [ for panel in row.Panel {
+				panels: [for panel in row.Panel {
 					{#Panel2Grafana, Row: row, Panel: panel}.G
 				}]
 			}]
@@ -360,7 +353,7 @@ Grafana: #GrafanaSchema & {
 				collapsed: false
 				gridPos: {w: 24, h: 1, x: 0, y: row.Y}
 				panels: []
-			}], [ for panel in row.Panel {
+			}], [for panel in row.Panel {
 				{#Panel2Grafana, Row: row, Panel: panel}.G
 			}]])
 		}

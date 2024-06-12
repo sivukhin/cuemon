@@ -1,6 +1,12 @@
 package lib
 
 import (
+	"fmt"
+	"math/rand"
+	"regexp"
+	"slices"
+	"strings"
+
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/cuecontext"
@@ -8,11 +14,66 @@ import (
 	"cuelang.org/go/cue/load"
 	"cuelang.org/go/cue/parser"
 	"cuelang.org/go/tools/trim"
-	"fmt"
-	"math/rand"
-	"regexp"
-	"strings"
 )
+
+type ReductionRule struct {
+	Reduction func(path []string, value ast.Expr) (string, ast.Expr, bool)
+}
+
+type ReductionRules []ReductionRule
+
+func (r ReductionRules) reduceField(path []string, decl ast.Decl) (ast.Decl, bool) {
+	field, ok := decl.(*ast.Field)
+	if !ok {
+		return decl, true
+	}
+	label, ok := labelString(field.Label)
+	if !ok {
+		return decl, true
+	}
+	value := field.Value
+	pathWithLabel := append(path, label)
+	r.reduceAst(pathWithLabel, []ast.Decl{field.Value})
+	for _, rule := range r {
+		newLabel, newValue, ok := rule.Reduction(pathWithLabel, value)
+		if !ok {
+			continue
+		}
+		if newValue == nil {
+			return nil, false
+		}
+		value = newValue
+		label = newLabel
+	}
+	field = FieldIdent(label, value)
+	return field, true
+}
+
+func (r ReductionRules) reduceAst(path []string, decls []ast.Decl) []ast.Decl {
+	result := make([]ast.Decl, 0)
+	for _, decl := range decls {
+		if structLit, ok := decl.(*ast.StructLit); ok {
+			structLit.Elts = r.reduceAst(path, structLit.Elts)
+			result = append(result, structLit)
+		} else if arrayLit, ok := decl.(*ast.ListLit); ok {
+			for _, decl := range arrayLit.Elts {
+				fmt.Printf("")
+				r.reduceAst(path, []ast.Decl{decl})
+			}
+			result = append(result, arrayLit)
+		} else if field, ok := decl.(*ast.Field); ok {
+			field, ok := r.reduceField(path, field)
+			if ok {
+				result = append(result, field)
+			}
+		}
+	}
+	return result
+}
+
+func (r ReductionRules) ReduceAst(decls []ast.Decl) []ast.Decl {
+	return r.reduceAst(nil, decls)
+}
 
 func CueAst(data string) (*ast.File, error) {
 	return parser.ParseFile("", data)
@@ -189,7 +250,28 @@ func CuePrettify(decl ast.Decl, flatten bool) ([]ast.Decl, error) {
 	return final, nil
 }
 
-func CueConvert(variable string, conversions []string, context map[string]string, flatten bool) ([]ast.Decl, error) {
+func CueFilter(decls []ast.Decl, filterNames []string) []ast.Decl {
+	filtered := make([]ast.Decl, 0)
+	for _, decl := range decls {
+		if field, ok := decl.(*ast.Field); ok {
+			label, ok := labelString(field.Label)
+			if ok && slices.Contains(filterNames, label) {
+				continue
+			}
+		}
+		filtered = append(filtered, decl)
+	}
+	return filtered
+}
+
+func CueConvert(
+	conversions []string,
+	context map[string]string,
+	trimAgainstVar string,
+	mappingName string,
+	fieldName string,
+	flatten bool,
+) ([]ast.Decl, error) {
 	pack, err := singleCuePackage(conversions)
 	if err != nil {
 		return nil, fmt.Errorf("invalid packages assignment: %w", err)
@@ -200,29 +282,40 @@ func CueConvert(variable string, conversions []string, context map[string]string
 		lets = append(lets, fmt.Sprintf("let var_%v=%v", key, value))
 		init = append(init, fmt.Sprintf("%v: var_%v", key, key))
 	}
-	target := fmt.Sprintf(`
+	template := `
 package %v
 
 %v
 
-Output: (#Conversion & {%v}).Output`, pack, strings.Join(lets, "\n"), strings.Join(init, ", "))
+%v: (%v & {%v}).%v`
+	target := fmt.Sprintf(
+		template,
+		pack,
+		strings.Join(lets, "\n"),
+		fieldName,
+		mappingName,
+		strings.Join(init, ", "),
+		fieldName,
+	)
 	cueContext := cuecontext.New()
 	_, filenames, overlay := buildOverlay(conversions, target)
 	buildInstances := load.Instances(filenames, &load.Config{Overlay: overlay})
 	original, err := cueContext.BuildInstances(buildInstances)
 	if err != nil {
+		fmt.Printf("%v\n", conversions)
 		return nil, fmt.Errorf("unable to compile conversion sources and target: %w", err)
 	}
-	source := original[0].LookupPath(cue.MakePath(cue.Str("Output"))).Syntax(cue.Concrete(true))
+	source := original[0].LookupPath(cue.MakePath(cue.Str(fieldName))).Syntax(cue.Concrete(true))
+	source = replaceHashFields(source)
 	converted, err := format.Node(source, format.Simplify())
 	if err != nil {
 		return nil, fmt.Errorf("unable to get concrete value of conversion: %w", err)
 	}
-	trimmed, err := ForceTrim(variable, conversions, string(converted))
+	trimmed, err := ForceTrim(trimAgainstVar, conversions, string(converted))
 	if err != nil {
 		return nil, fmt.Errorf("unable to trim concrete value: %w", err)
 	}
-	pretty, err := CuePrettify(trimmed, flatten)
+	pretty, err := CuePrettify(removeEmptyFields(trimmed), flatten)
 	if err != nil {
 		return nil, fmt.Errorf("unable to prettify value: %w", err)
 	}
@@ -230,4 +323,61 @@ Output: (#Conversion & {%v}).Output`, pack, strings.Join(lets, "\n"), strings.Jo
 		return nil, fmt.Errorf("unable to convert value: %v", context)
 	}
 	return pretty, nil
+}
+
+func isEmpty(node ast.Node) bool {
+	switch n := node.(type) {
+	case *ast.StructLit:
+		return len(n.Elts) == 0
+	case *ast.ListLit:
+		return len(n.Elts) == 0
+	}
+	return false
+}
+
+func removeEmptyFields(node ast.Decl) ast.Decl {
+	if listLit, ok := node.(*ast.ListLit); ok {
+		for _, element := range listLit.Elts {
+			removeEmptyFields(element)
+		}
+	} else if structLit, ok := node.(*ast.StructLit); ok {
+		replaced := make([]ast.Decl, 0)
+		for _, decl := range structLit.Elts {
+			if field, ok := decl.(*ast.Field); ok {
+				removeEmptyFields(field.Value)
+				if isEmpty(field.Value) {
+					continue
+				}
+			}
+			replaced = append(replaced, decl)
+		}
+		structLit.Elts = replaced
+		return structLit
+	}
+	return node
+
+}
+
+func replaceHashFields(node ast.Node) ast.Node {
+	if listLit, ok := node.(*ast.ListLit); ok {
+		for _, element := range listLit.Elts {
+			replaceHashFields(element)
+		}
+	} else if structLit, ok := node.(*ast.StructLit); ok {
+		replaced := make([]ast.Decl, 0)
+		for _, decl := range structLit.Elts {
+			if field, ok := decl.(*ast.Field); ok {
+				replaceHashFields(field.Value)
+				label, ok := labelString(field.Label)
+				if ok && strings.HasPrefix(label, "#") {
+					replaced = append(replaced, FieldIdent(label, field.Value))
+					continue
+				}
+			}
+			replaced = append(replaced, decl)
+		}
+		structLit.Elts = replaced
+		return structLit
+	}
+	return node
 }
