@@ -1,6 +1,7 @@
 package cuemon
 
 #conversion: {
+	#v7ToV10: {min: "min", max: "max", mean: "mean", avg: "mean", total: "sum", sum: "sum", current: "lastNotNull", lastNotNull: "lastNotNull", last: "last"}
 	input: #panel
 	output: {
 		input
@@ -64,10 +65,10 @@ package cuemon
 						if input.legend.sortDesc == true {legend: sortHow: "desc"}
 						if input.legend.sortDesc == false {legend: sortHow: "asc"}
 					}
-					if input.legend.sort != _|_ {
-						legend: sortBy: input.legend.sort
+					if input.legend.sort != _|_ && (input.legend.sort & string) != _|_ {
+						legend: sortBy: #v7ToV10[input.legend.sort]
 					}
-					legend: values: [for value in ["avg", "max", "min", "current", "total"] if input.legend[value] {value}]
+					legend: values: [for value in ["avg", "max", "min", "current", "total"] if input.legend[value] {#v7ToV10[value]}]
 					legend: showValues: input.legend.values
 				}
 				leftY: unit:     input.yaxes[0].format
@@ -75,6 +76,13 @@ package cuemon
 				rightY: unit:    input.yaxes[1].format
 				rightY: hashKey: input.yaxes[1].$$hashKey
 				display: fill:   input.fill
+				display: bars: use:    input.bars
+				display: lines: use:   input.lines
+				display: lines: size:  input.linewidth
+				display: points: use:  input.points
+				display: points: size: input.pointradius
+				display: stack: input.stack
+				if input.nullPointMode == "connected" {display: nulls: "connected"}
 				if input.tooltip != _|_ {tooltip: sort: input.tooltip.sort}
 			}
 		}

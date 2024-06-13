@@ -139,22 +139,27 @@ import (
 #monPanel: {
 	#defaultGraphPlugin: bool | *true
 	#graph?: {
-		#values: "avg" | "min" | "max" | "current" | "total" | "mean" | "lastNotNull" | "sum"
+		#values: "min" | "max" | "mean" | "lastNotNull" | "last" | "sum"
 
 		legend: type: *"table" | "list"
-		legend: values: [...#values] | *["current"]
+		legend: values: [...#values] | *["lastNotNull"]
 		legend: showValues: bool | *true
 		legend: placement:  "bottom" | *"right"
-		legend: sortBy:     #values | *"current"
-		legend: sortHow:    "asc" | *"desc"
+		legend: sortBy: #values | [...#values] | *"lastNotNull"
+		legend: sortHow: "asc" | *"desc"
 
 		leftY: unit:      string | *"short"
 		leftY: hashKey?:  string
 		rightY: unit:     string | *"short"
 		rightY: hashKey?: string
 
-		display: fill: number | *0
-		tooltip: sort: number | *2
+		display: lines: {use: bool | *true, size: number | *1}
+		display: points: {use: bool | *false, size: number | *0}
+		display: bars: use: bool | *false
+		display: nulls: "connected" | *"null"
+		display: fill:  number | *0
+		display: stack: bool | *false
+		tooltip: sort:  number | *2
 	}
 
 	if (#graph != _|_ && #grafanaVersion == "v10" && #defaultGraphPlugin) || (#graph != _|_ && #grafanaVersion == "v7" && !#defaultGraphPlugin) {
@@ -164,19 +169,35 @@ import (
 		options: legend: placement:   _ | *#graph.legend.placement
 		options: legend: calcs:       _ | *#graph.legend.values
 
-		fieldConfig: defaults: color: mode:           "palette-classic" // for some reason CUE refuse to trim this value if it will be default...
+		fieldConfig: defaults: color: mode: "palette-classic" // for some reason CUE refuse to trim this value if it will be default...
+		if #graph.display.bars.use {
+			fieldConfig: defaults: custom: drawStyle: _ | *"bars"
+			fieldConfig: defaults: custom: lineWidth: _ | *1
+			fieldConfig: defaults: custom: pointSize: _ | *5
+		}
+		if !#graph.display.bars.use && #graph.display.points.use {
+			fieldConfig: defaults: custom: drawStyle: _ | *"points"
+			fieldConfig: defaults: custom: lineWidth: _ | *1
+			fieldConfig: defaults: custom: pointSize: _ | *#graph.display.points.size
+		}
+		if !#graph.display.bars.use && !#graph.display.points.use {
+			fieldConfig: defaults: custom: drawStyle: _ | *"lines"
+			fieldConfig: defaults: custom: lineWidth: _ | *#graph.display.lines.size
+			fieldConfig: defaults: custom: pointSize: _ | *5
+		}
+		if #graph.display.nulls == "connected" {
+			fieldConfig: defaults: custom: insertNulls: _ | *false
+		}
+
+		fieldConfig: defaults: custom: fillOpacity:   _ | *0
 		fieldConfig: defaults: custom: axisLabel:     _ | *""
 		fieldConfig: defaults: custom: axisPlacement: _ | *"auto"
 		fieldConfig: defaults: custom: barAlignment:  _ | *0
-		fieldConfig: defaults: custom: drawStyle:     _ | *"bars"
-		fieldConfig: defaults: custom: fillOpacity:   _ | *100
 		fieldConfig: defaults: custom: gradientMode:  _ | *"none"
 		fieldConfig: defaults: custom: hideFrom: graph:   _ | *false
 		fieldConfig: defaults: custom: hideFrom: legend:  _ | *false
 		fieldConfig: defaults: custom: hideFrom: tooltip: _ | *false
 		fieldConfig: defaults: custom: lineInterpolation: _ | *"linear"
-		fieldConfig: defaults: custom: lineWidth:         _ | *1
-		fieldConfig: defaults: custom: pointSize:         _ | *5
 		fieldConfig: defaults: custom: scaleDistribution: type: _ | *"linear"
 		fieldConfig: defaults: custom: showPoints: _ | *"never"
 		fieldConfig: defaults: custom: spanNulls:  _ | *true
@@ -193,6 +214,9 @@ import (
 			fieldConfig: defaults: custom: stacking: group:       _ | *"A"
 			fieldConfig: defaults: custom: stacking: mode:        _ | *"none"
 			fieldConfig: defaults: custom: thresholdsStyle: mode: _ | *"off"
+			fieldConfig: defaults: unit: _ | *#graph.leftY.unit
+			fieldConfig: defaults: unitScale: _ | *true
+
 		}
 
 		options: tooltipOptions: mode: _ | *"single"
@@ -206,45 +230,49 @@ import (
 				format: _ | *#graph.rightY.unit
 				if #graph.rightY.hashKey != _|_ {$$hashKey: _ | *#graph.rightY.hashKey}
 			}
-			format:  _ | *#graph.yaxes.format[i]
 			logBase: _ | *1
 			show:    _ | *true
 		}]
 	}
 
 	if (#graph != _|_ && #grafanaVersion == "v7" && #defaultGraphPlugin) || (#graph != _|_ && #grafanaVersion == "v10" && !#defaultGraphPlugin) {
-		type: _ | *"graph"
+		type:        _ | *"graph"
+		description: _ | *""
 		xaxis: mode:         _ | *"time"
 		xaxis: show:         _ | *true
 		tooltip: shared:     _ | *true
 		tooltip: value_type: _ | *"individual"
-		bars:          _ | *false
-		dashLength:    _ | *10
+		lines:       _ | *#graph.display.lines.use
+		points:      _ | *#graph.display.points.use
+		bars:        _ | *#graph.display.bars.use
+		linewidth:   _ | *#graph.display.lines.size
+		pointradius: _ | *#graph.display.points.size
+
 		dashes:        _ | *false
+		dashLength:    _ | *10
 		fillGradient:  _ | *0
 		hiddenSeries:  _ | *false
-		lines:         _ | *true
-		linewidth:     _ | *1
-		nullPointMode: _ | *"null"
+		nullPointMode: _ | *#graph.display.nulls
 		percentage:    _ | *false
 		pluginVersion: _ | *#pluginVersion[type]
-		pointradius:   _ | *2
-		points:        _ | *false
 		renderer:      _ | *"flot"
 		spaceLength:   _ | *10
-		stack:         _ | *false
+		stack:         _ | *#graph.display.stack
 
 		fill: _ | *#graph.display.fill
 		tooltip: sort:   _ | *#graph.tooltip.sort
-		legend: avg:     _ | *list.Contains(#graph.legend.values, "avg")
+		legend: avg:     _ | *list.Contains(#graph.legend.values, "mean")
 		legend: max:     _ | *list.Contains(#graph.legend.values, "max")
 		legend: min:     _ | *list.Contains(#graph.legend.values, "min")
-		legend: current: _ | *list.Contains(#graph.legend.values, "current")
-		legend: total:   _ | *list.Contains(#graph.legend.values, "total")
+		legend: current: _ | *list.Contains(#graph.legend.values, "lastNotNull")
+		legend: total:   _ | *list.Contains(#graph.legend.values, "sum")
 
 		legend: rightSide: _ | *(#graph.legend.placement == "right")
-		legend: sort:      _ | *#graph.legend.sortBy
-		legend: sortDesc:  _ | *(#graph.legend.sortHow == "desc")
+		if (#graph.legend.sortBy & string) != _|_ {
+			#v7ToV10: {min: "min", max: "max", mean: "avg", avg: "avg", total: "total", sum: "total", current: "current", lastNotNull: "current", last: "current"}
+			legend: sort: _ | *#v7ToV10[#graph.legend.sortBy]
+		}
+		legend: sortDesc: _ | *(#graph.legend.sortHow == "desc")
 
 		legend: alignAsTable: _ | *(#graph.legend.type == "table")
 		legend: values:       _ | *#graph.legend.showValues
@@ -259,7 +287,6 @@ import (
 				format: _ | *#graph.rightY.unit
 				if #graph.rightY.hashKey != _|_ {$$hashKey: _ | *#graph.rightY.hashKey}
 			}
-			format:  _ | *#graph.yaxes.format[i]
 			logBase: _ | *1
 			show:    _ | *true
 		}]
@@ -381,9 +408,11 @@ import (
 				colorMode: _ | *"critical"
 				fill:      _ | *true
 				line:      _ | *true
-				op:        _ | *#alert.conditions[i].evaluator.type
-				value:     _ | *#alert.conditions[i].evaluator.params[0]
-				visible:   _ | *true
+				if #alert.conditions[0].evaluator.type == "outside_range" && i == 0 {op: _ | *"lt"}
+				if #alert.conditions[0].evaluator.type == "outside_range" && i == 1 {op: _ | *"gt"}
+				if #alert.conditions[0].evaluator.type != "outside_range" {op: _ | *#alert.conditions[0].evaluator.type}
+				value:   _ | *#alert.conditions[0].evaluator.params[i]
+				visible: _ | *true
 			}]
 		}
 	}
