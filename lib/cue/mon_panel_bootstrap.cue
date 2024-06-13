@@ -19,7 +19,36 @@ package cuemon
 			}
 		}
 
+		if input.alert != _|_ {
+			"#alert": input.alert
+		}
+
+		if input.seriesOverrides != _|_ {
+			"#overrides": [for override in input.seriesOverrides {
+				hashKey: override.$$hashKey
+				alias:   override.alias
+				if override.color != _|_ {color: override.color}
+				if override.yaxis != _|_ {yaxis: override.yaxis}
+				if override.hiddenSeries != _|_ {hidden: override.hiddenSeries}
+				if override.dashes != _|_ {dashes: override.dashes}
+				if override.legend != _|_ {legend: override.legend}
+				if override.fillGradient != _|_ {fillGradient: override.fillGradient}
+			}]
+		}
+
+		if input.type == "timeseries" {
+			if #grafanaVersion == "v7" {"#defaultGraphPlugin": false}
+			"#graph": {
+				legend: type:      input.options.legend.displayMode
+				legend: placement: input.options.legend.placement
+				legend: values:    input.options.legend.calcs
+			}
+			if input.fieldConfig.defaults.min != _|_ {"#rangeY": min: input.fieldConfig.defaults.min}
+			if input.fieldConfig.defaults.max != _|_ {"#rangeY": min: input.fieldConfig.defaults.max}
+		}
+
 		if input.type == "graph" {
+			if #grafanaVersion == "v10" {"#defaultGraphPlugin": false}
 			"#graph": {
 				if input.legend != _|_ {
 					if input.legend.alignAsTable != _|_ {
@@ -28,8 +57,9 @@ package cuemon
 					}
 					if input.legend.rightSide != _|_ {
 						if input.legend.rightSide == true {legend: placement: "right"}
-						if input.legend.rightSide == false {legend: placement: "bottom"}
+						if input.legend.rightSide != true {legend: placement: "bottom"}
 					}
+					if input.legend.rightSide == _|_ {legend: placement: "bottom"}
 					if input.legend.sortDesc != _|_ {
 						if input.legend.sortDesc == true {legend: sortHow: "desc"}
 						if input.legend.sortDesc == false {legend: sortHow: "asc"}
@@ -39,6 +69,10 @@ package cuemon
 					}
 					legend: values: [for value in ["avg", "max", "min", "current", "total"] if input.legend[value] {value}]
 				}
+				leftY: unit:     input.yaxes[0].format
+				leftY: hashKey:  input.yaxes[0].$$hashKey
+				rightY: unit:    input.yaxes[1].format
+				rightY: hashKey: input.yaxes[1].$$hashKey
 			}
 		}
 
@@ -66,6 +100,22 @@ package cuemon
 							perSeriesAligner:   target.metricQuery.perSeriesAligner
 							projectName:        target.metricQuery.projectName
 							query:              target.metricQuery.query
+						}
+					}
+					if target.metricQuery.editorMode == "visual" {
+						"#mqlVisual": {
+							aliasBy:            target.metricQuery.aliasBy
+							alignmentPeriod:    target.metricQuery.alignmentPeriod
+							crossSeriesReducer: target.metricQuery.crossSeriesReducer
+							filters:            target.metricQuery.filters
+							groupBys:           target.metricQuery.groupBys
+							metricKind:         target.metricQuery.metricKind
+							metricType:         target.metricQuery.metricType
+							perSeriesAligner:   target.metricQuery.perSeriesAligner
+							projectName:        target.metricQuery.projectName
+							unit:               target.metricQuery.unit
+							valueType:          target.metricQuery.valueType
+							if #grafanaVersion == "v7" {sloV7: target.sloQuery != _|_}
 						}
 					}
 				}

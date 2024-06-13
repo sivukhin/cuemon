@@ -3,8 +3,11 @@ package cuemon
 #schemaVersion:  39
 #grafanaVersion: "v10"
 #pluginVersion: {
-	text:  "10.3.0"
-	table: "10.3.0"
+	text:       "10.3.0"
+	table:      "10.3.0"
+	graph:      "10.3.0"
+	stat:       "10.3.0"
+	timeseries: "9.3.2"
 }
 
 #grafana: {
@@ -269,6 +272,28 @@ package cuemon
 		#_textbox
 	}
 }
+#yaxes: {
+	format:     string
+	$$hashKey?: string | null
+	label?:     string | null
+	max?:       string | null
+	logBase:    number
+	min?:       number | string | null
+	show:       bool
+}
+#seriesOverrides: {
+	alias:         string
+	$$hashKey?:    string | null
+	color?:        string | null
+	dashLength?:   number | null
+	fill?:         number | null
+	linewidth?:    number | null
+	yaxis?:        number | null
+	zindex?:       number | null
+	dashes?:       bool | null
+	hiddenSeries?: bool | null
+	hideTooltip?:  bool | null
+}
 #link: {
 	#_dashboards: {
 		icon:         string
@@ -305,7 +330,9 @@ package cuemon
 		title:       string
 		id?:         number | null
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
+		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -336,6 +363,8 @@ package cuemon
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -367,8 +396,8 @@ package cuemon
 				thresholds: {
 					mode: string
 					steps: [...{
-						color: string
-						value: number | null
+						color:  string
+						value?: number | null
 					}]
 				}
 			}
@@ -379,7 +408,9 @@ package cuemon
 		title:         string
 		id?:           number | null
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
+		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -402,6 +433,8 @@ package cuemon
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -428,8 +461,8 @@ package cuemon
 				thresholds: {
 					mode: string
 					steps: [...{
-						color: string
-						value: number | null
+						color:  string
+						value?: number | null
 					}]
 				}
 			}
@@ -464,6 +497,8 @@ package cuemon
 		targets: [...#target]
 		timeRegions: []
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		yaxis: align: bool
 		aliasColors: {
 			Egress?:         string | null
@@ -494,15 +529,6 @@ package cuemon
 			show:     bool
 			values: []
 		}
-		yaxes: [...{
-			format:     string
-			$$hashKey?: string | null
-			label?:     string | null
-			max?:       string | null
-			logBase:    number
-			min?:       number | string | null
-			show:       bool
-		}]
 		thresholds: [...{
 			colorMode:  string
 			op:         string
@@ -512,19 +538,6 @@ package cuemon
 			fill:       bool
 			line:       bool
 			visible?:   bool | null
-		}]
-		seriesOverrides: [...{
-			alias:         string
-			$$hashKey?:    string | null
-			color?:        string | null
-			dashLength?:   number | null
-			fill?:         number | null
-			linewidth?:    number | null
-			yaxis?:        number | null
-			zindex?:       number | null
-			dashes?:       bool | null
-			hiddenSeries?: bool | null
-			hideTooltip?:  bool | null
 		}]
 		legend: {
 			sort?:         string | null
@@ -587,7 +600,9 @@ package cuemon
 		editable?:        bool | null
 		error?:           bool | null
 		panels: [...#panel]
+		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
+		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 	}
@@ -595,12 +610,15 @@ package cuemon
 		pluginVersion:  string
 		title:          string
 		description?:   string | null
+		interval?:      string | null
 		id?:            number | null
 		maxDataPoints?: number | null
 		transparent?:   bool | null
 		targets: [...#target]
 		links?: [] | null
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -640,8 +658,8 @@ package cuemon
 					value: {
 						mode: string
 						steps: [...{
-							color: string
-							value: number | null
+							color:  string
+							value?: number | null
 						}]
 					}
 				}]
@@ -678,6 +696,8 @@ package cuemon
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -830,7 +850,9 @@ package cuemon
 		transparent?:  bool | null
 		links?: [] | null
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
+		yaxes?: [...#yaxes] | null
 		style?: {
 			"font-size": string
 		} | null
@@ -857,6 +879,8 @@ package cuemon
 		maxPerRow?:       number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -1007,6 +1031,8 @@ package cuemon
 	panels: [...#panel]
 	datasource?: #datasource
 	gridPos?:    #grid
+	yaxes?: [...#yaxes]
+	seriesOverrides?: [...#seriesOverrides]
 	targets: [...#target]
 	if type == "alertlist" {
 		#_alertlist

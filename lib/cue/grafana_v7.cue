@@ -3,9 +3,10 @@ package cuemon
 #schemaVersion:  27
 #grafanaVersion: "v7"
 #pluginVersion: {
-	text:  "7.5.17"
-	stat:  "7.5.17"
-	graph: "7.5.17"
+	text:       "7.5.17"
+	stat:       "7.5.17"
+	graph:      "7.5.17"
+	timeseries: "7.5.17"
 }
 
 #grafana: {
@@ -209,6 +210,28 @@ package cuemon
 		#_textbox
 	}
 }
+#yaxes: {
+	format:     string
+	$$hashKey?: string | null
+	label?:     string | null
+	max?:       string | null
+	min?:       string | null
+	logBase:    number
+	show:       bool
+}
+#seriesOverrides: {
+	alias:         string
+	$$hashKey?:    string | null
+	color?:        string | null
+	fill?:         number | null
+	fillGradient?: number | null
+	linewidth?:    number | null
+	yaxis?:        number | null
+	zindex?:       number | null
+	dashes?:       bool | null
+	hiddenSeries?: bool | null
+	legend?:       bool | null
+}
 #link: {
 	#_dashboards: {
 		icon:        string
@@ -251,6 +274,8 @@ package cuemon
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		gridPos?: #grid
 		options: {
 			orientation:          string
@@ -319,6 +344,8 @@ package cuemon
 		timeRegions: []
 		links?: [] | null
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		grid?: {} | null
 		aliasColors: {
 			"max - istio-proxy"?: string | null
@@ -346,15 +373,6 @@ package cuemon
 			show:     bool
 			values: []
 		}
-		yaxes: [...{
-			$$hashKey: string
-			format:    string
-			label?:    string | null
-			max?:      string | null
-			min?:      string | null
-			logBase:   number
-			show:      bool
-		}]
 		transformations?: [...{
 			id: string
 			options: {}
@@ -368,19 +386,6 @@ package cuemon
 			fill:       bool
 			line:       bool
 			visible?:   bool | null
-		}]
-		seriesOverrides: [...{
-			$$hashKey:     string
-			alias:         string
-			color?:        string | null
-			fill?:         number | null
-			fillGradient?: number | null
-			linewidth?:    number | null
-			yaxis?:        number | null
-			zindex?:       number | null
-			dashes?:       bool | null
-			hiddenSeries?: bool | null
-			legend?:       bool | null
 		}]
 		legend: {
 			sideWidth?:    null
@@ -459,7 +464,9 @@ package cuemon
 		id?:         number | null
 		collapsed:   bool
 		panels: [...#panel]
+		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
+		yaxes?: [...#yaxes] | null
 		gridPos?: #grid
 	}
 	#_stat: {
@@ -489,10 +496,10 @@ package cuemon
 		steppedLine?:   bool | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		seriesOverrides?: [] | null
+		seriesOverrides?: [...#seriesOverrides] | null
 		thresholds?: [] | null
 		timeRegions?: [] | null
-		yaxes?: [] | null
+		yaxes?: [...#yaxes] | null
 		aliasColors?: {} | null
 		yaxis?: {
 			alignLevel?: null
@@ -568,6 +575,8 @@ package cuemon
 		targets: [...#target]
 		links?: [] | null
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		gridPos?: #grid
 		options: {
 			frameIndex?: number | null
@@ -662,6 +671,8 @@ package cuemon
 		transparent:   bool
 		targets: [...#target]
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		options: {
 			content: string
 			mode:    string
@@ -684,6 +695,8 @@ package cuemon
 		id?:            number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
+		seriesOverrides?: [...#seriesOverrides] | null
+		yaxes?: [...#yaxes] | null
 		gridPos?: #grid
 		options: {
 			graph: {}
@@ -754,6 +767,8 @@ package cuemon
 	id?:         number
 	panels: [...#panel]
 	gridPos?: #grid
+	yaxes?: [...#yaxes]
+	seriesOverrides?: [...#seriesOverrides]
 	targets: [...#target]
 	if type == "gauge" {
 		#_gauge
