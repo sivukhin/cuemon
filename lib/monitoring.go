@@ -351,15 +351,35 @@ type FileEntry struct {
 }
 
 func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error) {
-	dataSources := make(map[string]ast.Expr)
-	dataSourcesId := make(map[string]string)
+	dataSources, dataSourcesId := make(map[string]ast.Expr), make(map[string]string)
+	projectNames, projectNamesId := make(map[string]ast.Expr), make(map[string]string)
+	var grafanaSchema string
+	if grafana.Value.SchemaVersion >= 39 {
+		grafanaSchema = GrafanaV10Cue
+	} else {
+		grafanaSchema = GrafanaV7Cue
+	}
 	m := MonitoringContext{
-		SchemaFiles: []string{GrafanaV7Cue},
+		SchemaFiles: []string{grafanaSchema},
 		ReductionRules: []ReductionRule{
 			{
 				Reduction: func(path []string, value ast.Expr) (string, ast.Expr, bool) {
+					if strings.HasPrefix(path[len(path)-1], "#") {
+						return "", nil, false
+					}
 					if structLit, ok := value.(*ast.StructLit); ok && len(structLit.Elts) == 0 {
 						return "", nil, true
+					}
+					if arrayLit, ok := value.(*ast.ListLit); ok {
+						shouldDelete := true
+						for _, decl := range arrayLit.Elts {
+							if structLit, ok := decl.(*ast.StructLit); !ok || len(structLit.Elts) > 0 {
+								shouldDelete = false
+							}
+						}
+						if shouldDelete {
+							return "", nil, true
+						}
 					}
 					if basicLit, ok := value.(*ast.BasicLit); ok && basicLit.Value == "null" {
 						return "", nil, true
@@ -386,7 +406,27 @@ func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error
 			},
 			{
 				Reduction: func(path []string, expr ast.Expr) (string, ast.Expr, bool) {
+					if path[len(path)-1] != "projectName" {
+						return "", nil, false
+					}
+					projectNameSrc, err := FormatNode(expr)
+					if err != nil {
+						Logger.Errorf("failed to format project name: %v", err)
+					}
+					if _, ok := projectNamesId[projectNameSrc]; !ok {
+						projectNameId := fmt.Sprintf("#projectName%v", len(projectNames)+1)
+						projectNamesId[projectNameSrc] = projectNameId
+						projectNames[projectNameId] = expr
+					}
+					return path[len(path)-1], ast.NewIdent(projectNamesId[projectNameSrc]), true
+				},
+			},
+			{
+				Reduction: func(path []string, expr ast.Expr) (string, ast.Expr, bool) {
 					if path[0] == "version" || path[0] == "iteration" || path[0] == "id" || path[0] == "gridPos" {
+						return "", nil, true
+					}
+					if path[len(path)-1] == "hashKey" {
 						return "", nil, true
 					}
 					return "", nil, false
@@ -431,6 +471,10 @@ func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error
 
 	for dataSourceName, dataSourceExpr := range dataSources {
 		dashboardDecls = append(dashboardDecls, FieldIdent(dataSourceName, dataSourceExpr))
+	}
+
+	for projectName, projectNameExpr := range projectNames {
+		dashboardDecls = append(dashboardDecls, FieldIdent(projectName, projectNameExpr))
 	}
 
 	dashboardDecls = append(dashboardDecls, FieldIdent("#links", ast.NewList(monitoring.Links...)))
