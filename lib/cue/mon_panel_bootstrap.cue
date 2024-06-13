@@ -68,11 +68,14 @@ package cuemon
 						legend: sortBy: input.legend.sort
 					}
 					legend: values: [for value in ["avg", "max", "min", "current", "total"] if input.legend[value] {value}]
+					legend: showValues: input.legend.values
 				}
 				leftY: unit:     input.yaxes[0].format
 				leftY: hashKey:  input.yaxes[0].$$hashKey
 				rightY: unit:    input.yaxes[1].format
 				rightY: hashKey: input.yaxes[1].$$hashKey
+				display: fill:   input.fill
+				if input.tooltip != _|_ {tooltip: sort: input.tooltip.sort}
 			}
 		}
 

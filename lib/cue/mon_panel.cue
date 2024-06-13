@@ -60,13 +60,18 @@ import (
 #monPanel: {
 	// set threshold ranges for colors of the text in stat plugin
 	#thresholds?: {mode: "percentage" | *"absolute", steps: [...{color: string, value: number | *null}]}
+	type: _
 
-	if #thresholds != _|_ {
-		fieldConfig: defaults: thresholds: mode:  #thresholds.mode
-		fieldConfig: defaults: thresholds: steps: #thresholds.steps
+	if #thresholds != _|_ && (type != "graph" || #grafanaVersion != "v10") {
+		fieldConfig: defaults: thresholds: mode:  _ | *#thresholds.mode
+		fieldConfig: defaults: thresholds: steps: _ | *#thresholds.steps
 		if len(#thresholds.steps) > 1 {
 			fieldConfig: defaults: color: mode: _ | *"thresholds"
 		}
+	}
+	if #thresholds == _|_ && #grafanaVersion == "v10" && type != "graph" {
+		fieldConfig: defaults: thresholds: mode:                _ | *"absolute"
+		fieldConfig: defaults: thresholds: steps: _ | *[{color: "green"}, {color: "red", value: 80}]
 	}
 }
 #monPanel: {
@@ -138,14 +143,18 @@ import (
 
 		legend: type: *"table" | "list"
 		legend: values: [...#values] | *["current"]
-		legend: placement: "bottom" | *"right"
-		legend: sortBy:    #values | *"current"
-		legend: sortHow:   "asc" | *"desc"
+		legend: showValues: bool | *true
+		legend: placement:  "bottom" | *"right"
+		legend: sortBy:     #values | *"current"
+		legend: sortHow:    "asc" | *"desc"
 
 		leftY: unit:      string | *"short"
 		leftY: hashKey?:  string
 		rightY: unit:     string | *"short"
 		rightY: hashKey?: string
+
+		display: fill: number | *0
+		tooltip: sort: number | *2
 	}
 
 	if (#graph != _|_ && #grafanaVersion == "v10" && #defaultGraphPlugin) || (#graph != _|_ && #grafanaVersion == "v7" && !#defaultGraphPlugin) {
@@ -187,6 +196,20 @@ import (
 		}
 
 		options: tooltipOptions: mode: _ | *"single"
+
+		yaxes: [for i, axis in yaxes {
+			if i == 0 {
+				format: _ | *#graph.leftY.unit
+				if #graph.leftY.hashKey != _|_ {$$hashKey: _ | *#graph.leftY.hashKey}
+			}
+			if i == 1 {
+				format: _ | *#graph.rightY.unit
+				if #graph.rightY.hashKey != _|_ {$$hashKey: _ | *#graph.rightY.hashKey}
+			}
+			format:  _ | *#graph.yaxes.format[i]
+			logBase: _ | *1
+			show:    _ | *true
+		}]
 	}
 
 	if (#graph != _|_ && #grafanaVersion == "v7" && #defaultGraphPlugin) || (#graph != _|_ && #grafanaVersion == "v10" && !#defaultGraphPlugin) {
@@ -194,12 +217,10 @@ import (
 		xaxis: mode:         _ | *"time"
 		xaxis: show:         _ | *true
 		tooltip: shared:     _ | *true
-		tooltip: sort:       _ | *2
 		tooltip: value_type: _ | *"individual"
 		bars:          _ | *false
 		dashLength:    _ | *10
 		dashes:        _ | *false
-		fill:          _ | *0
 		fillGradient:  _ | *0
 		hiddenSeries:  _ | *false
 		lines:         _ | *true
@@ -213,6 +234,8 @@ import (
 		spaceLength:   _ | *10
 		stack:         _ | *false
 
+		fill: _ | *#graph.display.fill
+		tooltip: sort:   _ | *#graph.tooltip.sort
 		legend: avg:     _ | *list.Contains(#graph.legend.values, "avg")
 		legend: max:     _ | *list.Contains(#graph.legend.values, "max")
 		legend: min:     _ | *list.Contains(#graph.legend.values, "min")
@@ -224,7 +247,7 @@ import (
 		legend: sortDesc:  _ | *(#graph.legend.sortHow == "desc")
 
 		legend: alignAsTable: _ | *(#graph.legend.type == "table")
-		legend: values:       _ | *true
+		legend: values:       _ | *#graph.legend.showValues
 		legend: show:         _ | *true
 
 		yaxes: [for i, axis in yaxes {
@@ -264,7 +287,7 @@ import (
 			groupBys: [...string]
 			unit:               string
 			alignmentPeriod:    string | *"cloud-monitoring-auto"
-			crossSeriesReducer: *"REDUCE_MEAN" | "REDUCE_SUM"
+			crossSeriesReducer: *"REDUCE_MEAN" | "REDUCE_SUM" | "REDUCE_MAX"
 			perSeriesAligner:   *"ALIGN_MEAN" | "ALIGN_INTERPOLATE" | "ALIGN_NEXT_OLDER" | "ALIGN_RATE"
 			metricKind:         "CUMULATIVE" | *"GAUGE"
 			valueType:          "INT64" | "DOUBLE"
@@ -304,7 +327,7 @@ import (
 			aliasBy:            string
 			projectName:        string
 			alignmentPeriod:    string | *"cloud-monitoring-auto"
-			crossSeriesReducer: *"REDUCE_MEAN" | "REDUCE_SUM"
+			crossSeriesReducer: *"REDUCE_MEAN" | "REDUCE_SUM" | "REDUCE_MAX"
 			perSeriesAligner:   *"ALIGN_MEAN" | "ALIGN_INTERPOLATE" | "ALIGN_NEXT_OLDER" | "ALIGN_RATE"
 		}
 		if #mqlScript != _|_ {
