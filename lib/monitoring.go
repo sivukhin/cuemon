@@ -3,17 +3,12 @@ package lib
 import (
 	_ "embed"
 	"fmt"
-	"io/fs"
 	"log"
-	"os"
 	"path"
-	"path/filepath"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"cuelang.org/go/cue/ast"
-	"cuelang.org/go/cue/ast/astutil"
 	"cuelang.org/go/cue/token"
 )
 
@@ -25,22 +20,22 @@ var (
 
 	//go:embed cue/mon_meta.cue
 	MonMetaCue string
-	//go:embed cue/mon_meta_bootstrap.cue
+	//go:embed cue_bootstrap/mon_meta_bootstrap.cue
 	MonMetaBootstrapCue string
 
 	//go:embed cue/mon_link.cue
 	MonLinkCue string
-	//go:embed cue/mon_link_bootstrap.cue
+	//go:embed cue_bootstrap/mon_link_bootstrap.cue
 	MonLinkBootstrapCue string
 
 	//go:embed cue/mon_variable.cue
 	MonVariableCue string
-	//go:embed cue/mon_variable_bootstrap.cue
+	//go:embed cue_bootstrap/mon_variable_bootstrap.cue
 	MonVariableBootstrapCue string
 
 	//go:embed cue/mon_panel.cue
 	MonPanelCue string
-	//go:embed cue/mon_panel_bootstrap.cue
+	//go:embed cue_bootstrap/mon_panel_bootstrap.cue
 	MonPanelBootstrapCue string
 )
 
@@ -70,50 +65,6 @@ type MonitoringContext struct {
 	SchemaFiles    []string
 	ReductionRules ReductionRules
 }
-
-//func (m MonitoringContext) matchOverrides(legend string, overrides []GrafanaSeriesOverrides) ([]ast.Decl, bool) {
-//	for _, override := range overrides {
-//		if strings.HasPrefix(override.Alias, "/") && strings.HasSuffix(override.Alias, "/") {
-//			matched, err := regexp.MatchString(strings.Trim(override.Alias, "/"), legend)
-//			if err != nil {
-//				log.Printf("unable to match legend %v against alias %v: %v", legend, override.Alias, err)
-//				continue
-//			}
-//			if !matched {
-//				continue
-//			}
-//		} else {
-//			if override.Alias != legend {
-//				continue
-//			}
-//		}
-//
-//		fields := make([]any, 0)
-//		if override.Dashes != nil {
-//			fields = append(fields, ast.NewIdent(DashesField), ast.NewBool(*override.Dashes))
-//		}
-//		if override.Hidden != nil {
-//			fields = append(fields, ast.NewIdent(HiddenField), ast.NewBool(*override.Hidden))
-//		}
-//		if override.Color != nil {
-//			fields = append(fields, ast.NewIdent(ColorField), ast.NewString(*override.Color))
-//		}
-//		if override.Fill != nil {
-//			fields = append(fields, ast.NewIdent(FillField), &ast.BasicLit{Kind: token.INT, Value: strconv.Itoa(*override.Fill)})
-//		}
-//		if override.YAxis != nil {
-//			fields = append(fields, ast.NewIdent(YAxisField), &ast.BasicLit{Kind: token.INT, Value: strconv.Itoa(*override.YAxis)})
-//		}
-//		if override.ZIndex != nil {
-//			fields = append(fields, ast.NewIdent(ZIndexField), &ast.BasicLit{Kind: token.INT, Value: strconv.Itoa(*override.ZIndex)})
-//		}
-//		if override.LineWidth != nil {
-//			fields = append(fields, ast.NewIdent(LineWidthField), &ast.BasicLit{Kind: token.INT, Value: strconv.Itoa(*override.LineWidth)})
-//		}
-//		return []ast.Decl{FieldIdent(OverridesField, ast.NewStruct(fields...))}, true
-//	}
-//	return nil, false
-//}
 
 type CuemonPanel struct {
 	GridPos Box
@@ -485,106 +436,4 @@ func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error
 	}
 	files = append(files, FileEntry{path.Join(output, "dashboard.cue"), dashboardSrc})
 	return files, nil
-}
-
-type FileEntryUpdated struct {
-	Path       string
-	Content    []byte
-	BeforePart []byte
-	AfterPart  []byte
-}
-
-func UpdateFiles(output string, panel JsonRaw[GrafanaPanel]) ([]FileEntryUpdated, error) {
-	targets := make(map[string]ast.Node, 0)
-	versions := make([]int, 0)
-	definitions := make(map[string]*ast.BasicLit)
-	_ = filepath.WalkDir(output, func(path string, d fs.DirEntry, err error) error {
-		if d == nil {
-			return fmt.Errorf("directory %v not found", output)
-		}
-		if d.IsDir() {
-			return nil
-		}
-		if !strings.HasSuffix(path, ".cue") {
-			return nil
-		}
-		content, err := os.ReadFile(path)
-		if err != nil {
-			return err
-		}
-		cueAst, err := CueAst(string(content))
-		if err != nil {
-			return err
-		}
-		for _, decl := range cueAst.Decls {
-			field, ok := decl.(*ast.Field)
-			if !ok {
-				continue
-			}
-			ident, ok := field.Label.(*ast.Ident)
-			if !ok {
-				continue
-			}
-			if !strings.HasPrefix(ident.Name, "#") {
-				continue
-			}
-			value, ok := field.Value.(*ast.BasicLit)
-			if !ok {
-				continue
-			}
-			definitions[ident.Name] = value
-		}
-
-		_, versionNode := findField(cueAst.Decls, GrafanaField, SchemaVersionField)
-		if versionNode != nil {
-			version, err := strconv.Atoi(versionNode.(*ast.BasicLit).Value)
-			if err != nil {
-				return fmt.Errorf("unable to parse Grafana schema version: %w", err)
-			}
-			versions = append(versions, version)
-		}
-		target, _ := findField(cueAst.Decls, PanelField, panel.Value.Title)
-		if target != nil {
-			targets[path] = target
-		}
-		return nil
-	})
-	if len(Unique(versions)) != 1 {
-		return nil, fmt.Errorf("unable to find single Grafana schema version: %v", versions)
-	}
-	//version := versions[0]
-	m := MonitoringContext{}
-	panelDecls, err := m.CreatePanelSrc(panel)
-	if err != nil {
-		return nil, fmt.Errorf("unable to convert panel %v: %w", panel.Value.Title, err)
-	}
-	panelStruct := FieldIdent(PanelField, ast.NewStruct(
-		ast.NewIdent(panel.Value.Title), ast.NewStruct(AsAny(panelDecls)...),
-	))
-	astutil.Apply(panelStruct, nil, func(cursor astutil.Cursor) bool {
-		lit, ok := cursor.Node().(*ast.BasicLit)
-		if !ok {
-			return true
-		}
-		for definition, replacement := range definitions {
-			if replacement.Value == lit.Value && replacement.Kind == lit.Kind {
-				cursor.Replace(ast.NewIdent(definition))
-				return true
-			}
-		}
-		return true
-	})
-	updates := make([]FileEntryUpdated, 0)
-	for targetPath, target := range targets {
-		content, err := os.ReadFile(targetPath)
-		if err != nil {
-			return nil, err
-		}
-		cutted, oldPart, newPart, err := CutNode(content, target, panelStruct)
-		if err != nil {
-			return nil, err
-		}
-		updates = append(updates, FileEntryUpdated{Path: targetPath, Content: cutted, BeforePart: oldPart, AfterPart: newPart})
-	}
-	return updates, nil
 }
