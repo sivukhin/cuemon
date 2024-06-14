@@ -76,17 +76,17 @@ import (
 #monPanel: {
 	#stat?: {
 		reducer: [...("lastNotNull" | "last" | "min" | "max" | "avg")]
-		yPrimary: unit:     string | *"short"
-		yPrimary: min?:     number
-		yPrimary: max?:     number
+		yPrimary: unit: string | *"short"
+		yPrimary: min?: number
+		yPrimary: max?: number
 	}
 
 	if #stat != _|_ {
 		type: "stat"
 		options: reduceOptions: calcs: _ | *#stat.reducer
-		fieldConfig: defaults: unit: _ | *#stat.yPrimary.unit
-		if #stat.yPrimary.min != _|_ { fieldConfig: defaults: min: _ | *#stat.yPrimary.min }
-		if #stat.yPrimary.max != _|_ { fieldConfig: defaults: max: _ | *#stat.yPrimary.max }
+		fieldConfig: defaults: unit:   _ | *#stat.yPrimary.unit
+		if #stat.yPrimary.min != _|_ {fieldConfig: defaults: min: _ | *#stat.yPrimary.min}
+		if #stat.yPrimary.max != _|_ {fieldConfig: defaults: max: _ | *#stat.yPrimary.max}
 	}
 }
 
@@ -229,7 +229,7 @@ import (
 	}
 
 	if (#graph != _|_ && #grafanaVersion == "v7" && #defaultGraphPlugin) || (#graph != _|_ && #grafanaVersion == "v10" && !#defaultGraphPlugin) {
-		type:        _ | *"graph"
+		type: _ | *"graph"
 		xaxis: mode:         _ | *"time"
 		xaxis: show:         _ | *true
 		tooltip: shared:     _ | *true
@@ -345,14 +345,14 @@ import (
 			metricQuery: editorMode:         _ | *"visual"
 			if #grafanaVersion == "v10" {metricQuery: preprocessor: _ | *"none"}
 			if #grafanaVersion == "v7" && #targets[i].mqlVisual.sloV7 {
-					sloQuery: projectName:     _ | *#targets[i].mqlVisual.projectName
-					sloQuery: alignmentPeriod: _ | *"cloud-monitoring-auto"
-					sloQuery: selectorName:    _ | *"select_slo_health"
-					sloQuery: aliasBy:         _ | *""
-					sloQuery: serviceId:       _ | *""
-					sloQuery: serviceName:     _ | *""
-					sloQuery: sloId:           _ | *""
-					sloQuery: sloName:         _ | *""
+				sloQuery: projectName:     _ | *#targets[i].mqlVisual.projectName
+				sloQuery: alignmentPeriod: _ | *"cloud-monitoring-auto"
+				sloQuery: selectorName:    _ | *"select_slo_health"
+				sloQuery: aliasBy:         _ | *""
+				sloQuery: serviceId:       _ | *""
+				sloQuery: serviceName:     _ | *""
+				sloQuery: sloId:           _ | *""
+				sloQuery: sloName:         _ | *""
 			}
 		}
 		if #targets[i].mqlScript != _|_ {

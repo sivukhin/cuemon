@@ -11,6 +11,7 @@ import (
 	#sortTypes: {none: 0, alphAsc: 1, alphDesc: 2, numAsc: 3, numDesc: 4, ialphAsc: 5, ialphDesc: 6}
 	#queryTypes: {labelNames: 0, labelValues: 1, metrics: 2, queryResult: 3, seriesQuery: 4, classicQuery: 5}
 
+	#datasrc?: _
 	#constant?: {
 		name:  string
 		value: string
@@ -24,17 +25,16 @@ import (
 		options: [...{value: string, text: string | *value, selected: bool | *false}]
 	}
 	#query?: {
-		name:       string
-		label:      string | null | *name
-		hide:       *"none" | "label" | "variable"
-		refresh:    *"dashboardLoad" | "timeRangeChange"
-		sort:       "none" | "alphAsc" | "alphDesc" | "numAsc" | "numDesc" | *"ialphAsc" | "ialphDesc"
-		multi:      bool | *true
-		all:        bool | *multi
-		allValue:   string | *""
-		datasource: _
-		regex:      string | *""
-		query:      string
+		name:     string
+		label:    string | null | *name
+		hide:     *"none" | "label" | "variable"
+		refresh:  *"dashboardLoad" | "timeRangeChange"
+		sort:     "none" | "alphAsc" | "alphDesc" | "numAsc" | "numDesc" | *"ialphAsc" | "ialphDesc"
+		multi:    bool | *true
+		all:      bool | *multi
+		allValue?: string
+		regex:    string | *""
+		query:    string
 		current: [...string] | string
 	}
 	#textbox?: {
@@ -44,6 +44,9 @@ import (
 		hide:    *"none" | "label" | "variable"
 	}
 
+	if #datasrc != _|_ {
+		datasource: #datasrc
+	}
 	if #constant != _|_ {
 		type:        "constant"
 		name:        _ | *#constant.name
@@ -77,7 +80,7 @@ import (
 			current: value: _ | *[for option in #custom.options if option.selected {option.value}][0] | ""
 		}
 		if #grafanaVersion == "v7" {description: string | null | *""}
-		queryValue: string | *""
+//		queryValue: string | *""
 	}
 	if #query != _|_ {
 		type:           "query"
@@ -93,7 +96,6 @@ import (
 		useTags:        _ | *false
 		tagsQuery:      _ | *""
 		tagValuesQuery: _ | *""
-		datasource:     #query.datasource
 
 		definition: _ | *query.query
 		query: query:      _ | *#query.query
@@ -108,12 +110,11 @@ import (
 		if !#query.multi {
 			current: text: _ | *#query.current
 		}
-		if #query.allValue != null {
-//			allValue: _ | *#query.allValue
+		if #query.allValue != _|_ {
+			allValue: _ | *#query.allValue
 		}
 		if #grafanaVersion == "v7" {
 			tags: _ | *[]
-			allValue: _ | *#query.allValue
 			query: refId: _ | *"StandardVariableQuery"
 		}
 		if #grafanaVersion == "v10" {

@@ -24,6 +24,7 @@ package cuemon
 			}
 		}
 		if input.type == "query" {
+			"#datasrc": input.datasource
 			"#query": {
 				name:       input.name
 				label:      input.label
@@ -33,10 +34,11 @@ package cuemon
 				sort:       #sortTypes[input.sort]
 				regex:      input.regex
 				refresh:    #refreshTypes[input.refresh]
-				datasource: input.datasource
 				current:    input.current.value
 				query:      input.query.query
-				if input.allValue != _|_ {allValue: input.allValue}
+				if (input.allValue & string) != _|_ {
+					allValue: input.allValue
+				}
 			}
 		}
 	}
