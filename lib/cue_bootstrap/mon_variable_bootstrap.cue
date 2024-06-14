@@ -36,6 +36,7 @@ package cuemon
 				datasource: input.datasource
 				current:    input.current.value
 				query:      input.query.query
+				if input.allValue != _|_ {allValue: input.allValue}
 			}
 		}
 	}

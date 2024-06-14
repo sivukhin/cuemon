@@ -26,14 +26,12 @@ import (
 #monPanel: #panel & {#panel}
 #monPanel: {
 	#text?: {
-		title:       string | *""
 		html?:       string
 		markdown?:   string
 		transparent: bool | *false
 	}
 	if #text != _|_ {
 		type:          "text"
-		title:         #text.title
 		transparent:   #text.transparent
 		pluginVersion: #pluginVersion[type]
 		if #text.html != _|_ {
@@ -74,36 +72,21 @@ import (
 		fieldConfig: defaults: thresholds: steps: _ | *[{color: "green"}, {color: "red", value: 80}]
 	}
 }
-#monPanel: {
-	// set units of the graph
-	#unit?: string
-
-	if #unit != _|_ {
-		fieldConfig: defaults: unit: _ | *#unit
-	}
-}
-
-#monPanel: {
-	// set min/max value for the y-axis of the graph
-	#rangeY?: {min?: number, max?: number}
-	type: _
-
-	if #rangeY != _|_ && type == "timeseries" {
-		if #rangeY.min != _|_ {fieldConfig: defaults: min: #rangeY.min}
-		if #rangeY.max != _|_ {fieldConfig: defaults: max: #rangeY.max}
-	}
-}
 
 #monPanel: {
 	#stat?: {
-		title: string
-		reducer: [...("lastNotNull" | "last" | "min" | "max" | "avg")] | *["lastNotNull"]
+		reducer: [...("lastNotNull" | "last" | "min" | "max" | "avg")]
+		yPrimary: unit:     string | *"short"
+		yPrimary: min?:     number
+		yPrimary: max?:     number
 	}
 
 	if #stat != _|_ {
-		type:  "stat"
-		title: #stat.title
+		type: "stat"
 		options: reduceOptions: calcs: _ | *#stat.reducer
+		fieldConfig: defaults: unit: _ | *#stat.yPrimary.unit
+		if #stat.yPrimary.min != _|_ { fieldConfig: defaults: min: _ | *#stat.yPrimary.min }
+		if #stat.yPrimary.max != _|_ { fieldConfig: defaults: max: _ | *#stat.yPrimary.max }
 	}
 }
 
@@ -116,6 +99,7 @@ import (
 		legend?:       bool
 		hidden?:       bool
 		dashes?:       bool
+		linewidth?:    number
 		fillGradient?: number
 	}
 	#overrides?: [...#override]
@@ -128,6 +112,7 @@ import (
 			if #overrides[i].yaxis != _|_ {yaxis: _ | *#overrides[i].yaxis}
 			if #overrides[i].hidden != _|_ {hiddenSeries: _ | *#overrides[i].hidden}
 			if #overrides[i].dashes != _|_ {dashes: _ | *#overrides[i].dashes}
+			if #overrides[i].linewidth != _|_ {linewidth: _ | *#overrides[i].linewidth}
 
 			// not sure if fillGradient exists for legacy "graph" panels in Grafana v10
 			if #overrides[i].fillGradient != _|_ && #grafanaVersion == "v7" {fillGradient: _ | *#overrides[i].fillGradient}
@@ -144,14 +129,19 @@ import (
 		legend: type: *"table" | "list"
 		legend: values: [...#values] | *["lastNotNull"]
 		legend: showValues: bool | *true
-		legend: placement:  "bottom" | *"right"
+		legend: placement:  *"bottom" | "right"
 		legend: sortBy: #values | [...#values] | *"lastNotNull"
 		legend: sortHow: "asc" | *"desc"
 
-		leftY: unit:      string | *"short"
-		leftY: hashKey?:  string
-		rightY: unit:     string | *"short"
-		rightY: hashKey?: string
+		yPrimary: unit:     string | *"short"
+		yPrimary: min?:     number
+		yPrimary: max?:     number
+		yPrimary: hashKey?: string
+
+		ySecondary: unit:     string | *yPrimary.unit
+		ySecondary: min?:     number | *yPrimary.min
+		ySecondary: max?:     number | *yPrimary.max
+		ySecondary: hashKey?: string
 
 		display: lines: {use: bool | *true, size: number | *1}
 		display: points: {use: bool | *false, size: number | *0}
@@ -214,21 +204,24 @@ import (
 			fieldConfig: defaults: custom: stacking: group:       _ | *"A"
 			fieldConfig: defaults: custom: stacking: mode:        _ | *"none"
 			fieldConfig: defaults: custom: thresholdsStyle: mode: _ | *"off"
-			fieldConfig: defaults: unit: _ | *#graph.leftY.unit
+			fieldConfig: defaults: unit:      _ | *#graph.yPrimary.unit
 			fieldConfig: defaults: unitScale: _ | *true
-
 		}
 
 		options: tooltipOptions: mode: _ | *"single"
 
 		yaxes: [for i, axis in yaxes {
 			if i == 0 {
-				format: _ | *#graph.leftY.unit
-				if #graph.leftY.hashKey != _|_ {$$hashKey: _ | *#graph.leftY.hashKey}
+				format: _ | *#graph.yPrimary.unit
+				if #graph.yPrimary.hashKey != _|_ {$$hashKey: _ | *#graph.yPrimary.hashKey}
+				if #graph.yPrimary.min != _|_ {min: _ | *"\(#graph.yPrimary.min)"}
+				if #graph.yPrimary.max != _|_ {max: _ | *"\(#graph.yPrimary.max)"}
 			}
 			if i == 1 {
-				format: _ | *#graph.rightY.unit
-				if #graph.rightY.hashKey != _|_ {$$hashKey: _ | *#graph.rightY.hashKey}
+				format: _ | *#graph.ySecondary.unit
+				if #graph.ySecondary.hashKey != _|_ {$$hashKey: _ | *#graph.ySecondary.hashKey}
+				if #graph.ySecondary.min != _|_ {min: _ | *"\(#graph.ySecondary.min)"}
+				if #graph.ySecondary.max != _|_ {max: _ | *"\(#graph.ySecondary.max)"}
 			}
 			logBase: _ | *1
 			show:    _ | *true
@@ -237,7 +230,6 @@ import (
 
 	if (#graph != _|_ && #grafanaVersion == "v7" && #defaultGraphPlugin) || (#graph != _|_ && #grafanaVersion == "v10" && !#defaultGraphPlugin) {
 		type:        _ | *"graph"
-		description: _ | *""
 		xaxis: mode:         _ | *"time"
 		xaxis: show:         _ | *true
 		tooltip: shared:     _ | *true
@@ -280,12 +272,16 @@ import (
 
 		yaxes: [for i, axis in yaxes {
 			if i == 0 {
-				format: _ | *#graph.leftY.unit
-				if #graph.leftY.hashKey != _|_ {$$hashKey: _ | *#graph.leftY.hashKey}
+				format: _ | *#graph.yPrimary.unit
+				if #graph.yPrimary.hashKey != _|_ {$$hashKey: _ | *#graph.yPrimary.hashKey}
+				if #graph.yPrimary.min != _|_ {min: _ | *"\(#graph.yPrimary.min)"}
+				if #graph.yPrimary.max != _|_ {max: _ | *"\(#graph.yPrimary.max)"}
 			}
 			if i == 1 {
-				format: _ | *#graph.rightY.unit
-				if #graph.rightY.hashKey != _|_ {$$hashKey: _ | *#graph.rightY.hashKey}
+				format: _ | *#graph.ySecondary.unit
+				if #graph.ySecondary.hashKey != _|_ {$$hashKey: _ | *#graph.ySecondary.hashKey}
+				if #graph.ySecondary.min != _|_ {min: _ | *"\(#graph.ySecondary.min)"}
+				if #graph.ySecondary.max != _|_ {max: _ | *"\(#graph.ySecondary.max)"}
 			}
 			logBase: _ | *1
 			show:    _ | *true
@@ -294,19 +290,13 @@ import (
 }
 
 #monPanel: {
-	#alphabet: [for x in list.Range(10, 256+10, 1) {strings.ToUpper(strconv.FormatInt(x, 36))}]
-
-	type:          string
+	type: string
+	targets: [...]
 	#d=datasource: #datasource
 
-	targets: [for i, target in targets {
-		refId:  _ | *#alphabet[i]
-		#prom?: string
-		if #prom != _|_ {
-			expr: _ | *#prom
-			if #grafanaVersion == "v7" {interval: _ | *""}
-		}
-		#mqlVisual?: {
+	#target: {
+		prom?: string
+		mqlVisual?: {
 			aliasBy:     string
 			projectName: string
 			metricType:  string
@@ -320,36 +310,7 @@ import (
 			valueType:          "INT64" | "DOUBLE"
 			sloV7:              bool | *false
 		}
-		if #mqlVisual != _|_ {
-			metricQuery: aliasBy:            _ | *#mqlVisual.aliasBy
-			metricQuery: alignmentPeriod:    _ | *#mqlVisual.alignmentPeriod
-			metricQuery: crossSeriesReducer: _ | *#mqlVisual.crossSeriesReducer
-			metricQuery: filters:            _ | *#mqlVisual.filters
-			metricQuery: groupBys:           _ | *#mqlVisual.groupBys
-			metricQuery: metricKind:         _ | *#mqlVisual.metricKind
-			metricQuery: metricType:         _ | *#mqlVisual.metricType
-			metricQuery: perSeriesAligner:   _ | *#mqlVisual.perSeriesAligner
-			metricQuery: projectName:        _ | *#mqlVisual.projectName
-			metricQuery: unit:               _ | *#mqlVisual.unit
-			metricQuery: valueType:          _ | *#mqlVisual.valueType
-			metricQuery: query:              _ | *""
-			metricQuery: editorMode:         _ | *"visual"
-			if #grafanaVersion == "v10" {metricQuery: preprocessor: _ | *"none"}
-			if #grafanaVersion == "v7" && #mqlVisual.sloV7 {
-				sloQuery: {
-					projectName:     _ | *#mqlVisual.projectName
-					alignmentPeriod: _ | *"cloud-monitoring-auto"
-					selectorName:    _ | *"select_slo_health"
-					aliasBy:         _ | *""
-					serviceId:       _ | *""
-					serviceName:     _ | *""
-					sloId:           _ | *""
-					sloName:         _ | *""
-				}
-			}
-		}
-
-		#mqlScript?: {
+		mqlScript?: {
 			query:              string
 			aliasBy:            string
 			projectName:        string
@@ -357,32 +318,65 @@ import (
 			crossSeriesReducer: *"REDUCE_MEAN" | "REDUCE_SUM" | "REDUCE_MAX"
 			perSeriesAligner:   *"ALIGN_MEAN" | "ALIGN_INTERPOLATE" | "ALIGN_NEXT_OLDER" | "ALIGN_RATE"
 		}
-		if #mqlScript != _|_ {
-			metricQuery: aliasBy:            _ | *#mqlScript.aliasBy
-			metricQuery: alignmentPeriod:    _ | *#mqlScript.alignmentPeriod
-			metricQuery: crossSeriesReducer: _ | *#mqlScript.crossSeriesReducer
-			metricQuery: perSeriesAligner:   _ | *#mqlScript.perSeriesAligner
-			metricQuery: projectName:        _ | *#mqlScript.projectName
-			metricQuery: query:              _ | *#mqlScript.query
+		format: string | *""
+		hide:   bool | *false
+	}
+	#targets: [...#target]
+	targets: [for i, target in targets {
+		target
+
+		datasource?: _ | *#d
+		if #targets[i].prom != _|_ {
+			expr: _ | *#targets[i].prom
+		}
+		if #targets[i].mqlVisual != _|_ {
+			metricQuery: aliasBy:            _ | *#targets[i].mqlVisual.aliasBy
+			metricQuery: alignmentPeriod:    _ | *#targets[i].mqlVisual.alignmentPeriod
+			metricQuery: crossSeriesReducer: _ | *#targets[i].mqlVisual.crossSeriesReducer
+			metricQuery: filters:            _ | *#targets[i].mqlVisual.filters
+			metricQuery: groupBys:           _ | *#targets[i].mqlVisual.groupBys
+			metricQuery: metricKind:         _ | *#targets[i].mqlVisual.metricKind
+			metricQuery: metricType:         _ | *#targets[i].mqlVisual.metricType
+			metricQuery: perSeriesAligner:   _ | *#targets[i].mqlVisual.perSeriesAligner
+			metricQuery: projectName:        _ | *#targets[i].mqlVisual.projectName
+			metricQuery: unit:               _ | *#targets[i].mqlVisual.unit
+			metricQuery: valueType:          _ | *#targets[i].mqlVisual.valueType
+			metricQuery: query:              _ | *""
+			metricQuery: editorMode:         _ | *"visual"
+			if #grafanaVersion == "v10" {metricQuery: preprocessor: _ | *"none"}
+			if #grafanaVersion == "v7" && #targets[i].mqlVisual.sloV7 {
+					sloQuery: projectName:     _ | *#targets[i].mqlVisual.projectName
+					sloQuery: alignmentPeriod: _ | *"cloud-monitoring-auto"
+					sloQuery: selectorName:    _ | *"select_slo_health"
+					sloQuery: aliasBy:         _ | *""
+					sloQuery: serviceId:       _ | *""
+					sloQuery: serviceName:     _ | *""
+					sloQuery: sloId:           _ | *""
+					sloQuery: sloName:         _ | *""
+			}
+		}
+		if #targets[i].mqlScript != _|_ {
+			metricQuery: aliasBy:            _ | *#targets[i].mqlScript.aliasBy
+			metricQuery: alignmentPeriod:    _ | *#targets[i].mqlScript.alignmentPeriod
+			metricQuery: crossSeriesReducer: _ | *#targets[i].mqlScript.crossSeriesReducer
+			metricQuery: perSeriesAligner:   _ | *#targets[i].mqlScript.perSeriesAligner
+			metricQuery: projectName:        _ | *#targets[i].mqlScript.projectName
+			metricQuery: query:              _ | *#targets[i].mqlScript.query
 
 			metricQuery: editorMode: _ | *"mql"
 			metricQuery: metricKind: _ | *""
 			metricQuery: metricType: _ | *""
 			metricQuery: unit:       _ | *""
 			metricQuery: valueType:  _ | *""
-
-			queryType: _ | *"metrics"
 		}
+		queryType:    _ | *"metrics"
+		legendFormat: _ | *#targets[i].format
+		hide:         _ | *#targets[i].hide
 
-		#format: string | *""
-		#hide:   bool | *false
-
-		datasource?:  _ | *#d
-		legendFormat: _ | *#format
-		hide:         _ | *#hide
+		if #grafanaVersion == "v7" {interval: _ | *""}
 		if #grafanaVersion == "v7" && (type == "stat" || type == "table") {
-			exemplar: _ | *false
-			instant:  _ | *true
+			exemplar: _ | *true
+			instant:  _ | *false
 		}
 		if #grafanaVersion == "v10" && (type == "stat" || type == "table") {
 			exemplar: _ | *false
@@ -393,6 +387,15 @@ import (
 			exemplar: _ | *true
 			//			range:    _ | *true
 		}
+	}]
+}
+
+#monPanel: {
+	#alphabet: [for x in list.Range(10, 256+10, 1) {strings.ToUpper(strconv.FormatInt(x, 36))}]
+	#targets: _
+
+	targets: [for i, target in targets {
+		refId: _ | *#alphabet[i]
 	}]
 }
 
@@ -425,6 +428,16 @@ import (
 	type:          string
 	pluginVersion: _ | *#pluginVersion[type]
 
+	#title:       string
+	#description: string | *""
+	#datasrc?:    #datasource
+
+	if type == "graph" || type == "stat" || type == "timeseries" {
+		title:       _ | *#title
+		description: _ | *#description
+		datasource:  _ | *#datasrc
+	}
+
 	if type == "stat" {
 		options: reduceOptions: fields: _ | *""
 		options: reduceOptions: values: _ | *false
@@ -437,7 +450,6 @@ import (
 
 		if #grafanaVersion == "v7" {
 			options: alertThreshold: _ | *true
-			description:   _ | *""
 			timeShift:     _ | *null
 			timeFrom:      _ | *null
 			steppedLine:   _ | *false

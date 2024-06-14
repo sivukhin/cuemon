@@ -1,13 +1,20 @@
 package cuemon
 
+import (
+	"strconv"
+)
+
 #conversion: {
 	#v7ToV10: {min: "min", max: "max", mean: "mean", avg: "mean", total: "sum", sum: "sum", current: "lastNotNull", lastNotNull: "lastNotNull", last: "last"}
 	input: #panel
 	output: {
 		input
+		"#title": input.title
+		if input.description != _|_ {"#description": input.description}
+		if input.datasource != _|_ {"#datasrc": input.datasource}
+
 		if input.type == "text" {
 			"#text": {
-				title:       input.title
 				markdown:    input.options.content
 				transparent: input.transparent
 			}
@@ -15,8 +22,10 @@ package cuemon
 
 		if input.type == "stat" {
 			"#stat": {
-				title:   input.title
 				reducer: input.options.reduceOptions.calcs
+				if input.fieldConfig.defaults.unit != _|_ {yPrimary: unit: input.fieldConfig.defaults.unit}
+				if input.fieldConfig.defaults.min != _|_ {yPrimary: min: input.fieldConfig.defaults.min}
+				if input.fieldConfig.defaults.max != _|_ {yPrimary: min: input.fieldConfig.defaults.max}
 			}
 		}
 
@@ -29,6 +38,7 @@ package cuemon
 				hashKey: override.$$hashKey
 				alias:   override.alias
 				if override.color != _|_ {color: override.color}
+				if override.linewidth != _|_ {linewidth: override.linewidth}
 				if override.yaxis != _|_ {yaxis: override.yaxis}
 				if override.hiddenSeries != _|_ {hidden: override.hiddenSeries}
 				if override.dashes != _|_ {dashes: override.dashes}
@@ -44,8 +54,8 @@ package cuemon
 				legend: placement: input.options.legend.placement
 				legend: values:    input.options.legend.calcs
 			}
-			if input.fieldConfig.defaults.min != _|_ {"#rangeY": min: input.fieldConfig.defaults.min}
-			if input.fieldConfig.defaults.max != _|_ {"#rangeY": min: input.fieldConfig.defaults.max}
+			//			if input.fieldConfig.defaults.min != _|_ {"#rangeY": min: input.fieldConfig.defaults.min}
+			//			if input.fieldConfig.defaults.max != _|_ {"#rangeY": min: input.fieldConfig.defaults.max}
 		}
 
 		if input.type == "graph" {
@@ -71,11 +81,15 @@ package cuemon
 					legend: values: [for value in ["avg", "max", "min", "current", "total"] if input.legend[value] {#v7ToV10[value]}]
 					legend: showValues: input.legend.values
 				}
-				leftY: unit:     input.yaxes[0].format
-				leftY: hashKey:  input.yaxes[0].$$hashKey
-				rightY: unit:    input.yaxes[1].format
-				rightY: hashKey: input.yaxes[1].$$hashKey
-				display: fill:   input.fill
+				yPrimary: unit:      input.yaxes[0].format
+				yPrimary: hashKey:   input.yaxes[0].$$hashKey
+				ySecondary: unit:    input.yaxes[1].format
+				ySecondary: hashKey: input.yaxes[1].$$hashKey
+				if (input.yaxes[0].min & string) != _|_ {yPrimary: min: strconv.ParseFloat(input.yaxes[0].min, 64)}
+				if (input.yaxes[0].max & string) != _|_ {yPrimary: max: strconv.ParseFloat(input.yaxes[0].max, 64)}
+				if (input.yaxes[1].min & string) != _|_ {ySecondary: min: strconv.ParseFloat(input.yaxes[1].min, 64)}
+				if (input.yaxes[1].max & string) != _|_ {ySecondary: max: strconv.ParseFloat(input.yaxes[1].max, 64)}
+				display: fill: input.fill
 				display: bars: use:    input.bars
 				display: lines: use:   input.lines
 				display: lines: size:  input.linewidth
@@ -99,12 +113,13 @@ package cuemon
 		}
 
 		if input.targets != _|_ {
-			targets: [for target in input.targets {
-				if target.expr != _|_ {"#prom": target.expr}
-				if target.legendFormat != _|_ {"#format": target.legendFormat}
+			"#targets": [for target in input.targets {
+				if target.hide != _|_ {hide: target.hide}
+				if target.expr != _|_ {prom: target.expr}
+				if target.legendFormat != _|_ {format: target.legendFormat}
 				if target.metricQuery != _|_ {
 					if target.metricQuery.editorMode == "mql" {
-						"#mqlScript": {
+						mqlScript: {
 							aliasBy:            target.metricQuery.aliasBy
 							alignmentPeriod:    target.metricQuery.alignmentPeriod
 							crossSeriesReducer: target.metricQuery.crossSeriesReducer
@@ -114,7 +129,7 @@ package cuemon
 						}
 					}
 					if target.metricQuery.editorMode == "visual" {
-						"#mqlVisual": {
+						mqlVisual: {
 							aliasBy:            target.metricQuery.aliasBy
 							alignmentPeriod:    target.metricQuery.alignmentPeriod
 							crossSeriesReducer: target.metricQuery.crossSeriesReducer

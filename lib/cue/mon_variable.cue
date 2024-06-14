@@ -77,6 +77,7 @@ import (
 			current: value: _ | *[for option in #custom.options if option.selected {option.value}][0] | ""
 		}
 		if #grafanaVersion == "v7" {description: string | null | *""}
+		queryValue: string | *""
 	}
 	if #query != _|_ {
 		type:           "query"
@@ -108,7 +109,7 @@ import (
 			current: text: _ | *#query.current
 		}
 		if #query.allValue != null {
-			allValue: _ | *#query.allValue
+//			allValue: _ | *#query.allValue
 		}
 		if #grafanaVersion == "v7" {
 			tags: _ | *[]

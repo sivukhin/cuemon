@@ -340,7 +340,7 @@ func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error
 			},
 			{
 				Reduction: func(path []string, expr ast.Expr) (string, ast.Expr, bool) {
-					if path[len(path)-1] != "datasource" {
+					if path[len(path)-1] != "#datasrc" {
 						return "", nil, false
 					}
 					dataSourceSrc, err := FormatNode(expr)
