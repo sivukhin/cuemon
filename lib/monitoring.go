@@ -13,29 +13,29 @@ import (
 )
 
 var (
-	//go:embed cue/grafana_v7.cue
+	//go:embed cue/grafanaV7.cue
 	GrafanaV7Cue string
-	//go:embed cue/grafana_v10.cue
+	//go:embed cue/grafanaV10.cue
 	GrafanaV10Cue string
 
-	//go:embed cue/mon_meta.cue
+	//go:embed cue/monMeta.cue
 	MonMetaCue string
-	//go:embed cue_bootstrap/mon_meta_bootstrap.cue
+	//go:embed cuebootstrap/monMetaBootstrap.cue
 	MonMetaBootstrapCue string
 
-	//go:embed cue/mon_link.cue
+	//go:embed cue/monLink.cue
 	MonLinkCue string
-	//go:embed cue_bootstrap/mon_link_bootstrap.cue
+	//go:embed cuebootstrap/monLinkBootstrap.cue
 	MonLinkBootstrapCue string
 
-	//go:embed cue/mon_variable.cue
+	//go:embed cue/monVariable.cue
 	MonVariableCue string
-	//go:embed cue_bootstrap/mon_variable_bootstrap.cue
+	//go:embed cuebootstrap/monVariableBootstrap.cue
 	MonVariableBootstrapCue string
 
-	//go:embed cue/mon_panel.cue
+	//go:embed cue/monPanel.cue
 	MonPanelCue string
-	//go:embed cue_bootstrap/mon_panel_bootstrap.cue
+	//go:embed cuebootstrap/monPanelBootstrap.cue
 	MonPanelBootstrapCue string
 )
 

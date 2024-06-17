@@ -103,21 +103,50 @@ import (
 		fillGradient?: number
 	}
 	#overrides: [...#override]
+	type: _
 
-	seriesOverrides: [for _ in #overrides { _ }]
-	seriesOverrides: [for i, override in seriesOverrides {
-		alias: _ | *#overrides[i].alias
-		if #overrides[i].hashKey != _|_ {$$hashKey: _ | *#overrides[i].hashKey}
-		if #overrides[i].color != _|_ {color: _ | *#overrides[i].color}
-		if #overrides[i].yaxis != _|_ {yaxis: _ | *#overrides[i].yaxis}
-		if #overrides[i].hidden != _|_ {hiddenSeries: _ | *#overrides[i].hidden}
-		if #overrides[i].dashes != _|_ {dashes: _ | *#overrides[i].dashes}
-		if #overrides[i].linewidth != _|_ {linewidth: _ | *#overrides[i].linewidth}
-
-		// not sure if fillGradient exists for legacy "graph" panels in Grafana v10
-		if #overrides[i].fillGradient != _|_ && #grafanaVersion == "v7" {fillGradient: _ | *#overrides[i].fillGradient}
-		if #overrides[i].legend != _|_ && #grafanaVersion == "v7" {legend: _ | *#overrides[i].legend}
-	}]
+	if type == "graph" {
+		seriesOverrides: [for _ in #overrides { _ }]
+		seriesOverrides: [for i, override in seriesOverrides {
+			alias: _ | *#overrides[i].alias
+			if #overrides[i].hashKey != _|_ {$$hashKey: _ | *#overrides[i].hashKey}
+			if #overrides[i].color != _|_ {color: _ | *#overrides[i].color}
+			if #overrides[i].yaxis != _|_ {yaxis: _ | *#overrides[i].yaxis}
+			if #overrides[i].hidden != _|_ {hiddenSeries: _ | *#overrides[i].hidden}
+			if #overrides[i].dashes != _|_ {dashes: _ | *#overrides[i].dashes}
+			if #overrides[i].linewidth != _|_ {linewidth: _ | *#overrides[i].linewidth}
+			if #overrides[i].fillGradient != _|_ {fillGradient: _ | *#overrides[i].fillGradient}
+			if #overrides[i].legend != _|_ && #grafanaVersion == "v7" {legend: _ | *#overrides[i].legend}
+		}]
+	}
+	if type == "timeseries" {
+		fieldConfig: overrides: [for _ in #overrides { _ }]
+		fieldConfig: overrides: [for i, override in fieldConfig.overrides {
+			matcher: id: _ | *"byRegexp"
+			matcher: options: _ | *#overrides[i].alias
+			properties: _ | *[
+				if (#overrides[i].hidden & true) != _|_ {
+					id: "custom.hideFrom"
+					value: legend: true
+					value: tooltip: false
+					value: viz: true
+				},
+				if (#overrides[i].dashes & true) != _|_ {
+					id: "custom.lineStyle"
+					value: dash: [10, 10]
+					value: fill: "dash"
+				},
+				if #overrides[i].linewidth != _|_ {
+					id: "custom.lineWidth"
+					value: #overrides[i].linewidth
+				},
+				if (#overrides[i].yaxis & 2) != _|_ {
+					id: "custom.axisPlacement"
+					value: "right"
+				}
+			]
+		}]
+	}
 }
 
 #monPanel: {
