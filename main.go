@@ -10,6 +10,14 @@ import (
 	"github.com/sivukhin/cuemon/lib/auth"
 )
 
+type ArrayFlags []string
+
+func (f *ArrayFlags) String() string { return strings.Join(*f, ",") }
+func (f *ArrayFlags) Set(value string) error {
+	*f = append(*f, value)
+	return nil
+}
+
 var (
 	bootstrap          = flag.NewFlagSet("bootstrap", flag.ExitOnError)
 	bootstrapInput     = bootstrap.String("input", "", "input file with Grafana dashboard JSON (stdin if not provided)")
@@ -47,14 +55,24 @@ const (
 )
 
 func run(args []string) error {
+	var tags []string
+	tagSet := func(s string) error {
+		tags = append(tags, s)
+		return nil
+	}
+	bootstrap.Func("t", "tags for cue export", tagSet)
+	export.Func("t", "tags for cue export", tagSet)
+
 	authorization, err := auth.AnalyzeSubjectAuthorization(os.Environ())
 	if err != nil {
 		return fmt.Errorf("failed to analyze authorization methods: %w", err)
 	}
 	switch args[0] {
 	case "export":
-		files := args[1:]
-		result, err := lib.Export(files, nil)
+		if err := export.Parse(args[1:]); err != nil {
+			return fmt.Errorf("export error: %v", multilineErr(err, errIdent))
+		}
+		result, err := lib.Export(export.Args(), tags)
 		if err != nil {
 			return fmt.Errorf("export error: %v", multilineErr(err, errIdent))
 		}
@@ -70,7 +88,7 @@ func run(args []string) error {
 		if err := push.Parse(args[1:]); err != nil {
 			return fmt.Errorf("push error: %v", multilineErr(err, errIdent))
 		}
-		if err := lib.Push(strings.TrimRight(*pushGrafana, "/"), authorization[authorizationSubject], *pushMessage, *pushPlayground, push.Args()); err != nil {
+		if err := lib.Push(strings.TrimRight(*pushGrafana, "/"), authorization[authorizationSubject], *pushMessage, *pushPlayground, tags, push.Args()); err != nil {
 			return fmt.Errorf("push error: %v", multilineErr(err, errIdent))
 		}
 	case "help":

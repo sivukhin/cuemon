@@ -43,8 +43,8 @@ func ReadJson[T any](input string) (data T, source string, err error) {
 	return
 }
 
-func Export(inputs []string, config *load.Config) (string, error) {
-	buildInstances := load.Instances(inputs, config)
+func Export(inputs []string, tags []string) (string, error) {
+	buildInstances := load.Instances(inputs, &load.Config{Tags: tags})
 	cueContext := cuecontext.New()
 	values, err := cueContext.BuildInstances(buildInstances)
 	if err != nil {
@@ -358,7 +358,14 @@ const (
 	TitleTag      = "title"
 )
 
-func Push(grafanaUrl string, authorization auth.AuthorizationMethods, message string, dashboardPlayground string, files []string) error {
+func Push(
+	grafanaUrl string,
+	authorization auth.AuthorizationMethods,
+	message string,
+	dashboardPlayground string,
+	tags []string,
+	files []string,
+) error {
 	if grafanaUrl == "" {
 		return fmt.Errorf("grafana URL should be provided")
 	}
@@ -368,7 +375,6 @@ func Push(grafanaUrl string, authorization auth.AuthorizationMethods, message st
 	if message == "" {
 		return fmt.Errorf("message should be non empty")
 	}
-	tags := make([]string, 0)
 	if dashboardPlayground != "" {
 		log.Printf("search for playground dashboard")
 		dashboards, err := searchDashboards(grafanaUrl, authorization, dashboardPlayground)
@@ -392,7 +398,7 @@ func Push(grafanaUrl string, authorization auth.AuthorizationMethods, message st
 		tags = append(tags, fmt.Sprintf("%v=%v", PlaygroundTag, true))
 		log.Printf("found playground dashboard with id: %v, uid: %v, title: %v", playgroundDashboard.Value.Id, playgroundDashboard.Value.Uid, playgroundDashboard.Value.Title)
 	}
-	result, err := Export(files, &load.Config{Tags: tags})
+	result, err := Export(files, tags)
 	if err != nil {
 		return fmt.Errorf("failed to export dashboard in JSON: %w", err)
 	}

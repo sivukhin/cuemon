@@ -79,10 +79,12 @@ import (
 		yPrimary: unit: string | *"short"
 		yPrimary: min?: number
 		yPrimary: max?: number
+		orientation: *"auto" | "vertical" | "horizontal"
 	}
 
 	if #stat != _|_ {
 		type: "stat"
+		options: orientation: _ | *#stat.orientation
 		options: reduceOptions: calcs: _ | *#stat.reducer
 		fieldConfig: defaults: unit:   _ | *#stat.yPrimary.unit
 		if #stat.yPrimary.min != _|_ {fieldConfig: defaults: min: _ | *#stat.yPrimary.min}
@@ -474,7 +476,6 @@ import (
 		options: colorMode:   _ | *"value"
 		options: graphMode:   _ | *"area"
 		options: justifyMode: _ | *"auto"
-		options: orientation: _ | *"auto"
 		options: textMode:    _ | *"auto"
 
 		if #grafanaVersion == "v7" {
