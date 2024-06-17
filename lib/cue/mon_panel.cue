@@ -102,23 +102,22 @@ import (
 		linewidth?:    number
 		fillGradient?: number
 	}
-	#overrides?: [...#override]
+	#overrides: [...#override]
 
-	if #overrides != _|_ {
-		seriesOverrides: [for i, override in seriesOverrides {
-			alias: _ | *#overrides[i].alias
-			if #overrides[i].hashKey != _|_ {$$hashKey: _ | *#overrides[i].hashKey}
-			if #overrides[i].color != _|_ {color: _ | *#overrides[i].color}
-			if #overrides[i].yaxis != _|_ {yaxis: _ | *#overrides[i].yaxis}
-			if #overrides[i].hidden != _|_ {hiddenSeries: _ | *#overrides[i].hidden}
-			if #overrides[i].dashes != _|_ {dashes: _ | *#overrides[i].dashes}
-			if #overrides[i].linewidth != _|_ {linewidth: _ | *#overrides[i].linewidth}
+	seriesOverrides: [for _ in #overrides { _ }]
+	seriesOverrides: [for i, override in seriesOverrides {
+		alias: _ | *#overrides[i].alias
+		if #overrides[i].hashKey != _|_ {$$hashKey: _ | *#overrides[i].hashKey}
+		if #overrides[i].color != _|_ {color: _ | *#overrides[i].color}
+		if #overrides[i].yaxis != _|_ {yaxis: _ | *#overrides[i].yaxis}
+		if #overrides[i].hidden != _|_ {hiddenSeries: _ | *#overrides[i].hidden}
+		if #overrides[i].dashes != _|_ {dashes: _ | *#overrides[i].dashes}
+		if #overrides[i].linewidth != _|_ {linewidth: _ | *#overrides[i].linewidth}
 
-			// not sure if fillGradient exists for legacy "graph" panels in Grafana v10
-			if #overrides[i].fillGradient != _|_ && #grafanaVersion == "v7" {fillGradient: _ | *#overrides[i].fillGradient}
-			if #overrides[i].legend != _|_ && #grafanaVersion == "v7" {legend: _ | *#overrides[i].legend}
-		}]
-	}
+		// not sure if fillGradient exists for legacy "graph" panels in Grafana v10
+		if #overrides[i].fillGradient != _|_ && #grafanaVersion == "v7" {fillGradient: _ | *#overrides[i].fillGradient}
+		if #overrides[i].legend != _|_ && #grafanaVersion == "v7" {legend: _ | *#overrides[i].legend}
+	}]
 }
 
 #monPanel: {
@@ -322,6 +321,7 @@ import (
 		hide:   bool | *false
 	}
 	#targets: [...#target]
+	targets: [for _ in #targets { _ }]
 	targets: [for i, target in targets {
 		target
 
