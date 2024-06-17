@@ -60,7 +60,7 @@ func run(args []string) error {
 		tags = append(tags, s)
 		return nil
 	}
-	bootstrap.Func("t", "tags for cue export", tagSet)
+	push.Func("t", "tags for cue export", tagSet)
 	export.Func("t", "tags for cue export", tagSet)
 
 	authorization, err := auth.AnalyzeSubjectAuthorization(os.Environ())
