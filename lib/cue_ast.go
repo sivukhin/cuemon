@@ -1,9 +1,11 @@
 package lib
 
 import (
+	"strconv"
+	"strings"
+
 	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/token"
-	"strconv"
 )
 
 func Int(value int) *ast.BasicLit {
@@ -27,6 +29,9 @@ func File(decl []ast.Decl) *ast.File {
 }
 
 func FieldIdent(ident string, value ast.Expr, attrs ...*ast.Attribute) *ast.Field {
+	if strings.HasPrefix(ident, "__") {
+		return &ast.Field{Label: ast.NewString(ident), Value: value, Attrs: attrs}
+	}
 	return &ast.Field{Label: ast.NewIdent(ident), Value: value, Attrs: attrs}
 }
 

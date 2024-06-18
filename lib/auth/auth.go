@@ -36,6 +36,18 @@ type AuthorizationMethods struct {
 	ProxyAuthorizationHeader *string
 }
 
+func AddAuthorization(request *http.Request, authorization AuthorizationMethods) {
+	if authorization.Cookie != nil {
+		request.Header.Set("Cookie", *authorization.Cookie)
+	}
+	if authorization.AuthorizationHeader != nil {
+		request.Header.Set("Authorization", *authorization.AuthorizationHeader)
+	}
+	if authorization.ProxyAuthorizationHeader != nil {
+		request.Header.Set("Proxy-Authorization", *authorization.ProxyAuthorizationHeader)
+	}
+}
+
 func ParseEnvVars(envs []string) (map[string]string, error) {
 	vars := make(map[string]string)
 	for _, env := range envs {
@@ -59,7 +71,7 @@ func ParseEnvVars(envs []string) (map[string]string, error) {
 				return nil, fmt.Errorf("unable to deserialize JSON from env key %v", env)
 			}
 			for jsonKey, jsonValue := range content {
-				vars[prefix+"_"+strings.ToUpper(jsonKey)] = string(jsonValue)
+				vars[prefix+"_"+strings.ToUpper(jsonKey)] = jsonValue
 			}
 		} else {
 			vars[tokens[0]] = value

@@ -10,6 +10,8 @@ type JsonRaw[T any] struct {
 }
 
 func (d *JsonRaw[T]) UnmarshalJSON(data []byte) error {
-	d.Raw = data
+	var payload map[string]any
+	_ = json.Unmarshal(data, &payload)
+	d.Raw, _ = json.Marshal(payload)
 	return json.Unmarshal(data, &d.Value)
 }

@@ -3,11 +3,20 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/sivukhin/cuemon/lib"
-	"github.com/sivukhin/cuemon/lib/auth"
 	"os"
 	"strings"
+
+	"github.com/sivukhin/cuemon/lib"
+	"github.com/sivukhin/cuemon/lib/auth"
 )
+
+type ArrayFlags []string
+
+func (f *ArrayFlags) String() string { return strings.Join(*f, ",") }
+func (f *ArrayFlags) Set(value string) error {
+	*f = append(*f, value)
+	return nil
+}
 
 var (
 	bootstrap          = flag.NewFlagSet("bootstrap", flag.ExitOnError)
@@ -16,13 +25,9 @@ var (
 	bootstrapDir       = bootstrap.String("dir", "", "target directory where cuemon will be initialized")
 	bootstrapOverwrite = bootstrap.Bool("overwrite", false, "enable unsafe mode which can overwrite files")
 
-	update          = flag.NewFlagSet("update", flag.ExitOnError)
-	updateInput     = update.String("input", "", "input file with Grafana panel JSON (stdin if not provided)")
-	updateDir       = update.String("dir", "", "target directory with cuemon setup")
-	updateOverwrite = update.Bool("overwrite", false, "enable unsafe mode which can overwrite files")
+	export = flag.NewFlagSet("export", flag.ExitOnError)
 
 	push           = flag.NewFlagSet("push", flag.ExitOnError)
-	pushDashboard  = push.String("dashboard", "", "target CUE file with cuemon dashboard setup")
 	pushMessage    = push.String("message", "", "message describing dashboard updates")
 	pushGrafana    = push.String("grafana", "", "url to Grafana instance")
 	pushPlayground = push.String("playground", "", "playground dashboard name which will be updated instead of original dashboard id")
@@ -31,7 +36,7 @@ var (
 func printUsage() {
 	fmt.Println("cuemon:")
 	bootstrap.Usage()
-	update.Usage()
+	export.Usage()
 	push.Usage()
 }
 
@@ -50,11 +55,28 @@ const (
 )
 
 func run(args []string) error {
+	var tags []string
+	tagSet := func(s string) error {
+		tags = append(tags, s)
+		return nil
+	}
+	push.Func("t", "tags for cue export", tagSet)
+	export.Func("t", "tags for cue export", tagSet)
+
 	authorization, err := auth.AnalyzeSubjectAuthorization(os.Environ())
 	if err != nil {
 		return fmt.Errorf("failed to analyze authorization methods: %w", err)
 	}
 	switch args[0] {
+	case "export":
+		if err := export.Parse(args[1:]); err != nil {
+			return fmt.Errorf("export error: %v", multilineErr(err, errIdent))
+		}
+		result, err := lib.Export(export.Args(), tags)
+		if err != nil {
+			return fmt.Errorf("export error: %v", multilineErr(err, errIdent))
+		}
+		fmt.Printf("%v", result)
 	case "bootstrap":
 		if err := bootstrap.Parse(args[1:]); err != nil {
 			return fmt.Errorf("bootstrap error: %v", multilineErr(err, errIdent))
@@ -62,18 +84,11 @@ func run(args []string) error {
 		if err := lib.Bootstrap(*bootstrapInput, *bootstrapModule, *bootstrapDir, *bootstrapOverwrite); err != nil {
 			return fmt.Errorf("bootstrap error: %v", multilineErr(err, errIdent))
 		}
-	case "update":
-		if err := update.Parse(args[1:]); err != nil {
-			return fmt.Errorf("update error: %v", multilineErr(err, errIdent))
-		}
-		if err := lib.Update(*updateInput, *updateDir, *updateOverwrite); err != nil {
-			return fmt.Errorf("update error: %v", multilineErr(err, errIdent))
-		}
 	case "push":
 		if err := push.Parse(args[1:]); err != nil {
 			return fmt.Errorf("push error: %v", multilineErr(err, errIdent))
 		}
-		if err := lib.Push(strings.TrimRight(*pushGrafana, "/"), authorization[authorizationSubject], *pushDashboard, *pushMessage, *pushPlayground); err != nil {
+		if err := lib.Push(strings.TrimRight(*pushGrafana, "/"), authorization[authorizationSubject], *pushMessage, *pushPlayground, tags, push.Args()); err != nil {
 			return fmt.Errorf("push error: %v", multilineErr(err, errIdent))
 		}
 	case "help":

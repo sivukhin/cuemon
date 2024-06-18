@@ -2,22 +2,24 @@ package lib
 
 import (
 	"bytes"
-	"cuelang.org/go/cue"
-	"cuelang.org/go/cue/ast"
-	"cuelang.org/go/cue/cuecontext"
-	"cuelang.org/go/cue/format"
-	"cuelang.org/go/cue/load"
-	cueJson "cuelang.org/go/pkg/encoding/json"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/sivukhin/cuemon/lib/auth"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path"
 	"strings"
+
+	"cuelang.org/go/cue"
+	"cuelang.org/go/cue/ast"
+	"cuelang.org/go/cue/cuecontext"
+	"cuelang.org/go/cue/format"
+	"cuelang.org/go/cue/load"
+	cueJson "cuelang.org/go/pkg/encoding/json"
+
+	"github.com/sivukhin/cuemon/lib/auth"
 )
 
 func ReadJson[T any](input string) (data T, source string, err error) {
@@ -39,6 +41,191 @@ func ReadJson[T any](input string) (data T, source string, err error) {
 		return
 	}
 	return
+}
+
+func Export(inputs []string, tags []string) (string, error) {
+	buildInstances := load.Instances(inputs, &load.Config{Tags: tags})
+	cueContext := cuecontext.New()
+	values, err := cueContext.BuildInstances(buildInstances)
+	if err != nil {
+		return "", fmt.Errorf("unable to build context from files: %+v", inputs)
+	}
+	if len(values) != 1 {
+		return "", fmt.Errorf("expected single value during CUE evaluation, got %v", len(values))
+	}
+	value := values[0]
+
+	mainValue := value.Eval()
+	rowsValue := value.LookupPath(cue.ParsePath("#rows")).Eval()
+	mainJson, err := cueJson.Marshal(mainValue)
+	if err != nil {
+		return "", fmt.Errorf("unable to format main json: %v", err)
+	}
+	rowsJson, err := cueJson.Marshal(rowsValue)
+	if err != nil {
+		return "", fmt.Errorf("unable to format rows json: %v", err)
+	}
+
+	var mainGrafana map[string]any
+	if err = json.Unmarshal([]byte(mainJson), &mainGrafana); err != nil {
+		return "", fmt.Errorf("unable to parse main json back: %v", err)
+	}
+
+	var rowsCue []CueRow
+	if err = json.Unmarshal([]byte(rowsJson), &rowsCue); err != nil {
+		return "", fmt.Errorf("unable to parse rows json back: %v", err)
+	}
+
+	err = fillGridPositions(rowsCue)
+	if err != nil {
+		return "", fmt.Errorf("failed to fill grid positions: %v", err)
+	}
+
+	panels, err := createPanels(rowsCue)
+	if err != nil {
+		return "", fmt.Errorf("failed to create panels for final export: %w", err)
+	}
+
+	mainGrafana["panels"] = panels
+	mainBytes, err := json.MarshalIndent(mainGrafana, "", "  ")
+	if err != nil {
+		return "", fmt.Errorf("failed to serialize final struct: %w", err)
+	}
+
+	return string(mainBytes), nil
+}
+
+func createPanel(panel JsonRaw[GrafanaPanel]) (map[string]any, error) {
+	var data map[string]any
+	err := json.Unmarshal(panel.Raw, &data)
+	if err != nil {
+		return nil, fmt.Errorf("unable to deserialize panel from json back: %w", err)
+	}
+	data["id"] = panel.Value.Id
+	data["gridPos"] = map[string]int{
+		"x": panel.Value.GridPos.X,
+		"y": panel.Value.GridPos.Y,
+		"w": panel.Value.GridPos.W,
+		"h": panel.Value.GridPos.H,
+	}
+	return data, nil
+}
+
+func createPanels(rows []CueRow) ([]map[string]any, error) {
+	panels := make([]map[string]any, 0)
+	for _, row := range rows {
+		rowPanels := make([]map[string]any, 0)
+		for _, group := range row.Groups {
+			for _, panel := range group.Panels {
+				panelMap, err := createPanel(panel)
+				if err != nil {
+					return nil, fmt.Errorf("failed to create panel: %w", err)
+				}
+				rowPanels = append(rowPanels, panelMap)
+			}
+		}
+		if row.Collapsed {
+			panels = append(panels, map[string]any{
+				"type":      "row",
+				"id":        row.Id,
+				"title":     row.Title,
+				"collapsed": row.Collapsed,
+				"panels":    rowPanels,
+				"gridPos": map[string]int{
+					"h": 1,
+					"w": 24,
+					"x": 0,
+					"y": row.Y,
+				},
+			})
+		} else {
+			panels = append(panels, map[string]any{
+				"type":      "row",
+				"id":        row.Id,
+				"title":     row.Title,
+				"collapsed": row.Collapsed,
+				"gridPos": map[string]int{
+					"h": 1,
+					"w": 24,
+					"x": 0,
+					"y": row.Y,
+				},
+			})
+			panels = append(panels, rowPanels...)
+		}
+	}
+	return panels, nil
+}
+
+func choose[T any](values ...*T) (T, error) {
+	for i := len(values) - 1; i >= 0; i-- {
+		if values[i] != nil {
+			return *values[i], nil
+		}
+	}
+	return *new(T), fmt.Errorf("all values are null")
+}
+
+func fillGridPositions(rows []CueRow) error {
+	id, globalOffsetY := 0, 0
+	for rowI := range rows {
+		row := &rows[rowI]
+		row.Y = globalOffsetY
+		row.Id = id
+		id++
+		globalOffsetY++
+
+		rowOffsetY := 0
+		if !row.Collapsed {
+			rowOffsetY = globalOffsetY
+		}
+		for groupI := range row.Groups {
+			group := &row.Groups[groupI]
+			height, err := choose(row.Height, group.Height)
+			if err != nil {
+				return fmt.Errorf("no height configured for group: %w", err)
+			}
+			widths, err := choose(row.Widths, group.Widths)
+			if err != nil {
+				return fmt.Errorf("no widths configured for group: %w", err)
+			}
+
+			column := 0
+			groupOffsetY := rowOffsetY
+			groupOffsetX := 0
+			for panelI := range group.Panels {
+				panel := &group.Panels[panelI]
+
+				panel.Value.Id = id
+				id++
+
+				if groupOffsetY == rowOffsetY+height {
+					groupOffsetY = rowOffsetY
+					groupOffsetX += widths[column]
+					column++
+				}
+
+				if column >= len(widths) {
+					return fmt.Errorf("invalid panel tiling: too many rows in a group")
+				}
+
+				if panel.Value.GridPos.H == 0 {
+					panel.Value.GridPos.H = (rowOffsetY + height) - groupOffsetY
+				}
+				panel.Value.GridPos.X = groupOffsetX
+				panel.Value.GridPos.Y = groupOffsetY
+				panel.Value.GridPos.W = widths[column]
+				groupOffsetY += panel.Value.GridPos.H
+			}
+
+			rowOffsetY = groupOffsetY
+		}
+
+		if !row.Collapsed {
+			globalOffsetY = rowOffsetY
+		}
+	}
+	return nil
 }
 
 func Bootstrap(input, module, dir string, overwrite bool) error {
@@ -106,60 +293,10 @@ func CutNode(content []byte, oldNode ast.Node, newNode ast.Node) ([]byte, []byte
 	return result, oldPart, newPart, nil
 }
 
-func Update(input, dir string, overwrite bool) error {
-	if dir == "" {
-		return fmt.Errorf("update dir should be provided")
-	}
-	panel, source, err := ReadJson[JsonRaw[GrafanaPanel]](input)
-	if err != nil {
-		return fmt.Errorf("unable to get grafana panel json from %v: %w", source, err)
-	}
-	updates, err := UpdateFiles(dir, panel)
-	if err != nil {
-		return fmt.Errorf("unable to prepare updates: %w", err)
-	}
-	if len(updates) == 0 {
-		return fmt.Errorf("unable to find configuration for panel with name '%v'", panel.Value.Title)
-	}
-	if len(updates) > 1 {
-		var filenames []string
-		for _, update := range updates {
-			filenames = append(filenames, update.Path)
-		}
-		return fmt.Errorf("found more than 1 configuration for panel with name '%v': files=%v", panel.Value.Title, filenames)
-	}
-	log.Printf("--- OLD (%v) ---\n", updates[0].Path)
-	log.Printf("%v\n", string(updates[0].BeforePart))
-	log.Printf("--- NEW (%v) ---\n", updates[0].Path)
-	log.Printf("%v\n", string(updates[0].AfterPart))
-	if !overwrite {
-		log.Printf("skipped update of file %v - pass overwrite flag to force this action", updates[0].Path)
-		return nil
-	}
-	err = os.WriteFile(updates[0].Path, updates[0].Content, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	log.Printf("updated file %v", updates[0].Path)
-	return nil
-}
-
 type DashboardPayload struct {
 	Dashboard json.RawMessage `json:"dashboard"`
 	Message   string          `json:"message"`
 	Overwrite bool            `json:"overwrite"`
-}
-
-func addAuthorization(request *http.Request, authorization auth.AuthorizationMethods) {
-	if authorization.Cookie != nil {
-		request.Header.Set("Cookie", *authorization.Cookie)
-	}
-	if authorization.AuthorizationHeader != nil {
-		request.Header.Set("Authorization", *authorization.AuthorizationHeader)
-	}
-	if authorization.ProxyAuthorizationHeader != nil {
-		request.Header.Set("Proxy-Authorization", *authorization.ProxyAuthorizationHeader)
-	}
 }
 
 func searchDashboards(grafanaUrl string, authorization auth.AuthorizationMethods, name string) ([]Grafana, error) {
@@ -171,7 +308,7 @@ func searchDashboards(grafanaUrl string, authorization auth.AuthorizationMethods
 	q.Add("query", name)
 	request.URL.RawQuery = q.Encode()
 	request.Header.Set("Content-Type", "application/json")
-	addAuthorization(request, authorization)
+	auth.AddAuthorization(request, authorization)
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("unable to send request for url %v: %w", request.URL.String(), err)
@@ -198,7 +335,7 @@ func updateDashboard(grafanaUrl string, authorization auth.AuthorizationMethods,
 		return fmt.Errorf("unable to create request for url %v: %w", grafanaUrl, err)
 	}
 	request.Header.Set("Content-Type", "application/json")
-	addAuthorization(request, authorization)
+	auth.AddAuthorization(request, authorization)
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return fmt.Errorf("unable to send request for url %v: %w", request.URL.String(), err)
@@ -215,23 +352,29 @@ func updateDashboard(grafanaUrl string, authorization auth.AuthorizationMethods,
 }
 
 const (
-	IdTag    = "Id"
-	UidTag   = "Uid"
-	TestTag  = "Test"
-	TitleTag = "Title"
+	IdTag         = "id"
+	UidTag        = "uid"
+	PlaygroundTag = "playground"
+	TitleTag      = "title"
 )
 
-func Push(grafanaUrl string, authorization auth.AuthorizationMethods, dashboard string, message string, dashboardPlayground string) error {
+func Push(
+	grafanaUrl string,
+	authorization auth.AuthorizationMethods,
+	message string,
+	dashboardPlayground string,
+	tags []string,
+	files []string,
+) error {
 	if grafanaUrl == "" {
 		return fmt.Errorf("grafana URL should be provided")
 	}
-	if dashboard == "" {
-		return fmt.Errorf("dashboard should be provided")
+	if len(files) == 0 {
+		return fmt.Errorf("dashboard files should be provided")
 	}
 	if message == "" {
 		return fmt.Errorf("message should be non empty")
 	}
-	tags := make([]string, 0)
 	if dashboardPlayground != "" {
 		log.Printf("search for playground dashboard")
 		dashboards, err := searchDashboards(grafanaUrl, authorization, dashboardPlayground)
@@ -252,26 +395,15 @@ func Push(grafanaUrl string, authorization auth.AuthorizationMethods, dashboard 
 		tags = append(tags, fmt.Sprintf("%v=%v", IdTag, playgroundDashboard.Value.Id))
 		tags = append(tags, fmt.Sprintf("%v=%v", UidTag, playgroundDashboard.Value.Uid))
 		tags = append(tags, fmt.Sprintf("%v=%v", TitleTag, playgroundDashboard.Value.Title))
-		tags = append(tags, fmt.Sprintf("%v=%v", TestTag, true))
+		tags = append(tags, fmt.Sprintf("%v=%v", PlaygroundTag, true))
 		log.Printf("found playground dashboard with id: %v, uid: %v, title: %v", playgroundDashboard.Value.Id, playgroundDashboard.Value.Uid, playgroundDashboard.Value.Title)
 	}
-	cueContext := cuecontext.New()
-	dir, file := path.Split(dashboard)
-	originalBuildInstances := load.Instances([]string{file}, &load.Config{
-		Dir:  dir,
-		Tags: tags,
-	})
-	original, err := cueContext.BuildInstances(originalBuildInstances)
+	result, err := Export(files, tags)
 	if err != nil {
-		return fmt.Errorf("unable to load dashboard: %w", err)
-	}
-	grafana := original[0].LookupPath(cue.MakePath(cue.Str(GrafanaField)))
-	serialized, err := cueJson.Marshal(grafana)
-	if err != nil {
-		return fmt.Errorf("unable to export CUE value to json: %w", err)
+		return fmt.Errorf("failed to export dashboard in JSON: %w", err)
 	}
 	payload := DashboardPayload{
-		Dashboard: []byte(serialized),
+		Dashboard: []byte(result),
 		Message:   message,
 		Overwrite: true,
 	}

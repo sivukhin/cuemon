@@ -4,7 +4,8 @@ go 1.20
 
 require (
 	cuelang.org/go v0.6.0
-	github.com/stretchr/testify v1.2.2
+	github.com/stretchr/testify v1.8.1
+	go.uber.org/zap v1.27.0
 )
 
 require (
@@ -16,6 +17,7 @@ require (
 	github.com/mpvl/unique v0.0.0-20150818121801-cbe035fff7de // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/protocolbuffers/txtpbfmt v0.0.0-20230328191034-3462fbc510c0 // indirect
+	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/mod v0.9.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
