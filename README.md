@@ -41,7 +41,7 @@ $> cuemon update -input <panel.json> -dir <cuemon-directory> -overwrite
 - **-dir**: Directory containing the cuemon setup to update.
 - **-overwrite**: Enable unsafe mode to allow overwriting files.
 
-### maintenance
+## Maintenance
 
 `grafanaV` generated with the help of [cuebootstrap](https://github.com/sivukhin/cuebootstrap) tool from the set of cherry-picked Grafana JSONs like this (take `bootstrap_config.cue` from the repo root):
 ```bash
