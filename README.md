@@ -40,3 +40,12 @@ $> cuemon update -input <panel.json> -dir <cuemon-directory> -overwrite
 - **-input**: Path to the input Grafana panel JSON file.
 - **-dir**: Directory containing the cuemon setup to update.
 - **-overwrite**: Enable unsafe mode to allow overwriting files.
+
+### maintenance
+
+`grafanaV` generated with the help of [cuebootstrap](https://github.com/sivukhin/cuebootstrap) tool from the set of cherry-picked Grafana JSONs like this:
+```bash
+$> cuebootstrap -inputs 'v10*' -skeleton config.cue -no-defaults > grafana_v10.cue
+```
+
+After this you can replace `#grafana` schema definition with the output of cuebootstrap
