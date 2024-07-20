@@ -72,23 +72,27 @@ package cuemon
 	name?: string | null
 } | string | null
 #target: {
-	refId:           string
-	aliasBy?:        string | null
-	editorMode?:     string | null
-	expr?:           string | null
-	expression?:     string | null
-	format?:         string | null
-	interval?:       string | null
-	legendFormat?:   string | null
-	metric?:         string | null
-	queryType?:      string | null
-	type?:           string | null
-	intervalFactor?: number | null
-	step?:           number | null
-	exemplar?:       bool | null
-	hide?:           bool | null
-	instant?:        bool | null
-	range?:          bool | null
+	refId:                string
+	aliasBy?:             string | null
+	editorMode?:          string | null
+	expr?:                string | null
+	expression?:          string | null
+	format?:              string | null
+	interval?:            string | null
+	legendFormat?:        string | null
+	metric?:              string | null
+	queryType?:           string | null
+	type?:                string | null
+	intervalFactor?:      number | null
+	step?:                number | null
+	disableTextWrap?:     bool | null
+	exemplar?:            bool | null
+	fullMetaSearch?:      bool | null
+	hide?:                bool | null
+	includeNullMetadata?: bool | null
+	instant?:             bool | null
+	range?:               bool | null
+	useBackend?:          bool | null
 	timeSeriesQuery?: {
 		projectName: string
 		query:       string
@@ -105,6 +109,15 @@ package cuemon
 		serviceName:      string
 		sloId:            string
 		sloName:          string
+	} | null
+	timeSeriesList?: {
+		alignmentPeriod:    string
+		crossSeriesReducer: string
+		perSeriesAligner:   string
+		preprocessor:       string
+		projectName:        string
+		filters: [...string]
+		groupBys: [...string]
 	} | null
 	metricQuery?: {
 		projectName:         string
@@ -208,6 +221,7 @@ package cuemon
 		regex:           string
 		allFormat?:      string | null
 		allValue?:       string | null
+		description?:    string | null
 		label?:          string | null
 		multiFormat?:    string | null
 		tagValuesQuery?: string | null
@@ -639,12 +653,14 @@ package cuemon
 		transformations?: [...{
 			id: string
 			options: {
-				indexByName: {}
-				renameByName: {}
-				excludeByName: {
+				regex?:         string | null
+				renamePattern?: string | null
+				indexByName?: {} | null
+				renameByName?: {} | null
+				excludeByName?: {
 					Time:  bool
 					Value: bool
-				}
+				} | null
 			}
 		}] | null
 		fieldConfig: {
@@ -1012,6 +1028,9 @@ package cuemon
 					insertNulls?:      bool | null
 					scaleDistribution: type: string
 					thresholdsStyle: mode:   string
+					lineStyle?: {
+						fill: string
+					} | null
 					stacking: {
 						group: string
 						mode:  string

@@ -27,7 +27,9 @@ package cuemon
 			"#datasrc": input.datasource
 			"#query": {
 				name:       input.name
-				label:      input.label
+				if (input.label & string) != _|_ {
+					label: input.label
+				}
 				hide:       #hideTypes[input.hide]
 				all:        input.includeAll
 				multi:      input.multi
