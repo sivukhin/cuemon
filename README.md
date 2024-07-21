@@ -46,7 +46,8 @@ $> cuemon update -input <panel.json> -dir <cuemon-directory> -overwrite
 `grafanaVxx` is generated with the help of [cuebootstrap](https://github.com/sivukhin/cuebootstrap) tool from the set of cherry-picked Grafana JSONs like this:
 ```bash
 $> cd bootstrap
-$> cuebootstrap -inputs 'grafana-v10-samples/*.json' -skeleton bootstrap_config.cue -no-defaults > grafanaV10.cue
+$> make cuebootstrap-install
+$> make bootstrap-grafana-v10
 ```
 
-After this you can replace `#grafana` schema definition with the output of cuebootstrap
+After this you can replace `#grafana` schema definition with the output of cuebootstrap written in the `grafanaV10.cue` file
