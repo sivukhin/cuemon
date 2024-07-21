@@ -1,0 +1,6301 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 78,
+  "links": [
+    {
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "RLEC"
+      ],
+      "targetBlank": true,
+      "type": "dashboards"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "rgb(31, 120, 193)",
+            "mode": "fixed"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 0,
+        "y": 0
+      },
+      "id": 66,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_memory_limit{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "",
+          "refId": "A",
+          "step": 600
+        }
+      ],
+      "title": "BDB:$bdb Memory limit",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 59,
+      "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Dashboard Row",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "editable": true,
+      "error": false,
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 7
+      },
+      "id": 9,
+      "links": [],
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<b style=\"font-size: 20pt\">$status<b>\n<b style=\"font-size: 20pt\">$newStatus<b>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.3.0",
+      "style": {
+        "font-size": "72pt"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Status for BDB:$bdb",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "rgb(31, 120, 193)",
+            "mode": "fixed"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 7
+      },
+      "id": 4,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "scalar(bdb_used_memory{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"})",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "",
+          "refId": "A",
+          "step": 14400
+        }
+      ],
+      "title": "BDB:$bdb used memory",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "rgb(31, 120, 193)",
+            "mode": "fixed"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 7
+      },
+      "id": 5,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "scalar(bdb_no_of_keys{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"})",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "",
+          "refId": "A",
+          "step": 14400
+        }
+      ],
+      "title": "BDB:$bdb #Keys",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "rgb(31, 120, 193)",
+            "mode": "fixed"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 7
+      },
+      "id": 6,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "scalar(bdb_conns{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"})",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "",
+          "refId": "A",
+          "step": 14400
+        }
+      ],
+      "title": "BDB:$bdb #Connections",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 7
+      },
+      "id": 7,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "count(listener_total_req{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"})",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "",
+          "refId": "A",
+          "step": 14400
+        }
+      ],
+      "title": "BDB:$bdb #Listeners",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "rgb(31, 120, 193)",
+            "mode": "fixed"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 7
+      },
+      "id": 12,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "count(redis_no_of_keys{cluster=\"$cluster\", bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}) or count(redis_used_memory{cluster=\"$cluster\", bdb=\"$bdb\",clustername=~\"production-cluster-redis\"})",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "",
+          "refId": "A",
+          "step": 14400
+        }
+      ],
+      "title": "BDB:$bdb #Shards",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 60,
+      "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Dashboard Row",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 12
+      },
+      "hiddenSeries": false,
+      "id": 1,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.3.0",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:96",
+          "alias": "/.*max.*/",
+          "dashes": true,
+          "fill": 0
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_avg_latency{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "bdb_avg_latency",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_avg_write_latency{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "bdb_avg_write_latency",
+          "metric": "",
+          "refId": "B",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_avg_read_latency{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "bdb_avg_read_latency",
+          "metric": "",
+          "refId": "C",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_avg_other_latency{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "bdb_avg_other_latency",
+          "metric": "",
+          "refId": "D",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "max_over_time(bdb_avg_latency_max{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[$aggregation])",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "bdb_avg_latency (max over $aggregation)",
+          "refId": "E",
+          "step": 1200
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "max_over_time(bdb_avg_read_latency_max{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[$aggregation])",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "bdb_avg_read_latency (max over $aggregation)",
+          "metric": "",
+          "refId": "F",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Avg latency for BDB:$bdb",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:105",
+          "format": "s",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:106",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 12
+      },
+      "hiddenSeries": false,
+      "id": 55,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.3.0",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/.*max.*/",
+          "dashes": true,
+          "fill": 0
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "listener_acc_latency{bdb=~\"$bdb.*\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} / listener_total_started_res{bdb=~\"$bdb.*\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "listener {{proxy}}  node {{node}}",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Avg listener latency for BDB:$bdb",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:201",
+          "format": "s",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:202",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 12
+      },
+      "hiddenSeries": false,
+      "id": 44,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.3.0",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/.*limit.*/",
+          "dashes": true,
+          "fill": 0
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_used_memory{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "used_memory",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_memory_limit{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} < bdb_used_memory{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} * 1.5",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "limit (when low, near used)",
+          "refId": "B",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Used Memory for BDB:$bdb",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 61,
+      "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Dashboard Row",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 20
+      },
+      "hiddenSeries": false,
+      "id": 10,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.3.0",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_conns{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Total",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "listener_conns{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "endpoint {{proxy}} node: {{node}}",
+          "metric": "",
+          "refId": "B",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_total_connections_received{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Total - received",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_total_connections_received_max{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Total received max",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "BDB:$bdb Connections",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:140",
+          "format": "none",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:141",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 20
+      },
+      "hiddenSeries": false,
+      "id": 14,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.3.0",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:134",
+          "alias": "/.*max.*/",
+          "dashes": true,
+          "fill": 0
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_total_req{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "total requests",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_other_req{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "other requests",
+          "refId": "B",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_read_req{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "read requests",
+          "refId": "C",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_write_req{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "write requests",
+          "refId": "D",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_total_req_max{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "total requests (max)",
+          "refId": "E",
+          "step": 240
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "max_over_time(bdb_total_req_max{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}[$aggregation])\n",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "total requests (max over $aggregation)",
+          "refId": "F",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Requests[total,read,write,other] for bdb:$bdb",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:143",
+          "format": "ops",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:144",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {
+        "Egress": "blue",
+        "Ingress": "green"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 20
+      },
+      "hiddenSeries": false,
+      "id": 16,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "10.3.0",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "Egress",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_egress_bytes{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Egress",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_ingress_bytes{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Ingress",
+          "refId": "B",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "BDB:$bdb Ingress/Egress",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "Bps",
+          "label": "Ingress",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "Bps",
+          "label": "Egress",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 29
+      },
+      "hiddenSeries": false,
+      "id": 43,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_main_thread_cpu_system{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_main_thread_cpu_user{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "main threads (masters)",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_shard_cpu_system{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_shard_cpu_user{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "all threads (masters)",
+          "refId": "B",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_fork_cpu_system{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_fork_cpu_user{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "all forks (masters)",
+          "refId": "C",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_main_thread_cpu_system_max{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_main_thread_cpu_user_max{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "main threads max (masters)",
+          "refId": "D",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_shard_cpu_system_max{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_shard_cpu_user_max{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "all threads max (masters)",
+          "refId": "E",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "sum((delta(redis_process_main_thread_cpu_system_seconds_total{bdb=\"$bdb\",role=\"slave\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[60s]) + delta(redis_process_main_thread_cpu_user_seconds_total{bdb=\"$bdb\",role=\"slave\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[60s]))/60)",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Slave main threads",
+          "refId": "F",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "sum((delta(redis_process_cpu_system_seconds_total{bdb=\"$bdb\",role=\"slave\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[60s]) + delta(redis_process_cpu_user_seconds_total{bdb=\"$bdb\",role=\"slave\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[60s]))/60)",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Slave all threads",
+          "refId": "G",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "BDB CPU utilization for bdb:$bdb",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 29
+      },
+      "hiddenSeries": false,
+      "id": 13,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "(delta(redis_process_cpu_system_seconds_total{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[60s]) + delta(redis_process_cpu_user_seconds_total{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[60s]))/60*100 or redis_cpu_percent{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "shard: {{redis}} role: {{role}} node:{{node}}, slots:{{slots}}",
+          "refId": "B",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "CPU usage by shards for bdb:$bdb",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 29
+      },
+      "hiddenSeries": false,
+      "id": 53,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/.*maxmemory.*/",
+          "dashes": true,
+          "fill": 0
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "redis_used_memory{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "redis:{{redis}}, role:{{role}}, node:{{node}}, slots:{{slots}}",
+          "metric": "redis_used_memory",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "redis_maxmemory{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "maxmemory: redis:{{redis}}, bdb:{{bdb}},  role:{{role}}, node:{{node}}",
+          "metric": "redis_used_memory",
+          "refId": "B",
+          "step": 240
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Sizes of shards for bdb:$bdb",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "id": 62,
+      "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Dashboard Row",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 39
+      },
+      "hiddenSeries": false,
+      "id": 17,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "redis_no_of_keys{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} or redis_db0_keys{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "redis:{{redis}}, role: {{role}}, node:{{node}}, slots:{{slots}}",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "# keys/shard",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 39
+      },
+      "hiddenSeries": false,
+      "id": 11,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_no_of_keys{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "num of keys",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "sum(redis_db0_expires{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "num of volatile keys",
+          "refId": "B",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "sum(max(redis_bigdb0_ram{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster))",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "ram keys",
+          "refId": "C",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "sum(max(redis_bigdb0_disk{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_disk{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster))",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "disk keys",
+          "refId": "D",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "(sum(max(redis_bigdb0_disk{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_disk{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster)) + sum(max(redis_bigdb0_ram{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster))) - sum(redis_db0_keys{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "overlapping keys",
+          "refId": "E",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "sum(max(redis_bigdb0_dirty{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_dirty{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster))",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "dirty keys",
+          "refId": "F",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "sum(max(redis_bigdb0_clean{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_clean{bdb=\"$bdb\", cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster))",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "clean keys",
+          "refId": "G",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "#Keys for BDB",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 39
+      },
+      "hiddenSeries": false,
+      "id": 20,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_evicted_objects{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "BDB:$bdb",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Evicted objects for BDB:$bdb",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 39
+      },
+      "hiddenSeries": false,
+      "id": 21,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_expired_objects{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "BDB:$bdb",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Expired objects for BDB:$bdb",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 63,
+      "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "Dashboard Row",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 5,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 46
+      },
+      "hiddenSeries": false,
+      "id": 48,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "delta(redis_aof_rewrites{cluster=\"$cluster\", bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}[$aggregation]) !=0",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Redis {{redis}} node {{node}}",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Shard AOF Rewrites / $aggregation",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 5,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 46
+      },
+      "hiddenSeries": false,
+      "id": 57,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "redis_rdb_bgsave_in_progress{cluster=\"$cluster\", bdb=\"$bdb\",clustername=~\"production-cluster-redis\"} !=0",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "BGSAVE {{redis}} node {{node}}",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "redis_aof_rewrite_in_progress{cluster=\"$cluster\", bdb=\"$bdb\",clustername=~\"production-cluster-redis\"} !=0",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "AOFRW {{redis}} node {{node}}",
+          "refId": "B",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "forks",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 46
+      },
+      "hiddenSeries": false,
+      "id": 49,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_read_misses{cluster=\"$cluster\", bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Read Misses",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_write_misses{cluster=\"$cluster\", bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Write Misses",
+          "refId": "B",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_read_hits{cluster=\"$cluster\", bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Read Hits",
+          "refId": "C",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_write_hits{cluster=\"$cluster\", bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Write Hits",
+          "refId": "D",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Read/Write Misses",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "ops",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 46
+      },
+      "hiddenSeries": false,
+      "id": 23,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "redis_fragmentation{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} or redis_mem_fragmentation_ratio{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} ",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Redis {{redis}} ({{role}})",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Shard RSS fragmentation",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 52
+      },
+      "hiddenSeries": false,
+      "id": 26,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "(bdb_read_hits{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_write_hits{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}) / (bdb_read_req{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_write_req{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}) > 0",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "DB hit ratio",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "DB Hit Ratio (hits / requests)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 52
+      },
+      "hiddenSeries": false,
+      "id": 47,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_replicaof_syncer_local_ingress_lag_time{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "BDB $bdb  src_id {{src_id}}",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "bdb_crdt_syncer_local_ingress_lag_time{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "BDB $bdb crdt src_id {{src_id}}",
+          "metric": "",
+          "refId": "B",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Syncer lag",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "ms",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 52
+      },
+      "hiddenSeries": false,
+      "id": 34,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "sum(redis_mem_fragmentation_ratio{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}) / count(redis_mem_fragmentation_ratio{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"})",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "redis_mem_fragmentation_ratio",
+          "metric": "",
+          "refId": "A",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "sum(redis_allocator_active{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}) / sum(redis_allocator_allocated{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"})",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Shard allocator fragmentation",
+          "refId": "B",
+          "step": 2400
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "sum(redis_allocator_resident{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}) / sum(redis_allocator_active{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"})",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "shard allocator rss",
+          "refId": "C",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "BDB:$bdb total fragmentation",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 52
+      },
+      "hiddenSeries": false,
+      "id": 50,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "redis_allocator_active{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} / redis_allocator_allocated{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "redis:{{redis}} role:{{role}}",
+          "metric": "redis_allocator_active",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Shard allocator fragmentation % (defraggable)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 58
+      },
+      "hiddenSeries": false,
+      "id": 30,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "redis_active_defrag_running{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "redis:{{redis}} role:{{role}}",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "BDB sum redis active defrag running",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 58
+      },
+      "hiddenSeries": false,
+      "id": 22,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "delta(redis_aof_delayed_fsync{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[$aggregation])",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Redis {{redis}} ({{role}})",
+          "metric": "redis_aof_delayed_fsync",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Delayed fsync - (events / $aggregation)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Ag61Bt04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 58
+      },
+      "hiddenSeries": false,
+      "id": 58,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.5.17",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "expr": "redis_allocator_active{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} - redis_allocator_allocated{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "redis:{{redis}} role:{{role}}",
+          "metric": "redis_allocator_active",
+          "refId": "A",
+          "step": 2400
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Shard allocator fragmentation bytes (defraggable)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "collapsed": true,
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 64
+      },
+      "id": 64,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 65
+          },
+          "hiddenSeries": false,
+          "id": 51,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+            "nullPointMode": "connected",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*limit.*/",
+              "dashes": true,
+              "fill": 0
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_used_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "bdb_used_ram",
+              "metric": "",
+              "refId": "A",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_ram_limit{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "limit (when low, near used)",
+              "refId": "B",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB (ROF) used RAM for $bdb",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 65
+          },
+          "hiddenSeries": false,
+          "id": 25,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "read hit ratio",
+              "dashes": true
+            },
+            {
+              "alias": "write hit ratio",
+              "dashes": true
+            },
+            {
+              "alias": "del hit ratio",
+              "dashes": true
+            },
+            {
+              "alias": "DB ram hit ratio",
+              "linewidth": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "(bdb_big_fetch_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_big_write_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_big_del_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}) / (bdb_big_fetch_flash{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_big_write_flash{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_big_del_flash{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_big_fetch_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_big_write_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} + bdb_big_del_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}) > 0",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "DB ram hit ratio",
+              "refId": "A",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_big_fetch_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}  / (bdb_big_fetch_flash{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}  + bdb_big_fetch_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} ) > 0",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "read hit ratio",
+              "refId": "B",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_big_write_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}  / (bdb_big_write_flash{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}  + bdb_big_write_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} ) > 0",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "write hit ratio",
+              "refId": "C",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_big_del_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}  / (bdb_big_del_flash{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}  + bdb_big_del_ram{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} ) > 0",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "del hit ratio",
+              "refId": "D",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "DB ram hit ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "description": "Positive is RAM, Negative is Flash",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 65
+          },
+          "hiddenSeries": false,
+          "id": 52,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/User*/",
+              "dashes": true
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "avg(delta(redis_big_io_ratio_redis{cluster=\"$cluster\",bdb=\"$bdb\",role=\"master\",clustername=~\"production-cluster-redis\"}[1m]))/60",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "RAM Ops for Redis",
+              "refId": "A",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "avg(delta(redis_big_io_ratio_flash{cluster=\"$cluster\",bdb=\"$bdb\",role=\"master\",clustername=~\"production-cluster-redis\"}[1m]) * -1)/60",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Flash Ops for Redis",
+              "refId": "B",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "avg(delta(redis_big_user_io_ratio_redis{cluster=\"$cluster\",bdb=\"$bdb\",role=\"master\",clustername=~\"production-cluster-redis\"}[1m]))/60",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "User RAM Ops for Redis",
+              "refId": "C",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "avg(delta(redis_big_user_io_ratio_flash{cluster=\"$cluster\",bdb=\"$bdb\",role=\"master\",clustername=~\"production-cluster-redis\"}[1m]) * -1)/60",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "User Flash Ops for Redis",
+              "refId": "D",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB RAM:Flash access ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "ops",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "description": "Positive is RAM, Negative is Flash",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 73
+          },
+          "hiddenSeries": false,
+          "id": 54,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": false,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "delta(redis_big_io_ratio_redis{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}[1m])/60",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "RAM Ops for Redis {{redis}}",
+              "refId": "A",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "delta(redis_big_io_ratio_flash{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}[1m]) / -60",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Flash Ops for Redis {{redis}}",
+              "refId": "B",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "RAM:Flash access ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "ops",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 73
+          },
+          "hiddenSeries": false,
+          "id": 19,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_bigstore_io_read_bytes{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Reads",
+              "refId": "A",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_bigstore_io_write_bytes{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Writes",
+              "refId": "B",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Flash IO Banwidth",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 73
+          },
+          "hiddenSeries": false,
+          "id": 18,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_bigstore_io_reads{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Reads",
+              "refId": "A",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_bigstore_io_writes{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Writes",
+              "refId": "B",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_bigstore_io_dels{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Deletes",
+              "refId": "C",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Flash IOPS",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 81
+          },
+          "hiddenSeries": false,
+          "id": 33,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "sum(delta(redis_wait_busy_key{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[$aggregation]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bdb:{{$bdb}}",
+              "refId": "A",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB sum redis wait busy key / $aggregation",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 81
+          },
+          "hiddenSeries": false,
+          "id": 31,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "sum(delta(redis_blocking_reads{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[$aggregation]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bdb:{{$bdb}}",
+              "refId": "A",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB sum redis blocking reads / $aggregation",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 81
+          },
+          "hiddenSeries": false,
+          "id": 37,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "frag ratio",
+              "yaxis": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_used_bigstore{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "used",
+              "metric": "",
+              "refId": "A",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_used_bigstore{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} * bdb_disk_frag_ratio{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "actual",
+              "refId": "B",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_disk_frag_ratio{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "frag ratio",
+              "refId": "C",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB used flash",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "percentunit",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 89
+          },
+          "hiddenSeries": false,
+          "id": 29,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_big_postponed_clients{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bdb:{{$bdb}}",
+              "refId": "A",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB postponed clients",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 89
+          },
+          "hiddenSeries": false,
+          "id": 27,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": false,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_big_blocked_clients{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Number of blocked clients",
+              "metric": "bdb_big_blocked_clients",
+              "refId": "A",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB blocked clients",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 89
+          },
+          "hiddenSeries": false,
+          "id": 28,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "ratiojj",
+              "yaxis": 2
+            },
+            {
+              "alias": "Total Ratio",
+              "dashes": true,
+              "linewidth": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "bdb_ram_overhead{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"} ",
+              "format": "time_series",
+              "hide": true,
+              "intervalFactor": 2,
+              "legendFormat": "actual (bytes)",
+              "refId": "A",
+              "step": 120
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "bdb_ram_overhead{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}  / bdb_ram_limit{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "hide": false,
+              "intervalFactor": 2,
+              "legendFormat": "Total Ratio",
+              "refId": "B",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "redis_ram_overhead{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"} / redis_max_ram{cluster=\"$cluster\",bdb=\"$bdb\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "redis: {{redis}} role:{{role}}",
+              "refId": "C",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB ram overhead",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": "",
+              "logBase": 1,
+              "max": "1",
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "percentunit",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 97
+          },
+          "hiddenSeries": false,
+          "id": 32,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "sum(rate(redis_blocking_writes{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[1m]))",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "bdb:{{$bdb}}",
+              "refId": "A",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB sum redis blocking writes",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 97
+          },
+          "hiddenSeries": false,
+          "id": 36,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "sum(redis_big_inst_avg_read_io_queue{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"})",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bdb:{{$bdb}}",
+              "refId": "A",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB sum redis big inst avg read io queue",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 97
+          },
+          "hiddenSeries": false,
+          "id": 35,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "sum(redis_big_inst_avg_write_io_queue{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"})",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bdb:{{$bdb}}",
+              "refId": "A",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB sum redis big inst avg write io queue",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 105
+          },
+          "hiddenSeries": false,
+          "id": 40,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_bigstore_objs_flash{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "objects in flash (sum of all master shards)",
+              "metric": "",
+              "refId": "A",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_bigstore_objs_ram{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "objects in ram (sum of all master shards)",
+              "refId": "B",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB objects(values) in FLASH",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 105
+          },
+          "hiddenSeries": false,
+          "id": 46,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/BDB.*/",
+              "dashes": true
+            },
+            {
+              "alias": "/average.*/",
+              "dashes": true
+            },
+            {
+              "alias": "/lowest.*/",
+              "linewidth": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "bdb_bigstore_objs_ram{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} / bdb_no_of_keys{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"} ",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "BDB % values in RAM (masters)",
+              "metric": "",
+              "refId": "A",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "avg((max(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster)) / on (redis,bdb,cluster) redis_db0_keys{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"})",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "average master shard % values in RAM",
+              "refId": "C",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "avg((max(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster)) / on (redis,bdb,cluster) redis_db0_keys{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"})",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "average slave shard % values in RAM",
+              "refId": "D",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "topk(1, min((max(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster)) / on (redis,bdb,cluster) redis_db0_keys{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis) * -1) *-1",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "lowest master shard % values in RAM - redsi:{{redis}}",
+              "refId": "F",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "topk(1, min((max(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster)) / on (redis,bdb,cluster) redis_db0_keys{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"}) by (redis) * -1) *-1",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "lowest slave shard % values in RAM - redsi:{{redis}}",
+              "refId": "G",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "min(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} / redis_bigdb0_keys{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"})",
+              "format": "time_series",
+              "hide": true,
+              "intervalFactor": 2,
+              "legendFormat": "lowest master shard % values in RAM",
+              "refId": "B",
+              "step": 10
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "min(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"} / redis_bigdb0_keys{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"})",
+              "format": "time_series",
+              "hide": true,
+              "intervalFactor": 2,
+              "legendFormat": "lowest slave shard % values in RAM",
+              "refId": "E",
+              "step": 10
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB % values in RAM",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 105
+          },
+          "hiddenSeries": false,
+          "id": 39,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/.*average.*/",
+              "dashes": true
+            },
+            {
+              "alias": "/.*lowest.*/",
+              "linewidth": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "bdb_bigstore_objs_ram{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "hide": true,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "bdb:{{$bdb}} (sum of masters)",
+              "metric": "",
+              "refId": "A",
+              "step": 10
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "avg(max(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "average number of values in ram per slave shard",
+              "refId": "D",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "avg(max(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "average number of values in ram per master shard",
+              "refId": "E",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "min(max(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster))",
+              "format": "time_series",
+              "hide": true,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "lowest number of values in ram per slave shard",
+              "refId": "B",
+              "step": 10
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "min(max(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster))",
+              "format": "time_series",
+              "hide": true,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "lowest number of values in ram per master shard",
+              "refId": "C",
+              "step": 10
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "topk(1, min(max(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster) < on(cluster,bdb,redis) redis_db0_keys{bdb=\"$bdb\",cluster=\"$cluster\",role=\"slave\",clustername=~\"production-cluster-redis\"} ) by (bdb, redis) * -1) * -1",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "lowest number of values in ram per slave shard - redis:{{redis}}",
+              "refId": "F",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "topk(1, min(max(redis_bigdb0_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"} or redis_bigdb_ram{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (redis,bdb,cluster) < on(cluster,bdb,redis) redis_db0_keys{bdb=\"$bdb\",cluster=\"$cluster\",role=\"master\",clustername=~\"production-cluster-redis\"}) by (bdb, redis) * -1) * -1",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "lowest number of values in ram per master shard  - redis:{{redis}}",
+              "refId": "G",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Shard objects(values) in RAM",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 113
+          },
+          "hiddenSeries": false,
+          "id": 42,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_big_ram_dirty_evictions{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bdb:{{$bdb}}",
+              "metric": "",
+              "refId": "A",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB dirty RAM evictions",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Ag61Bt04k"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 113
+          },
+          "hiddenSeries": false,
+          "id": 41,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Ag61Bt04k"
+              },
+              "expr": "bdb_big_ram_clean_evictions{bdb=\"$bdb\",cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bdb:{{$bdb}}",
+              "metric": "",
+              "refId": "A",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "BDB clean RAM evictions",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 113
+          },
+          "hiddenSeries": false,
+          "id": 56,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/stalls/",
+              "yaxis": 2
+            },
+            {
+              "alias": "/slowdowns/",
+              "yaxis": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "sum(delta(redis_rocks_comp_started{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[1m]))",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "compactions",
+              "metric": "",
+              "refId": "A",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "sum(delta(redis_rocks_flush_started{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[1m]))",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "flushes",
+              "refId": "B",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "sum(delta(redis_rocks_flush_writes_slowdown{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[$aggregation]))",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "slowdowns / $aggregation",
+              "metric": "",
+              "refId": "C",
+              "step": 1200
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "TjtJft04z"
+              },
+              "expr": "sum(delta(redis_rocks_flush_writes_stop{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}[$aggregation]))",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "stalls / $aggregation",
+              "metric": "",
+              "refId": "D",
+              "step": 1200
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "RocksDB",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": "events",
+              "logBase": 1,
+              "min": "0",
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "refId": "A"
+        }
+      ],
+      "title": "ROF Metrics",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [
+    "RLEC"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "c9646.asia-southeast1-mz.gcp.cloud.rlrcp.com",
+          "value": "c9646.asia-southeast1-mz.gcp.cloud.rlrcp.com"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Ag61Bt04k"
+        },
+        "definition": "label_values(node_up{clustername=~\"production-cluster-redis\"},cluster)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(node_up{clustername=~\"production-cluster-redis\"},cluster)",
+          "refId": "VM-cluster-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "10149741",
+          "value": "10149741"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Ag61Bt04k"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "BDB Id",
+        "multi": false,
+        "name": "bdb",
+        "options": [],
+        "query": {
+          "query": "label_values(bdb_conns{cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}, bdb)",
+          "refId": "VM-bdb-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Ag61Bt04k"
+        },
+        "definition": "",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "status",
+        "options": [],
+        "query": {
+          "query": "label_values(bdb_status{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}, status)",
+          "refId": "VM-status-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "active",
+          "value": "active"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Ag61Bt04k"
+        },
+        "definition": "",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "newStatus",
+        "options": [],
+        "query": {
+          "query": "label_values(bdb_up{bdb=\"$bdb\", cluster=\"$cluster\",clustername=~\"production-cluster-redis\"}, status)",
+          "refId": "VM-newStatus-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "auto": true,
+        "auto_count": 100,
+        "auto_min": "1m",
+        "current": {
+          "selected": false,
+          "text": "auto",
+          "value": "$__auto_interval_aggregation"
+        },
+        "hide": 0,
+        "label": "aggregation interval",
+        "name": "aggregation",
+        "options": [
+          {
+            "selected": true,
+            "text": "auto",
+            "value": "$__auto_interval_aggregation"
+          },
+          {
+            "selected": false,
+            "text": "1m",
+            "value": "1m"
+          },
+          {
+            "selected": false,
+            "text": "10m",
+            "value": "10m"
+          },
+          {
+            "selected": false,
+            "text": "30m",
+            "value": "30m"
+          },
+          {
+            "selected": false,
+            "text": "1h",
+            "value": "1h"
+          },
+          {
+            "selected": false,
+            "text": "6h",
+            "value": "6h"
+          },
+          {
+            "selected": false,
+            "text": "12h",
+            "value": "12h"
+          },
+          {
+            "selected": false,
+            "text": "1d",
+            "value": "1d"
+          },
+          {
+            "selected": false,
+            "text": "7d",
+            "value": "7d"
+          },
+          {
+            "selected": false,
+            "text": "14d",
+            "value": "14d"
+          },
+          {
+            "selected": false,
+            "text": "30d",
+            "value": "30d"
+          }
+        ],
+        "query": "1m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+        "refresh": 2,
+        "skipUrlSync": false,
+        "type": "interval"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "Asia/Kolkata",
+  "title": "BDB Dashboard",
+  "uid": "nnWIgDhMz",
+  "version": 1,
+  "weekStart": ""
+}
