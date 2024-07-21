@@ -10,18 +10,9 @@ import (
 	"github.com/sivukhin/cuemon/lib/auth"
 )
 
-type ArrayFlags []string
-
-func (f *ArrayFlags) String() string { return strings.Join(*f, ",") }
-func (f *ArrayFlags) Set(value string) error {
-	*f = append(*f, value)
-	return nil
-}
-
 var (
 	bootstrap          = flag.NewFlagSet("bootstrap", flag.ExitOnError)
 	bootstrapInput     = bootstrap.String("input", "", "input file with Grafana dashboard JSON (stdin if not provided)")
-	bootstrapModule    = bootstrap.String("module", "", "CUE module name")
 	bootstrapDir       = bootstrap.String("dir", "", "target directory where cuemon will be initialized")
 	bootstrapOverwrite = bootstrap.Bool("overwrite", false, "enable unsafe mode which can overwrite files")
 
@@ -52,6 +43,9 @@ func multilineErr(err error, ident string) string {
 const (
 	errIdent             = "  "
 	authorizationSubject = "GRAFANA"
+
+	// cuemonModule must be in sync with CUE package name, which is used in lib/cue/ definitions
+	cuemonModule = "cuemon"
 )
 
 func run(args []string) error {
@@ -63,10 +57,6 @@ func run(args []string) error {
 	push.Func("t", "tags for cue export", tagSet)
 	export.Func("t", "tags for cue export", tagSet)
 
-	authorization, err := auth.AnalyzeSubjectAuthorization(os.Environ())
-	if err != nil {
-		return fmt.Errorf("failed to analyze authorization methods: %w", err)
-	}
 	switch args[0] {
 	case "export":
 		if err := export.Parse(args[1:]); err != nil {
@@ -81,12 +71,16 @@ func run(args []string) error {
 		if err := bootstrap.Parse(args[1:]); err != nil {
 			return fmt.Errorf("bootstrap error: %v", multilineErr(err, errIdent))
 		}
-		if err := lib.Bootstrap(*bootstrapInput, *bootstrapModule, *bootstrapDir, *bootstrapOverwrite); err != nil {
+		if err := lib.Bootstrap(*bootstrapInput, cuemonModule, *bootstrapDir, *bootstrapOverwrite); err != nil {
 			return fmt.Errorf("bootstrap error: %v", multilineErr(err, errIdent))
 		}
 	case "push":
 		if err := push.Parse(args[1:]); err != nil {
 			return fmt.Errorf("push error: %v", multilineErr(err, errIdent))
+		}
+		authorization, err := auth.AnalyzeSubjectAuthorization(os.Environ())
+		if err != nil {
+			return fmt.Errorf("failed to analyze authorization methods: %w", err)
 		}
 		if err := lib.Push(strings.TrimRight(*pushGrafana, "/"), authorization[authorizationSubject], *pushMessage, *pushPlayground, tags, push.Args()); err != nil {
 			return fmt.Errorf("push error: %v", multilineErr(err, errIdent))
