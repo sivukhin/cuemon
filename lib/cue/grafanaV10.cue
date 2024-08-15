@@ -3,10 +3,9 @@ package cuemon
 #schemaVersion:  39
 #grafanaVersion: "v10"
 #pluginVersion: {
-	text:       "10.3.0"
-	table:      "10.3.0"
-	graph:      "10.3.0"
 	stat:       "10.3.0"
+	table:      "10.3.0"
+	text:       "10.3.0"
 	timeseries: "9.3.2"
 }
 
@@ -284,9 +283,6 @@ package cuemon
 		#_textbox
 	}
 }
-#yaxes: {
-	$$hashKey?: string
-}
 #link: {
 	#_link: {
 		icon:        string
@@ -311,7 +307,6 @@ package cuemon
 		id?:         number | null
 		panels?: [...#panel] | null
 		targets?: [...#target] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -342,7 +337,6 @@ package cuemon
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -387,7 +381,6 @@ package cuemon
 		id?:           number | null
 		panels?: [...#panel] | null
 		targets?: [...#target] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -410,7 +403,6 @@ package cuemon
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -452,7 +444,6 @@ package cuemon
 		collapsed:        bool
 		panels?: [...#panel] | null
 		targets?: [...#target] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 	}
@@ -464,7 +455,6 @@ package cuemon
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -537,7 +527,6 @@ package cuemon
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -703,7 +692,6 @@ package cuemon
 		id?:           number | null
 		panels?: [...#panel] | null
 		targets?: [...#target] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -727,7 +715,7 @@ package cuemon
 		maxPerRow?:       number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		yaxes?: [...#yaxes] | null
+		yaxes?: [] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -881,7 +869,6 @@ package cuemon
 	panels: [...#panel]
 	datasource?: #datasource
 	gridPos?:    #grid
-	yaxes?: [...#yaxes]
 	targets: [...#target]
 	if type == "alertlist" {
 		#_alertlist

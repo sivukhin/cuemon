@@ -7,7 +7,6 @@
 		type: string @discriminative()
 		datasource: #datasource
 	}
-	#yaxes: $$hashKey?: string
 	#link: type: string @discriminative()
 	#panel: {
 		type: string @discriminative()
@@ -16,7 +15,6 @@
 		datasource: #datasource
 		targets: [...#target]
 		panels: [...#panel]
-		yaxes?: [...#yaxes]
 	}
 
 	iteration?: number

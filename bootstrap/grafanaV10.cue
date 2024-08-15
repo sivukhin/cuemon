@@ -272,9 +272,6 @@
 		#_textbox
 	}
 }
-#yaxes: {
-	$$hashKey?: string
-}
 #link: {
 	#_link: {
 		icon:        string
@@ -299,7 +296,6 @@
 		id?:         number | null
 		panels?: [...#panel] | null
 		targets?: [...#target] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -330,7 +326,6 @@
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -375,7 +370,6 @@
 		id?:           number | null
 		panels?: [...#panel] | null
 		targets?: [...#target] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -398,7 +392,6 @@
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -440,7 +433,6 @@
 		collapsed:        bool
 		panels?: [...#panel] | null
 		targets?: [...#target] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 	}
@@ -452,7 +444,6 @@
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -525,7 +516,6 @@
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -691,7 +681,6 @@
 		id?:           number | null
 		panels?: [...#panel] | null
 		targets?: [...#target] | null
-		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -715,7 +704,7 @@
 		maxPerRow?:       number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		yaxes?: [...#yaxes] | null
+		yaxes?: [] | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -869,7 +858,6 @@
 	panels: [...#panel]
 	datasource?: #datasource
 	gridPos?:    #grid
-	yaxes?: [...#yaxes]
 	targets: [...#target]
 	if type == "alertlist" {
 		#_alertlist
