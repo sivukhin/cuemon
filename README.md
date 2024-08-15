@@ -9,7 +9,7 @@ To install cuemon, follow these steps:
 1. Install the Go programming language if you haven't already
 2. Run the following command to install cuemon:
 ```bash
-$> go get github.com/sivukhin/cuemon
+$> go install github.com/sivukhin/cuemon
 ```
 
 ## Usage

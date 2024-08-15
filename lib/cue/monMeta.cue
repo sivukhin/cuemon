@@ -30,9 +30,6 @@ package cuemon
 	editable:     number | *true
 	graphTooltip: 0 | *1 | 2 // default | shared-crosshair | shared-tooltpi
 	if #meta.timepicker != _|_ {timepicker: refresh_intervals: #meta.timepicker}
-	if #grafanaVersion == "v7" {
-		style: string | *"dark"
-	}
 	if #grafanaVersion == "v10" {
 		fiscalYearStartMonth: number | *0
 		liveNow:              bool | *#meta.live
