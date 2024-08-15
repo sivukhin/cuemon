@@ -18,12 +18,9 @@
 		from: string
 		to:   string
 	}
-	timepicker: {
-		refresh_intervals?: [...string] | null
-		time_options?: [...string] | null
-	}
-	annotations: list: [...#annotation]
+	timepicker: refresh_intervals?: [...string] | null
 	links: [...#link]
+	annotations: list: [...#annotation]
 	templating: list: [...#template]
 	panels: [...#panel]
 }
@@ -68,11 +65,8 @@
 	format?:              string | null
 	interval?:            string | null
 	legendFormat?:        string | null
-	metric?:              string | null
 	queryType?:           string | null
 	type?:                string | null
-	intervalFactor?:      number | null
-	step?:                number | null
 	disableTextWrap?:     bool | null
 	exemplar?:            bool | null
 	fullMetaSearch?:      bool | null
@@ -108,26 +102,33 @@
 		groupBys: [...string]
 	} | null
 	metricQuery?: {
-		projectName:         string
-		aliasBy?:            string | null
-		alignmentPeriod?:    string | null
-		crossSeriesReducer?: string | null
-		editorMode?:         string | null
-		expr?:               string | null
-		legendFormat?:       string | null
-		metricKind?:         string | null
-		metricType?:         string | null
-		perSeriesAligner?:   string | null
-		preprocessor?:       string | null
-		query?:              string | null
-		unit?:               string | null
-		valueType?:          string | null
-		range?:              bool | null
+		aliasBy:            string
+		alignmentPeriod:    string
+		crossSeriesReducer: string
+		editorMode:         string
+		metricKind:         string
+		metricType:         string
+		perSeriesAligner:   string
+		projectName:        string
+		query:              string
+		valueType:          string
+		expr?:              string | null
+		legendFormat?:      string | null
+		preprocessor?:      string | null
+		unit?:              string | null
+		range?:             bool | null
 		filters?: [...string] | null
 		groupBys?: [...string] | null
 	} | null
 }
 #template: {
+	#_adhoc: {
+		name:        string
+		hide:        number
+		skipUrlSync: bool
+		filters: []
+		datasource?: #datasource
+	}
 	#_constant: {
 		name:        string
 		query:       string
@@ -136,20 +137,16 @@
 		datasource?: #datasource
 	}
 	#_custom: {
-		name:         string
-		query:        string
-		allFormat?:   string | null
-		allValue?:    string | null
-		label?:       string | null
-		multiFormat?: string | null
-		queryValue?:  string | null
-		hide:         number
-		refresh?:     number | null
-		sort?:        number | null
-		includeAll:   bool
-		multi:        bool
-		skipUrlSync:  bool
-		datasource?:  #datasource
+		name:        string
+		query:       string
+		allValue?:   string | null
+		label?:      string | null
+		queryValue?: string | null
+		hide:        number
+		includeAll:  bool
+		multi:       bool
+		skipUrlSync: bool
+		datasource?: #datasource
 		options: [...{
 			text:     string
 			value:    string
@@ -185,7 +182,7 @@
 		label:       string
 		name:        string
 		query:       string
-		queryValue?: string | null
+		queryValue:  string
 		auto_count:  number
 		hide:        number
 		refresh:     number
@@ -207,11 +204,9 @@
 		definition:      string
 		name:            string
 		regex:           string
-		allFormat?:      string | null
 		allValue?:       string | null
 		description?:    string | null
 		label?:          string | null
-		multiFormat?:    string | null
 		tagValuesQuery?: string | null
 		tagsQuery?:      string | null
 		hide:            number
@@ -253,8 +248,11 @@
 			selected: bool
 		}]
 	}
-	type:        "constant" | "custom" | "datasource" | "interval" | "query" | "textbox"
+	type:        "adhoc" | "constant" | "custom" | "datasource" | "interval" | "query" | "textbox"
 	datasource?: #datasource
+	if type == "adhoc" {
+		#_adhoc
+	}
 	if type == "constant" {
 		#_constant
 	}
@@ -275,53 +273,24 @@
 	}
 }
 #yaxes: {
-	format:     string
-	$$hashKey?: string | null
-	label?:     string | null
-	max?:       string | null
-	logBase:    number
-	min?:       number | string | null
-	show:       bool
+	$$hashKey?: string
 }
 #seriesOverrides: {
-	alias:         string
-	$$hashKey?:    string | null
-	color?:        string | null
-	dashLength?:   number | null
-	fill?:         number | null
-	linewidth?:    number | null
-	yaxis?:        number | null
-	zindex?:       number | null
-	dashes?:       bool | null
-	hiddenSeries?: bool | null
-	hideTooltip?:  bool | null
+	$$hashKey?: string
 }
 #link: {
-	#_dashboards: {
-		icon:         string
-		$$hashKey?:   string | null
-		targetBlank:  bool
-		asDropdown?:  bool | null
-		includeVars?: bool | null
-		keepTime?:    bool | null
-		tags: [...string]
-	}
 	#_link: {
-		icon:         string
-		title:        string
-		url:          string
-		$$hashKey?:   string | null
-		tooltip?:     string | null
-		targetBlank:  bool
-		asDropdown?:  bool | null
-		includeVars?: bool | null
-		keepTime?:    bool | null
+		icon:        string
+		title:       string
+		tooltip:     string
+		url:         string
+		asDropdown:  bool
+		includeVars: bool
+		keepTime:    bool
+		targetBlank: bool
 		tags: []
 	}
-	type: "dashboards" | "link"
-	if type == "dashboards" {
-		#_dashboards
-	}
+	type: "link"
 	if type == "link" {
 		#_link
 	}
@@ -379,7 +348,7 @@
 			minVizHeight:  number
 			minVizWidth:   number
 			showUnfilled:  bool
-			text?: {} | null
+			text: {}
 			reduceOptions: {
 				fields: string
 				values: bool
@@ -390,8 +359,8 @@
 			overrides: []
 			defaults: {
 				unit:      string
-				max?:      number | null
-				min?:      number | null
+				max:       number
+				min:       number
 				unitScale: bool
 				mappings: []
 				color: mode: string
@@ -470,138 +439,13 @@
 			}
 		}
 	}
-	#_graph: {
-		nullPointMode:  string
-		renderer:       string
-		title:          string
-		description?:   string | null
-		interval?:      string | null
-		pluginVersion?: string | null
-		dashLength:     number
-		fill:           number
-		fillGradient:   number
-		linewidth:      number
-		pointradius:    number
-		spaceLength:    number
-		id?:            number | null
-		span?:          number | null
-		bars:           bool
-		dashes:         bool
-		hiddenSeries:   bool
-		lines:          bool
-		percentage:     bool
-		points:         bool
-		stack:          bool
-		steppedLine:    bool
-		editable?:      bool | null
-		error?:         bool | null
-		transparent?:   bool | null
-		targets: [...#target]
-		timeRegions: []
-		panels?: [...#panel] | null
-		seriesOverrides?: [...#seriesOverrides] | null
-		yaxes?: [...#yaxes] | null
-		yaxis: align: bool
-		aliasColors: {
-			Egress?:         string | null
-			Ingress?:        string | null
-			"test-index-1"?: string | null
-		}
-		datasource?: #datasource
-		gridPos?:    #grid
-		tooltip: {
-			value_type:    string
-			sort:          number
-			shared:        bool
-			msResolution?: bool | null
-		}
-		options?: {
-			alertThreshold?: bool | null
-			dataLinks?: [] | null
-		} | null
-		links?: [...{
-			title:       string
-			url:         string
-			targetBlank: bool
-		}] | null
-		xaxis: {
-			mode:     string
-			format?:  string | null
-			logBase?: number | null
-			show:     bool
-			values: []
-		}
-		thresholds: [...{
-			colorMode:  string
-			op:         string
-			$$hashKey?: string | null
-			yaxis?:     string | null
-			value:      number
-			fill:       bool
-			line:       bool
-			visible?:   bool | null
-		}]
-		legend: {
-			sort?:         string | null
-			avg:           bool
-			current:       bool
-			max:           bool
-			min:           bool
-			show:          bool
-			total:         bool
-			values:        bool
-			alignAsTable?: bool | null
-			hideEmpty?:    bool | null
-			hideZero?:     bool | null
-			rightSide?:    bool | null
-			sortDesc?:     bool | null
-		}
-		fieldConfig?: {
-			overrides: []
-			defaults: {
-				unit?:      string | null
-				unitScale?: bool | null
-				links?: [] | null
-				custom?: {} | null
-			}
-		} | null
-		alert?: {
-			executionErrorState: string
-			for:                 string
-			frequency:           string
-			message:             string
-			name:                string
-			noDataState:         string
-			handler:             number
-			alertRuleTags: og_priority?: string | null
-			notifications: [...{
-				uid: string
-			}]
-			conditions: [...{
-				type: string
-				operator: type: string
-				query: params: [...string]
-				reducer: {
-					type: string
-					params: []
-				}
-				evaluator: {
-					type: string
-					params: [...number]
-				}
-			}]
-		} | null
-	}
 	#_row: {
 		title:            string
 		repeat?:          string | null
 		repeatDirection?: string | null
 		id?:              number | null
-		span?:            number | null
 		collapsed:        bool
-		editable?:        bool | null
-		error?:           bool | null
-		panels: [...#panel]
+		panels?: [...#panel] | null
 		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
 		yaxes?: [...#yaxes] | null
@@ -609,15 +453,12 @@
 		gridPos?:    #grid
 	}
 	#_stat: {
-		pluginVersion:  string
-		title:          string
-		description?:   string | null
-		interval?:      string | null
-		id?:            number | null
-		maxDataPoints?: number | null
-		transparent?:   bool | null
+		pluginVersion: string
+		title:         string
+		description?:  string | null
+		interval?:     string | null
+		id?:           number | null
 		targets: [...#target]
-		links?: [] | null
 		panels?: [...#panel] | null
 		seriesOverrides?: [...#seriesOverrides] | null
 		yaxes?: [...#yaxes] | null
@@ -652,6 +493,22 @@
 			}
 		}] | null
 		fieldConfig: {
+			defaults: {
+				unit?:      string | null
+				min?:       number | null
+				unitScale?: bool | null
+				mappings: []
+				color?: {
+					mode: string
+				} | null
+				thresholds: {
+					mode: string
+					steps: [...{
+						color:  string
+						value?: number | null
+					}]
+				}
+			}
 			overrides: [...{
 				matcher: {
 					id:      string
@@ -668,29 +525,6 @@
 					}
 				}]
 			}]
-			defaults: {
-				unit?:      string | null
-				min?:       number | null
-				unitScale?: bool | null
-				color?: {
-					mode:        string
-					fixedColor?: string | null
-				} | null
-				thresholds: {
-					mode: string
-					steps: [...{
-						color:  string
-						value?: number | null
-					}]
-				}
-				mappings: [...{
-					type: string
-					options: {
-						match: string
-						result: text: string
-					}
-				}]
-			}
 		}
 	}
 	#_table: {
@@ -708,11 +542,15 @@
 			cellHeight:  string
 			frameIndex?: number | null
 			showHeader:  bool
-			sortBy?: [] | null
+			sortBy?: [...{
+				displayName: string
+				desc:        bool
+			}] | null
 			footer: {
-				fields:    string
-				countRows: bool
-				show:      bool
+				fields:            string
+				countRows:         bool
+				show:              bool
+				enablePagination?: bool | null
 				reducer: [...string]
 			}
 		}
@@ -734,10 +572,6 @@
 					operator: string
 					right:    string
 				} | null
-				excludeByName?: {
-					Time?:  bool | null
-					Value?: bool | null
-				} | null
 				include?: {
 					names: [...string]
 				} | null
@@ -745,24 +579,40 @@
 					field: string
 				}] | null
 				renameByName?: {
-					"Value #A"?: string | null
-					"Value #B"?: string | null
-					"Value #C"?: string | null
-					"Value #D"?: string | null
-					"Value #E"?: string | null
-					"Value #F"?: string | null
-					"Value #G"?: string | null
-					ip_address?: string | null
-					task_name?:  string | null
+					Value?:              string | null
+					"Value #A"?:         string | null
+					"Value #B"?:         string | null
+					"Value #C"?:         string | null
+					"Value #D"?:         string | null
+					"Value #E"?:         string | null
+					"Value #F"?:         string | null
+					"Value #G"?:         string | null
+					ip_address?:         string | null
+					redpanda_group?:     string | null
+					redpanda_partition?: string | null
+					redpanda_topic?:     string | null
+					task_name?:          string | null
+				} | null
+				excludeByName?: {
+					Time?:     bool | null
+					Value?:    bool | null
+					instance?: bool | null
+					job?:      bool | null
+					shard?:    bool | null
 				} | null
 				indexByName?: {
-					"Value #A"?:     number | null
-					"Value #B"?:     number | null
-					"Value #C"?:     number | null
-					"Value #D"?:     number | null
-					"Value #E"?:     number | null
-					cluster_name?:   number | null
-					monitoring_url?: number | null
+					Time?:               number | null
+					Value?:              number | null
+					"Value #A"?:         number | null
+					"Value #B"?:         number | null
+					"Value #C"?:         number | null
+					"Value #D"?:         number | null
+					"Value #E"?:         number | null
+					cluster_name?:       number | null
+					monitoring_url?:     number | null
+					redpanda_group?:     number | null
+					redpanda_partition?: number | null
+					redpanda_topic?:     number | null
 				} | null
 				filters?: [...{
 					fieldName: string
@@ -809,6 +659,7 @@
 			}]
 			defaults: {
 				unit?:        string | null
+				min?:         number | null
 				unitScale:    bool
 				fieldMinMax?: bool | null
 				color: mode: string
@@ -844,22 +695,14 @@
 		}
 	}
 	#_text: {
+		description:   string
 		pluginVersion: string
-		description?:  string | null
-		title?:        string | null
+		title:         string
 		id?:           number | null
-		span?:         number | null
-		editable?:     bool | null
-		error?:        bool | null
-		transparent?:  bool | null
-		links?: [] | null
 		panels?: [...#panel] | null
 		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
 		yaxes?: [...#yaxes] | null
-		style?: {
-			"font-size": string
-		} | null
 		datasource?: #datasource
 		gridPos?:    #grid
 		options: {
@@ -1033,13 +876,13 @@
 			}
 		}
 	}
-	type: "alertlist" | "bargauge" | "dashlist" | "gauge" | "graph" | "row" | "stat" | "table" | "text" | "timeseries"
+	type: "alertlist" | "bargauge" | "dashlist" | "gauge" | "row" | "stat" | "table" | "text" | "timeseries"
 	id?:  number
 	panels: [...#panel]
 	datasource?: #datasource
 	gridPos?:    #grid
-	yaxes?: [...#yaxes]
 	seriesOverrides?: [...#seriesOverrides]
+	yaxes?: [...#yaxes]
 	targets: [...#target]
 	if type == "alertlist" {
 		#_alertlist
@@ -1052,9 +895,6 @@
 	}
 	if type == "gauge" {
 		#_gauge
-	}
-	if type == "graph" {
-		#_graph
 	}
 	if type == "row" {
 		#_row
