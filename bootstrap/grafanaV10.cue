@@ -275,9 +275,6 @@
 #yaxes: {
 	$$hashKey?: string
 }
-#seriesOverrides: {
-	$$hashKey?: string
-}
 #link: {
 	#_link: {
 		icon:        string
@@ -301,7 +298,6 @@
 		title:       string
 		id?:         number | null
 		panels?: [...#panel] | null
-		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
 		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
@@ -334,7 +330,6 @@
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		seriesOverrides?: [...#seriesOverrides] | null
 		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
@@ -379,7 +374,6 @@
 		title:         string
 		id?:           number | null
 		panels?: [...#panel] | null
-		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
 		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
@@ -404,7 +398,6 @@
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		seriesOverrides?: [...#seriesOverrides] | null
 		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
@@ -446,7 +439,6 @@
 		id?:              number | null
 		collapsed:        bool
 		panels?: [...#panel] | null
-		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
 		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
@@ -460,7 +452,6 @@
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		seriesOverrides?: [...#seriesOverrides] | null
 		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
@@ -534,7 +525,6 @@
 		id?:           number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		seriesOverrides?: [...#seriesOverrides] | null
 		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
@@ -700,7 +690,6 @@
 		title:         string
 		id?:           number | null
 		panels?: [...#panel] | null
-		seriesOverrides?: [...#seriesOverrides] | null
 		targets?: [...#target] | null
 		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
@@ -726,7 +715,6 @@
 		maxPerRow?:       number | null
 		targets: [...#target]
 		panels?: [...#panel] | null
-		seriesOverrides?: [...#seriesOverrides] | null
 		yaxes?: [...#yaxes] | null
 		datasource?: #datasource
 		gridPos?:    #grid
@@ -881,7 +869,6 @@
 	panels: [...#panel]
 	datasource?: #datasource
 	gridPos?:    #grid
-	seriesOverrides?: [...#seriesOverrides]
 	yaxes?: [...#yaxes]
 	targets: [...#target]
 	if type == "alertlist" {
