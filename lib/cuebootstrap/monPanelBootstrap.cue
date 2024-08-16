@@ -30,9 +30,8 @@ package cuemon
 
 		if input.type == "timeseries" {
 			"#timeseries": {
+				// TODO: maybe setup proper preset for timeseries plugin
 			}
-			//			if input.fieldConfig.defaults.min != _|_ {"#rangeY": min: input.fieldConfig.defaults.min}
-			//			if input.fieldConfig.defaults.max != _|_ {"#rangeY": min: input.fieldConfig.defaults.max}
 		}
 
 		if input.fieldConfig.defaults.unit != _|_ {
