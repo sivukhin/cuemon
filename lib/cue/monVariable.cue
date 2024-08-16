@@ -109,11 +109,9 @@ import (
 		if #query.allValue != _|_ {
 			allValue: _ | *#query.allValue
 		}
-		if #grafanaVersion == "v10" {
-			query: refId: _ | *"PrometheusVariableQueryEditor-VariableQuery"
-			if strings.HasPrefix(query.query, "label_values") {query: qryType: _ | *#queryTypes.labelValues}
-			if strings.HasPrefix(query.query, "query_result") {query: qryType: _ | *#queryTypes.queryResult}
-		}
+		query: refId: _ | *"PrometheusVariableQueryEditor-VariableQuery"
+		if strings.HasPrefix(query.query, "label_values") {query: qryType: _ | *#queryTypes.labelValues}
+		if strings.HasPrefix(query.query, "query_result") {query: qryType: _ | *#queryTypes.queryResult}
 	}
 	if #textbox != _|_ {
 		type:        "textbox"

@@ -43,7 +43,7 @@ $> cuemon update -input <panel.json> -dir <cuemon-directory> -overwrite
 
 ## Maintenance
 
-`grafanaVxx` is generated with the help of [cuebootstrap](https://github.com/sivukhin/cuebootstrap) tool from the set of cherry-picked Grafana JSONs like this:
+`grafanaV10` is generated with the help of [cuebootstrap](https://github.com/sivukhin/cuebootstrap) tool from the set of cherry-picked Grafana JSONs like this:
 ```bash
 $> cd bootstrap
 $> make cuebootstrap-install

@@ -41,13 +41,11 @@ import (
 			options: content: #text.markdown
 			options: mode:    "markdown"
 		}
-		if #grafanaVersion == "v10" {
-			options: code: language:        _ | *"plaintext"
-			options: code: showLineNumbers: _ | *false
-			options: code: showMiniMap:     _ | *false
-			error:    _ | *false
-			editable: _ | *true
-		}
+		options: code: language:        _ | *"plaintext"
+		options: code: showLineNumbers: _ | *false
+		options: code: showMiniMap:     _ | *false
+		error:    _ | *false
+		editable: _ | *true
 	}
 }
 
