@@ -143,6 +143,7 @@ package cuemon
 	#_constant: {
 		name:        string
 		query:       string
+		label?:      string | null
 		hide:        number
 		skipUrlSync: bool
 		datasource?: #datasource
