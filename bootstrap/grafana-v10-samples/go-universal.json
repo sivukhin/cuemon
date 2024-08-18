@@ -1,0 +1,1900 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 392,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 15,
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "name",
+        "wideLayout": true
+      },
+      "panels": [],
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": false,
+          "expr": "count(go_info{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}) by (service_prometheus_track, version)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ service_prometheus_track }} - {{ version }}",
+          "queryType": "metrics",
+          "refId": "A"
+        }
+      ],
+      "title": "Go version",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 5
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "panels": [],
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": false,
+          "expr": "count(sum(go_info{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}) by (service_prometheus_track, kubernetes_pod_name)) by (service_prometheus_track)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ service_prometheus_track }}",
+          "queryType": "metrics",
+          "refId": "A"
+        }
+      ],
+      "title": "Pods count",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 5
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "panels": [],
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": false,
+          "expr": "$func(go_memstats_heap_alloc_bytes{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}) by (service_prometheus_track)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ service_prometheus_track }}",
+          "queryType": "metrics",
+          "refId": "A"
+        }
+      ],
+      "title": "Heap size (average)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "white",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 5
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "panels": [],
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": false,
+          "expr": "$func(histogram_quantile(0.999, sum(rate(go_sched_latencies_seconds_bucket{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m])) by (le, kubernetes_pod_name, service_prometheus_track))) by (service_prometheus_track)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ service_prometheus_track }}",
+          "queryType": "metrics",
+          "refId": "A"
+        }
+      ],
+      "title": "Goroutine scheduling latency (p999)",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 5,
+      "title": "Details",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "lines",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "graph": false,
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(show\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(hide\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "tooltipOptions": {
+          "mode": "single"
+        }
+      },
+      "panels": [],
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(go_memstats_heap_alloc_bytes{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 0h) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }}",
+          "queryType": "metrics",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(go_memstats_heap_alloc_bytes{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 24h) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }} - yesterday($show_yesterday)",
+          "queryType": "metrics",
+          "refId": "B"
+        }
+      ],
+      "title": "Heap size",
+      "type": "timeseries",
+      "yaxes": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "lines",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "graph": false,
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(show\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(hide\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "tooltipOptions": {
+          "mode": "single"
+        }
+      },
+      "panels": [],
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(go_memstats_heap_objects{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 0h) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }}",
+          "queryType": "metrics",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(go_memstats_heap_objects{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 24h) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }} - yesterday($show_yesterday)",
+          "queryType": "metrics",
+          "refId": "B"
+        }
+      ],
+      "title": "Heap objects",
+      "type": "timeseries",
+      "yaxes": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "lines",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "graph": false,
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(show\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(hide\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "tooltipOptions": {
+          "mode": "single"
+        }
+      },
+      "panels": [],
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(go_memstats_next_gc_bytes{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 0h) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }}",
+          "queryType": "metrics",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(go_memstats_next_gc_bytes{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 24h) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }} - yesterday($show_yesterday)",
+          "queryType": "metrics",
+          "refId": "B"
+        }
+      ],
+      "title": "Next GC trigger size",
+      "type": "timeseries",
+      "yaxes": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "lines",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "graph": false,
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(show\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(hide\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "tooltipOptions": {
+          "mode": "single"
+        }
+      },
+      "panels": [],
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(go_threads{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 0h) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }}",
+          "queryType": "metrics",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(go_threads{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 24h) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }} - yesterday($show_yesterday)",
+          "queryType": "metrics",
+          "refId": "B"
+        }
+      ],
+      "title": "Threads",
+      "type": "timeseries",
+      "yaxes": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "lines",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "graph": false,
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(show\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(hide\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 46
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "tooltipOptions": {
+          "mode": "single"
+        }
+      },
+      "panels": [],
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(go_goroutines{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 0h) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }}",
+          "queryType": "metrics",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(go_goroutines{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 24h) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }} - yesterday($show_yesterday)",
+          "queryType": "metrics",
+          "refId": "B"
+        }
+      ],
+      "title": "Goroutines",
+      "type": "timeseries",
+      "yaxes": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "lines",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "graph": false,
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(show\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(hide\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "tooltipOptions": {
+          "mode": "single"
+        }
+      },
+      "panels": [],
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(rate(go_gc_pauses_seconds_sum{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 0h)) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }}",
+          "queryType": "metrics",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(rate(go_gc_pauses_seconds_sum{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 24h)) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }} - yesterday($show_yesterday)",
+          "queryType": "metrics",
+          "refId": "B"
+        }
+      ],
+      "title": "GC pauses latency",
+      "type": "timeseries",
+      "yaxes": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "lines",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "graph": false,
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s",
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(show\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(hide\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 62
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "tooltipOptions": {
+          "mode": "single"
+        }
+      },
+      "panels": [],
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(histogram_quantile(0.99, sum(rate(go_sched_latencies_seconds_bucket{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 0h)) by (le, kubernetes_pod_name, ${by}))) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }}",
+          "queryType": "metrics",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(histogram_quantile(0.99, sum(rate(go_sched_latencies_seconds_bucket{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 24h)) by (le, kubernetes_pod_name, ${by}))) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }} - yesterday($show_yesterday)",
+          "queryType": "metrics",
+          "refId": "B"
+        }
+      ],
+      "title": "Goroutine scheduling latency (p99)",
+      "type": "timeseries",
+      "yaxes": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "lines",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "graph": false,
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s",
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(show\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(hide\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 70
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "tooltipOptions": {
+          "mode": "single"
+        }
+      },
+      "panels": [],
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(histogram_quantile(0.999, sum(rate(go_sched_latencies_seconds_bucket{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 0h)) by (le, kubernetes_pod_name, ${by}))) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }}",
+          "queryType": "metrics",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(histogram_quantile(0.999, sum(rate(go_sched_latencies_seconds_bucket{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 24h)) by (le, kubernetes_pod_name, ${by}))) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }} - yesterday($show_yesterday)",
+          "queryType": "metrics",
+          "refId": "B"
+        }
+      ],
+      "title": "Goroutine scheduling latency (p999)",
+      "type": "timeseries",
+      "yaxes": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "TjtJft04z"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "lines",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "graph": false,
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s",
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(show\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/\\(hide\\)$/"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 78
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "tooltipOptions": {
+          "mode": "single"
+        }
+      },
+      "panels": [],
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(rate(go_sync_mutex_wait_total_seconds_total{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 0h)) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }}",
+          "queryType": "metrics",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "TjtJft04z"
+          },
+          "exemplar": true,
+          "expr": "$func(rate(go_sync_mutex_wait_total_seconds_total{clustername=\"$cluster_name\", service_prometheus_track=~\"^${service_prometheus_track:pipe}$\"}[1m] offset 24h)) by (${by})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{ $by }} - yesterday($show_yesterday)",
+          "queryType": "metrics",
+          "refId": "B"
+        }
+      ],
+      "title": "Sync mutex wait",
+      "type": "timeseries",
+      "yaxes": []
+    }
+  ],
+  "refresh": "15m",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "moj-p-ds-generic-services-02",
+          "value": "moj-p-ds-generic-services-02"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "TjtJft04z"
+        },
+        "definition": "label_values(go_info,clustername)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "cluster_name",
+        "multi": false,
+        "name": "cluster_name",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(go_info,clustername)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 6,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "sharecone-service"
+          ],
+          "value": [
+            "sharecone-service"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "TjtJft04z"
+        },
+        "definition": "label_values(go_info{clustername=\"$cluster_name\"},service_prometheus_track)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "service_prometheus_track",
+        "multi": true,
+        "name": "service_prometheus_track",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(go_info{clustername=\"$cluster_name\"},service_prometheus_track)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 6,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "avg",
+          "value": "avg"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "func",
+        "multi": false,
+        "name": "func",
+        "options": [
+          {
+            "selected": true,
+            "text": "avg",
+            "value": "avg"
+          },
+          {
+            "selected": false,
+            "text": "max",
+            "value": "max"
+          }
+        ],
+        "query": "avg,max",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "service_prometheus_track",
+          "value": "service_prometheus_track"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "by",
+        "multi": false,
+        "name": "by",
+        "options": [
+          {
+            "selected": true,
+            "text": "service_prometheus_track",
+            "value": "service_prometheus_track"
+          },
+          {
+            "selected": false,
+            "text": "kubernetes_pod_name",
+            "value": "kubernetes_pod_name"
+          },
+          {
+            "selected": false,
+            "text": "zone",
+            "value": "zone"
+          },
+          {
+            "selected": false,
+            "text": "node_instance_type",
+            "value": "node_instance_type"
+          },
+          {
+            "selected": false,
+            "text": "id",
+            "value": "id"
+          }
+        ],
+        "query": "service_prometheus_track,kubernetes_pod_name,zone,node_instance_type,id",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "hide",
+          "value": "hide"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "show_yesterday",
+        "multi": false,
+        "name": "show_yesterday",
+        "options": [
+          {
+            "selected": true,
+            "text": "hide",
+            "value": "hide"
+          },
+          {
+            "selected": false,
+            "text": "show",
+            "value": "show"
+          }
+        ],
+        "query": "hide,show",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Go universal dashboard [cuemon]",
+  "uid": "b18e315a-29a9-44e0-8754-4b24f6df907d",
+  "version": 39,
+  "weekStart": ""
+}

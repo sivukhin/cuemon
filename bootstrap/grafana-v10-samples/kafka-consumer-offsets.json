@@ -1,0 +1,1376 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 22,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum by([[aggr_criteria]] , redpanda_group) (max by(redpanda_namespace, redpanda_topic, redpanda_partition)(redpanda_kafka_max_offset{instance=~\"$instance\", redpanda_namespace=\"kafka\", redpanda_topic=~\"[[redpanda_topic]]\"}) - on(redpanda_topic, redpanda_partition) group_right max by(redpanda_group, redpanda_topic, redpanda_partition)(redpanda_kafka_consumer_group_committed_offset{instance=~\"$instance\", redpanda_group=~\"[[redpanda_group]]\"}) +1)",
+          "interval": "",
+          "legendFormat": "Group: {{redpanda_group}}, Topic: {{redpanda_topic}}, Partition: {{redpanda_partition}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Consumer Group Offset Lag",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 12,
+        "y": 0
+      },
+      "id": 19,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "count(count by(redpanda_group)(redpanda_kafka_consumer_group_committed_offset{instance=~\"$instance\", redpanda_topic=~\"[[redpanda_topic]]\", redpanda_group=~\"[[redpanda_group]]\", redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\"}))",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Consumer Groups",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 15,
+        "y": 0
+      },
+      "id": 23,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "count(count(redpanda_kafka_max_offset{instance=~\"$instance\", redpanda_topic=~\"[[redpanda_topic]]\",redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\"}) by (redpanda_topic, redpanda_partition))",
+          "interval": "",
+          "legendFormat": "group: {{group}}, redpanda_topic: {{redpanda_topic}}, partition: {{partition}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Partitions",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 18,
+        "y": 0
+      },
+      "id": 25,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum(max by(redpanda_namespace, redpanda_topic, redpanda_partition)(redpanda_kafka_max_offset{instance=~\"$instance\", redpanda_namespace=\"kafka\", redpanda_topic=~\"[[redpanda_topic]]\",redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\"}) - on(redpanda_topic, redpanda_partition) group_right max by(redpanda_group, redpanda_topic, redpanda_partition)(redpanda_kafka_consumer_group_committed_offset{instance=~\"$instance\", redpanda_group=~\"[[redpanda_group]]\", redpanda_topic=~\"[[redpanda_topic]]\",redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\"}) + 1)",
+          "interval": "",
+          "legendFormat": "group: {{group}}, redpanda_topic: {{redpanda_topic}}, partition: {{partition}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Consumer Group Offset Lag",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Only applies when topics are being written to (to understand the write-rate and compute the offset against that)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 21,
+        "y": 0
+      },
+      "id": 24,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "avg\n(\n    (max by(redpanda_namespace, redpanda_topic, redpanda_partition)(redpanda_kafka_max_offset{instance=~\"$instance\", redpanda_namespace=\"kafka\", redpanda_topic!=\"__consumer_offsets\"}) - on (redpanda_topic, redpanda_partition) group_right max by(redpanda_group,redpanda_topic, redpanda_partition) (redpanda_kafka_consumer_group_committed_offset{instance=~\"$instance\", redpanda_group=~\"[[redpanda_group]]\",redpanda_topic=~\"[[redpanda_topic]]\",redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\"})\n    )\n    / on (redpanda_topic, redpanda_partition) group_right\n    max by(redpanda_namespace, redpanda_topic, redpanda_partition) (rate(redpanda_kafka_max_offset{instance=~\"$instance\", redpanda_topic=~\"[[redpanda_topic]]\",redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\"}[$__rate_interval])!=0) \n)",
+          "interval": "",
+          "legendFormat": "group: {{group}}, redpanda_topic: {{redpanda_topic}}, partition: {{partition}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Offset Lag (time)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "partition"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 79
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "group"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 166
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "redpanda_topic"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 128
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 52
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "redpanda_partition"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "redpanda_group"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 117
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Lag"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Topic"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 291
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Group"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 427
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 7
+      },
+      "id": 15,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Lag"
+          }
+        ]
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by([[aggr_criteria]] , redpanda_group) (max by(redpanda_namespace, redpanda_topic, redpanda_partition)(redpanda_kafka_max_offset{instance=~\"$instance\", redpanda_namespace=\"kafka\", redpanda_topic=~\"[[redpanda_topic]]\"}) - on(redpanda_topic, redpanda_partition) group_right max by(redpanda_group, redpanda_topic, redpanda_partition)(redpanda_kafka_consumer_group_committed_offset{instance=~\"$instance\", redpanda_group=~\"[[redpanda_group]]\"}) +1)",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Consumer Group Offset Lag",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "instance": true,
+              "job": true,
+              "shard": true
+            },
+            "indexByName": {
+              "Time": 1,
+              "Value": 4,
+              "redpanda_group": 2,
+              "redpanda_partition": 3,
+              "redpanda_topic": 0
+            },
+            "renameByName": {
+              "Value": "Lag",
+              "redpanda_group": "Group",
+              "redpanda_partition": "Partition",
+              "redpanda_topic": "Topic"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 73
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Group"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 390
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Topic"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 267
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Consumption Rate"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 155
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 7
+      },
+      "id": 22,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Consumption Rate"
+          }
+        ]
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by(redpanda_group, redpanda_topic) (rate(redpanda_kafka_consumer_group_committed_offset{instance=~\"$instance\", redpanda_topic=~\"[[redpanda_topic]]\", redpanda_group=~\"[[redpanda_group]]\", redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\"}[1m]))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "Group: {{redpanda_group}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Topic Consumption Rate by Group",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Consumption Rate",
+              "redpanda_group": "Group",
+              "redpanda_topic": "Topic"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "sum by ($aggr_criteria) (rate(redpanda_kafka_max_offset{instance=~\"$instance\", redpanda_topic=~\"[[redpanda_topic]]\",redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\"}[$__rate_interval])) / 3",
+          "legendFormat": "Topic: {{redpanda_topic}}, Partitions: {{redpanda_partition}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Topic Production Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "sum by([[aggr_criteria]], redpanda_group ) (rate(redpanda_kafka_consumer_group_committed_offset{instance=~\"$instance\", redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\", redpanda_topic=~\"[[redpanda_topic]]\"}[$__rate_interval]))",
+          "legendFormat": "group: {{redpanda_group}}, topic: {{redpanda_topic}}, partition: {{redpanda_partition}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Topic Consumption Rate by Group",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 23
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "max by([[aggr_criteria]]) (rate(redpanda_kafka_max_offset{instance=~\"$instance\", redpanda_topic=~\"[[redpanda_topic]]\", redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\"}[$__rate_interval]))",
+          "interval": "",
+          "legendFormat": "Topic: {{redpanda_topic}}, Partition: {{redpanda_partition}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Log End Offset Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 23
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "max by([[aggr_criteria]], redpanda_group) (rate(redpanda_kafka_consumer_group_committed_offset{instance=~\"$instance\", redpanda_topic=~\"[[redpanda_topic]]\", redpanda_group=~\"[[redpanda_group]]\", redpanda_cloud_data_cluster_name=~\"[[data_cluster]]\"}[$__rate_interval]))",
+          "interval": "",
+          "legendFormat": "Group: {{redpanda_group}}, Topic: {{redpanda_topic}}, Partition: {{redpanda_partition}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Consumer Group Offsets Rate",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10m",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "VM",
+          "value": "Ag61Bt04k"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "console-914dce73.ci8q04tu86fclp7lpl0g.byoc.prd.cloud.redpanda.com:443",
+          "value": "console-914dce73.ci8q04tu86fclp7lpl0g.byoc.prd.cloud.redpanda.com:443"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "label_values(redpanda_application_uptime_seconds_total{}, instance)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Cluster",
+        "multi": false,
+        "name": "instance",
+        "options": [],
+        "query": {
+          "query": "label_values(redpanda_application_uptime_seconds_total{}, instance)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "type": "query"
+      },
+      {
+        "allValue": "",
+        "current": {
+          "selected": true,
+          "text": [
+            "data-beaver-tj-vplay-v11-eventmesh-video-play-v1"
+          ],
+          "value": [
+            "data-beaver-tj-vplay-v11-eventmesh-video-play-v1"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "label_values(redpanda_kafka_consumer_group_topics{redpanda_topic !~ 'controller|group|__consumer_offsets', instance=\"$instance\"}, redpanda_group)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Group",
+        "multi": true,
+        "name": "redpanda_group",
+        "options": [],
+        "query": {
+          "query": "label_values(redpanda_kafka_consumer_group_topics{redpanda_topic !~ 'controller|group|__consumer_offsets', instance=\"$instance\"}, redpanda_group)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": "",
+        "current": {
+          "selected": true,
+          "text": [
+            "eventmesh-video-play-v1"
+          ],
+          "value": [
+            "eventmesh-video-play-v1"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "label_values(redpanda_kafka_replicas{redpanda_topic !~ 'controller|group|__consumer_offsets', instance=\"$instance\", redpanda_namespace=\"kafka\"}, redpanda_topic)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Topic",
+        "multi": true,
+        "name": "redpanda_topic",
+        "options": [],
+        "query": {
+          "query": "label_values(redpanda_kafka_replicas{redpanda_topic !~ 'controller|group|__consumer_offsets', instance=\"$instance\", redpanda_namespace=\"kafka\"}, redpanda_topic)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "Topic",
+          "value": "redpanda_topic"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Aggregate by",
+        "multi": false,
+        "name": "aggr_criteria",
+        "options": [
+          {
+            "selected": true,
+            "text": "Topic",
+            "value": "redpanda_topic"
+          },
+          {
+            "selected": false,
+            "text": "Topic,Partition",
+            "value": "redpanda_topic,redpanda_partition"
+          }
+        ],
+        "query": "Topic : redpanda_topic,Topic\\,Partition : redpanda_topic\\,redpanda_partition",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "label_values(redpanda_cloud_data_cluster_name)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data cluster",
+        "multi": false,
+        "name": "data_cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(redpanda_cloud_data_cluster_name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "filters": [],
+        "hide": 0,
+        "name": "Filters",
+        "skipUrlSync": false,
+        "type": "adhoc"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Kafka Consumer Offsets",
+  "uid": "rtW0EDenk",
+  "version": 3,
+  "weekStart": ""
+}

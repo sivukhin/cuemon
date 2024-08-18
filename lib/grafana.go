@@ -13,26 +13,14 @@ type Box struct {
 type Datasource = JsonRaw[any]
 
 type GrafanaPanel struct {
-	Id              int                      `json:"id"`
-	Type            string                   `json:"type"`
-	Title           string                   `json:"title"`
-	Collapsed       bool                     `json:"collapsed"`
-	GridPos         Box                      `json:"gridPos"`
-	Targets         []json.RawMessage        `json:"targets"`
-	SeriesOverrides []GrafanaSeriesOverrides `json:"seriesOverrides"`
-	Panels          []JsonRaw[GrafanaPanel]  `json:"panels"`
-	Datasource      Datasource               `json:"datasource"`
-}
-
-type GrafanaSeriesOverrides struct {
-	Alias     string  `json:"alias"`
-	Dashes    *bool   `json:"dashes"`
-	Hidden    *bool   `json:"hiddenSeries"`
-	Color     *string `json:"color"`
-	Fill      *int    `json:"fill"`
-	YAxis     *int    `json:"yaxis"`
-	ZIndex    *int    `json:"zindex"`
-	LineWidth *int    `json:"linewidth"`
+	Id         int                     `json:"id"`
+	Type       string                  `json:"type"`
+	Title      string                  `json:"title"`
+	Collapsed  bool                    `json:"collapsed"`
+	GridPos    Box                     `json:"gridPos"`
+	Targets    []json.RawMessage       `json:"targets"`
+	Panels     []JsonRaw[GrafanaPanel] `json:"panels"`
+	Datasource Datasource              `json:"datasource"`
 }
 
 type Templating = JsonRaw[struct {

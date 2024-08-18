@@ -53,9 +53,6 @@ import (
 		query:       _ | *#constant.value
 		skipUrlSync: _ | *false
 		hide:        _ | *2
-		if #grafanaVersion == "v7" {
-			label: _ | *#constant.name
-		}
 	}
 	if #custom != _|_ {
 		type:        "custom"
@@ -79,7 +76,6 @@ import (
 			current: text:  _ | *[for option in #custom.options if option.selected {option.text}][0] | ""
 			current: value: _ | *[for option in #custom.options if option.selected {option.value}][0] | ""
 		}
-		if #grafanaVersion == "v7" {description: string | null | *""}
 //		queryValue: string | *""
 	}
 	if #query != _|_ {
@@ -113,15 +109,9 @@ import (
 		if #query.allValue != _|_ {
 			allValue: _ | *#query.allValue
 		}
-		if #grafanaVersion == "v7" {
-			tags: _ | *[]
-			query: refId: _ | *"StandardVariableQuery"
-		}
-		if #grafanaVersion == "v10" {
-			query: refId: _ | *"PrometheusVariableQueryEditor-VariableQuery"
-			if strings.HasPrefix(query.query, "label_values") {query: qryType: _ | *#queryTypes.labelValues}
-			if strings.HasPrefix(query.query, "query_result") {query: qryType: _ | *#queryTypes.queryResult}
-		}
+		query: refId: _ | *"PrometheusVariableQueryEditor-VariableQuery"
+		if strings.HasPrefix(query.query, "label_values") {query: qryType: _ | *#queryTypes.labelValues}
+		if strings.HasPrefix(query.query, "query_result") {query: qryType: _ | *#queryTypes.queryResult}
 	}
 	if #textbox != _|_ {
 		type:        "textbox"

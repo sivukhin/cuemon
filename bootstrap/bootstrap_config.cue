@@ -7,8 +7,6 @@
 		type: string @discriminative()
 		datasource: #datasource
 	}
-	#yaxes: $$hashKey?: string
-	#seriesOverrides: $$hashKey?: string
 	#link: type: string @discriminative()
 	#panel: {
 		type: string @discriminative()
@@ -17,8 +15,6 @@
 		datasource: #datasource
 		targets: [...#target]
 		panels: [...#panel]
-		yaxes?: [...#yaxes]
-		seriesOverrides?: [...#seriesOverrides]
 	}
 
 	iteration?: number
@@ -29,4 +25,3 @@
 	panels: [...#panel]
 	templating: list: [...#template]
 } @root(undefined-is-null,null-is-undefined)
-

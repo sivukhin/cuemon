@@ -13,8 +13,6 @@ import (
 )
 
 var (
-	//go:embed cue/grafanaV7.cue
-	GrafanaV7Cue string
 	//go:embed cue/grafanaV10.cue
 	GrafanaV10Cue string
 
@@ -49,16 +47,14 @@ func toFilename(s string) string {
 }
 
 const (
-	GrafanaField       = "Grafana"
-	SchemaVersionField = "schemaVersion"
-	TitleField         = "Title"
-	CollapsedField     = "Collapsed"
-	ColumnsField       = "Widths"
-	HeightsField       = "Heights"
-	PanelField         = "Panel"
-	PanelGridField     = "PanelGrid"
-	WidthField         = "Width"
-	HeightField        = "Height"
+	TitleField     = "Title"
+	CollapsedField = "Collapsed"
+	ColumnsField   = "Widths"
+	HeightsField   = "Heights"
+	PanelField     = "Panel"
+	PanelGridField = "PanelGrid"
+	WidthField     = "Width"
+	HeightField    = "Height"
 )
 
 type MonitoringContext struct {
@@ -308,7 +304,7 @@ func MonitoringFiles(module, output string, grafana Grafana) ([]FileEntry, error
 	if grafana.Value.SchemaVersion >= 39 {
 		grafanaSchema = GrafanaV10Cue
 	} else {
-		grafanaSchema = GrafanaV7Cue
+		return nil, fmt.Errorf("unsupported Grafana schema version: %v", grafana.Value.SchemaVersion)
 	}
 	m := MonitoringContext{
 		SchemaFiles: []string{grafanaSchema},

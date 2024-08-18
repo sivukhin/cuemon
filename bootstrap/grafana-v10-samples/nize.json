@@ -1,0 +1,1537 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 246,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Cluster View",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{namespace_name}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && resource.resource.namespace_name =~ '${Namespace:pipe}'\n| align delta()\n| group_by\n    [namespace_name: resource.namespace_name],\n    24h,\n    [value_egress_percent: sum(if(metric.remote_zone != metadata.system.node_zone, value.egress_bytes_count, 0)) / sum(value.egress_bytes_count)]\n| every 1h\n"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic % split by namespace (per day)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{namespace_name}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && resource.namespace_name =~ '${Namespace:pipe}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [namespace_name: resource.namespace_name],\n    24h,\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1h\n| filter value_egress_bytes_count_aggregate > cast_units(10,'GiBy')"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic split by namespace (per day)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 14,
+      "panels": [],
+      "title": "Cluster View - Details",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{namespace_name}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && resource.namespace_name =~ '${Namespace:pipe}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [namespace_name: resource.namespace_name, top_level_controller_name: metadata.system.top_level_controller_name],\n    24h,\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1h"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic split by namespace and top_level_controller (per day)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{node_zone}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [node_zone: metadata.system.node_zone],\n    24h,\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1h"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic split by node_zone (per day)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 41
+      },
+      "id": 22,
+      "panels": [],
+      "title": "Namespace View",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 42
+      },
+      "id": 35,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Max",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{namespace_name}}::{{node_zone}}-->{{remote_zone}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && resource.resource.namespace_name =~ '${Namespace:pipe}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [namespace_name: resource.namespace_name, node_zone: metadata.system.node_zone, remote_zone: metric.remote_zone],\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1m\n| filter value_egress_bytes_count_aggregate > cast_units(1,'MiBy')"
+          }
+        }
+      ],
+      "title": "NIZE traffic on namespace level",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 50
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{top_level_controller_name}}@{{node_zone}}-->{{remote_zone}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && resource.resource.namespace_name =~ '${Namespace:pipe}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [namespace_name: resource.namespace_name, top_level_controller_name: metadata.system.top_level_controller_name, node_zone: metadata.system.node_zone, remote_zone: metric.remote_zone],\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1m\n| filter value_egress_bytes_count_aggregate > cast_units(1,'MiBy')"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic split by top_level_controller and node_zone (per minute)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 58
+      },
+      "id": 18,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{top_level_controller_name}}@{{namespace_name}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && resource.resource.namespace_name =~ '${Namespace:pipe}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [namespace_name: resource.namespace_name, top_level_controller_name: metadata.system.top_level_controller_name],\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1m\n| filter value_egress_bytes_count_aggregate > cast_units(1,'MiBy')"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic split by top_level_controller (per minute)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 67
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{top_level_controller_name}}@{{namespace_name}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && resource.resource.namespace_name =~ '${Namespace:pipe}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [namespace_name: resource.namespace_name, top_level_controller_name: metadata.system.top_level_controller_name],\n    24h,\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1h"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic split by top_level_controller (per day)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 76
+      },
+      "id": 34,
+      "panels": [],
+      "title": "Deployment View",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 77
+      },
+      "id": 32,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{pod_name}} -- {{remote_zone}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && metadata.system.top_level_controller_name =~ '${Deployment:pipe}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [pod_name: resource.pod_name, remote_zone: metric.remote_zone],\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1m\n| filter value_egress_bytes_count_aggregate > cast_units(1,'MiBy')"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic split by pod_name and remote_zone (per minute)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 86
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{pod_name}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && metadata.system.top_level_controller_name =~ '${Deployment:pipe}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [pod_name: resource.pod_name],\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1m\n| filter value_egress_bytes_count_aggregate > cast_units(1,'MiBy')"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic split by pod_name (per minute)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 95
+      },
+      "id": 28,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{top_level_controller_name}} -- {{node_zone}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && metadata.system.top_level_controller_name =~ '${Deployment:pipe}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [top_level_controller_name: metadata.system.top_level_controller_name, node_zone: metadata.system.node_zone],\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1m"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic split by top_level_controller and node_zone (per minute)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 104
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{top_level_controller_name}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && metadata.system.top_level_controller_name =~ '${Deployment:pipe}' && metric.remote_zone != metadata.system.node_zone\n| align delta()\n| group_by\n    [top_level_controller_name: metadata.system.top_level_controller_name],\n    [value_egress_bytes_count_aggregate: sum(value.egress_bytes_count)]\n| every 1m"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic split by top_level_controller (per minute)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "stackdriver",
+        "uid": "18ZElFA4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 112
+      },
+      "id": 24,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aliasBy": "{{top_level_controller_name}}",
+          "datasource": {
+            "type": "stackdriver",
+            "uid": "18ZElFA4k"
+          },
+          "queryType": "timeSeriesQuery",
+          "refId": "A",
+          "timeSeriesQuery": {
+            "projectName": "$Project",
+            "query": "fetch k8s_pod\n| metric 'networking.googleapis.com/pod_flow/egress_bytes_count'\n| filter resource.cluster_name == '${Cluster}' && metadata.system.top_level_controller_name =~ '${Deployment:pipe}'\n| align delta()\n| group_by\n    [top_level_controller_name: metadata.system.top_level_controller_name],\n    [value_egress_percent: sum(if(metric.remote_zone != metadata.system.node_zone, value.egress_bytes_count, 0)) / sum(value.egress_bytes_count)]\n| every 1m"
+          }
+        }
+      ],
+      "title": "Cluster NIZE traffic % split by top_level_controller (per minute)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "prj-moj-p-services",
+          "value": "prj-moj-p-services"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "Project",
+        "options": [
+          {
+            "selected": false,
+            "text": "prj-moj-p-ds-services",
+            "value": "prj-moj-p-ds-services"
+          },
+          {
+            "selected": true,
+            "text": "prj-moj-p-services",
+            "value": "prj-moj-p-services"
+          }
+        ],
+        "query": "prj-moj-p-ds-services,prj-moj-p-services",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "moj-p-generic-services-01",
+          "value": "moj-p-generic-services-01"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Ag61Bt04k"
+        },
+        "definition": "label_values(kube_node_info,clustername)",
+        "description": "",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(kube_node_info,clustername)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Ag61Bt04k"
+        },
+        "definition": "label_values(kube_pod_info{clustername=\"$Cluster\"},namespace)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "Namespace",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(kube_pod_info{clustername=\"$Cluster\"},namespace)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Ag61Bt04k"
+        },
+        "definition": "label_values(kube_deployment_status_replicas_available{clustername=\"$Cluster\", namespace=\"$Namespace\"},deployment)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "Deployment",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(kube_deployment_status_replicas_available{clustername=\"$Cluster\", namespace=\"$Namespace\"},deployment)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "NIZE traffic drilldown MOJ",
+  "uid": "HNOrjwaVk",
+  "version": 11,
+  "weekStart": ""
+}
