@@ -22,7 +22,8 @@ import (
 	}]
 }
 
-#monPanel: #panel & {#panel}
+#monPanel: {#panel, ...} // allow monPanel to have extra non-# fields in comparison to #panel defined in grafana schema (e.g. monPanel.h)
+
 #monPanel: {
 	#text?: {
 		html?:       string
@@ -166,19 +167,26 @@ import (
 
 #monPanel: {
 	panelH=h?: number
-	if panelH != _|_ {gridPos: h: _ | *panelH}
+	if panelH != _|_ {
+		gridPos: h: _ | *panelH
+		gridPos: w: _ | *0 // NOTE: w,x,y fields on the panel level will be ignored by `cuemon export`
+		gridPos: x: _ | *0
+		gridPos: y: _ | *0
+	}
 
 	type:          string
 	pluginVersion: _ | *#pluginVersion[type]
 
+	#datasrc?: #datasource
+	if #datasrc != _|_ {
+		datasource: #datasrc
+	}
+
 	#title:       string
 	#description: string | *""
-	#datasrc?:    #datasource
-
 	if type == "stat" || type == "timeseries" {
 		title:       _ | *#title
 		description: _ | *#description
-		datasource:  _ | *#datasrc
 	}
 
 	if type == "stat" {
